@@ -8,9 +8,12 @@
 
        DEF    START
 
+       copy "macros.a99"
+
 *       Memory Map
 WRKSP  EQU  >8300                      ; Workspace
 R0LB   EQU  >8301                      ; R0 LSB
+R2LB   EQU  >8305                      ; R2 LSB
 STACK  EQU  >8320                      ; Stack
 VDPRD  EQU  >8800                      ; VDP read data
 VDPSTA EQU  >8802                      ; VDP status
@@ -108,19 +111,27 @@ INISCR MOV  R11,*R10+                  ; Push return address onto the stack
 *      Init name tables
        MOV  @SCRLY,R4                  ; Get initial scroll offset in pixels
        SRL  R4,3                       ; Convert to row offset
-       SLA  R4,5                       ; Convert to character offset
+       MOV  R4,R5
+       SLA  R4,5                       ; Convert to name table offser
+       MPY  @MS0,R5                    ; Convert to map offset in R6
 *      Table 0
        LI   R0,NAMET0                  ; Destination address in VDP RAM
        LI   R1,MD0                     ; Base address of map data
-       A    R4,R1                      ; Add character offset
-       LI   R2,>300/8                  ; Number of groups of 8 bytes to copy
-       BL   @VM8BW                     ; Call low character set copying routine
+       A    R6,R1                      ; Add map offset
+       LI   R7,24                      ; Number of rows
+INISC1 BL   @copy_row
+       AI   R0,32
+       DEC  R7
+       JNE  INISC1
 *      Table 1
        LI   R0,NAMET1                  ; Destination address in VDP RAM
        LI   R1,MD0                     ; Base address of map data
-       A    R4,R1                      ; Add character offset
-       LI   R2,>300/8                  ; Number of groups of 8 bytes to copy
-       BL   @VM8BHW                    ; Call high character set copying routine
+       A    R6,R1                      ; Add map offset
+       LI   R7,24                      ; Number of rows
+INISC2 BL   @copy_row_hi
+       AI   R0,32
+       DEC  R7
+       JNE  INISC2
 *      Return
        DECT R10                        ; Pop return address off the stack
        MOV  *R10,R11
@@ -282,8 +293,7 @@ UPDNT  MOV  R11,*R10+                  ; Push return address onto the stack
        SRL  R1,3                       ; Divide by 8 to get row offset
        A    @SCRLDY,R1                 ; Add dy: prepared buffer has a 1 row offset
        A    R2,R1                      ; Add the row offset we calculated before
-       SLA  R1,5                       ; Multiply by 32 to get character offset
-       MOV  R1,R2                      ; Copy to R2
+       MPY  @MS0,R1                    ; Multiply by map width to get character offset in R2
        LI   R1,MD0                     ; Get the map base address
        A    R2,R1                      ; Add the character offset
 *      Calculate buffer destination address in R0
@@ -303,14 +313,20 @@ UPDNT2 COC  @ONE,R3                    ; Bit weight >01 determines the buffer
        JMP  UPDNT4
 UPDNT3 AI   R0,NAMET3                  ; Add base address to character offset
 *      Copy to VDP RAM buffer
-UPDNT4 LI   R2,6*32/8                  ; Number of 8 character groups to copy
+UPDNT4 LI   R4,6                       ; Number of rows to copy
        COC  @ONE,R3                    ; High or low character set copy?
-       JEQ  UPDNT5
-       BL   @VM8BW                     ; Low character set
-       JMP  UPDNT6
-UPDNT5 BL   @VM8BHW                    ; High character set
+       JEQ  UPDNT6
+UPDNT5 BL   @copy_row                  ; Low character set
+       AI   R0,32
+       DEC  R4
+       JNE  UPDNT5
+       JMP  UPDNT7
+UPDNT6 BL   @copy_row_hi
+       AI   R0,32
+       DEC  R4
+       JNE  UPDNT6
 *      Return
-UPDNT6 DECT R10                        ; Pop return address off the stack
+UPDNT7 DECT R10                        ; Pop return address off the stack
        MOV  *R10,R11
        B    *R11
 *// UPDNT
@@ -386,6 +402,66 @@ GMODE  MOV  R11,*R10+                  ; Push return address onto the stack
        MOV  *R10,R11
        B    *R11
 *// GMODE       
+
+*********************************************************************
+*
+* Copy one row of the map (22 bytes) to VDP
+*
+copy_row:
+       .proc
+       bl   @vwad
+       li   r3,2                       ; 2 * 11
+       li   r15,vdpwd
+copy_row_1:
+       movb *r1+,*r15                  ; Copy 11 bytes
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       dec  r3
+       jne copy_row_1
+       .endproc
+*// copy_row
+
+*********************************************************************
+*
+* Copy one row of the map (22 bytes) to VDP,
+* setting the most significant bit of each byte written.
+*
+copy_row_hi:
+       .proc
+       bl   @vwad
+       li   r3,3                       ; 3 * 8 - 2
+       li   r15,vdpwd
+       jmp  copy_row_hi_2              ; First time only copy 6 bytes
+copy_row_hi_1:
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 1
+       movb @r2lb,*r15                 ; Byte 2
+copy_row_hi_2:
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 3
+       movb @r2lb,*r15                 ; Byte 4
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 5
+       movb @r2lb,*r15                 ; Byte 6
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 7
+       movb @r2lb,*r15                 ; Byte 8
+       dec  r3
+       jne copy_row_hi_1
+       .endproc
+*// copy_row_hi
 
 *********************************************************************
 *
