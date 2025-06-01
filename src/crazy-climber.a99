@@ -45,8 +45,10 @@ START  LIMI 0                          ; Disable interrupts
        AI   R0,-24                     ; Subtract one screen
        SLA  R0,3                       ; Convert to pixels
        MOV  R0,@SCRLMX                 ; This is where scrolling should stop
-       CLR  @SCRLY                     ; Start at the top of the map
-       MOV  @ONE,@SCRLDY               ; Scroll downwards
+       LI   R0,>0BF7                   ; Start at the bottom of the map
+       MOV  R0,@SCRLY
+       SETO @SCRLDY                    ; Scroll upwards
+       LI   R0,>0007
 *      Display initial screen
        BL   @INISCR
 *      Scroll loop
@@ -90,8 +92,12 @@ CHGDY  NEG  @SCRLDY
 *
 INISCR MOV  R11,*R10+                  ; Push return address onto the stack
 *      Upload patterns
-       LI   R0,PTRNTB                  ; Destination address in VDP RAM
-       LI   R1,PSTRIP                  ; Address of first scrolled pattern frame
+;       LI   R0,PTRNTB                  ; Destination address in VDP RAM
+;       LI   R1,PSTRIP+7                ; Address of first scrolled pattern frame
+;       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
+;       BL   @VM8BW8                    ; Call copying routine
+       LI   R0,PTRNTB+>400             ; Destination address in VDP RAM
+       LI   R1,PSTRIP+7                ; Address of first scrolled pattern frame
        MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
        BL   @VM8BW8                    ; Call copying routine
 *       Upload 2nd and 3rd part of the pattern table
@@ -104,18 +110,26 @@ INISCR MOV  R11,*R10+                  ; Push return address onto the stack
 *       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
 *       BL   @VM8BW8                    ; Call copying routine
 *       Upload colors
-       LI   R0,COLRTB                  ; Destination address in VDP RAM
-       LI   R1,CSTRIP                  ; Address of first scrolled color frame
+;       LI   R0,COLRTB                  ; Destination address in VDP RAM
+;       LI   R1,CSTRIP+7                ; Address of first scrolled color frame
+;       MOV  @TCHNUM,R2                 ; Number of pattern colors of 8 bytes
+;       BL   @VM8BW8                    ; Call copying routine
+       LI   R0,COLRTB+>400             ; Destination address in VDP RAM
+       LI   R1,CSTRIP+7                ; Address of first scrolled color frame
        MOV  @TCHNUM,R2                 ; Number of pattern colors of 8 bytes
        BL   @VM8BW8                    ; Call copying routine
 *      Init name tables
        MOV  @SCRLY,R4                  ; Get initial scroll offset in pixels
        SRL  R4,3                       ; Convert to row offset
        MOV  R4,R5
-       SLA  R4,5                       ; Convert to name table offser
+       SLA  R4,5                       ; Convert to name table offset
        MPY  @MS0,R5                    ; Convert to map offset in R6
 *      Table 0
-       LI   R0,NAMET0                  ; Destination address in VDP RAM
+       li   r0,namet0
+       li   r1,>2500
+       li   r2,>300
+       bl   @vsmw
+       LI   R0,NAMET0+8                ; Destination address in VDP RAM
        LI   R1,MD0                     ; Base address of map data
        A    R6,R1                      ; Add map offset
        LI   R7,24                      ; Number of rows
@@ -124,7 +138,11 @@ INISC1 BL   @copy_row
        DEC  R7
        JNE  INISC1
 *      Table 1
-       LI   R0,NAMET1                  ; Destination address in VDP RAM
+       li   r0,namet1
+       li   r1,>a500
+       li   r2,>300
+       bl   @vsmw
+       LI   R0,NAMET1+8                ; Destination address in VDP RAM
        LI   R1,MD0                     ; Base address of map data
        A    R6,R1                      ; Add map offset
        LI   R7,24                      ; Number of rows
@@ -132,6 +150,16 @@ INISC2 BL   @copy_row_hi
        AI   R0,32
        DEC  R7
        JNE  INISC2
+*      Table 2
+       li   r0,namet2
+       li   r1,>2500
+       li   r2,>300
+       bl   @vsmw
+*      Table 3
+       li   r0,namet3
+       li   r1,>a500
+       li   r2,>300
+       bl   @vsmw
 *      Return
        DECT R10                        ; Pop return address off the stack
        MOV  *R10,R11
@@ -303,15 +331,15 @@ UPDNT  MOV  R11,*R10+                  ; Push return address onto the stack
        JNE  UPDNT2                     ; If not set we update buffer 2 or 3
        COC  @ONE,R3                    ; Bit weight >01 determines the buffer
        JEQ  UPDNT1
-       AI   R0,NAMET0                  ; Add base address to character offset
+       AI   R0,NAMET0+8                ; Add base address to character offset
        JMP  UPDNT4
-UPDNT1 AI   R0,NAMET1                  ; Add base address to character offset
+UPDNT1 AI   R0,NAMET1+8                ; Add base address to character offset
        JMP  UPDNT4
 UPDNT2 COC  @ONE,R3                    ; Bit weight >01 determines the buffer
        JEQ  UPDNT3
-       AI   R0,NAMET2                  ; Add base address to character offset
+       AI   R0,NAMET2+8                ; Add base address to character offset
        JMP  UPDNT4
-UPDNT3 AI   R0,NAMET3                  ; Add base address to character offset
+UPDNT3 AI   R0,NAMET3+8                ; Add base address to character offset
 *      Copy to VDP RAM buffer
 UPDNT4 LI   R4,6                       ; Number of rows to copy
        COC  @ONE,R3                    ; High or low character set copy?
@@ -630,7 +658,7 @@ VWTR   MOVB @R0LB,@VDPWA               ; Send low byte (value) to write to VDP r
 *       Variables
 SCRLY  DATA >0000                      ; Vertical scroll offset
 SCRLFR DATA >0000                      ; Scroll frame (0-15) = SCRLY mod 16
-SCRLDY DATA >0001                      ; Scroll direction (1 or -1)
+SCRLDY DATA >0000                      ; Scroll direction (1 or -1)
 SCRLMX DATA >0000                      ; Maximimum scroll offset
 
 *       Constants
