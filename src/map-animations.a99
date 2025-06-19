@@ -36,53 +36,53 @@ close_window_below_closed:
 
 * Close window - open window above (>09,>09)
 close_window_below_open_0:
-       BYTE >36,>36                    ;
+       BYTE >36,>36                    ; Open
        BYTE >09,>09                    ;
        BYTE >36,>36                    ;
 close_window_below_open_1:
-       BYTE >38,>0E                    ;
+       BYTE >38,>0E                    ; Closed 1
        BYTE >0C,>0F                    ;
        BYTE >36,>36                    ;
 close_window_below_open_2:
-       BYTE >3A,>13                    ;
+       BYTE >3A,>13                    ; Closed 2
        BYTE >10,>14                    ;
        BYTE >36,>36                    ;
 close_window_below_open_3:
-       BYTE >02,>39                    ;
+       BYTE >02,>39                    ; Closed 3
        BYTE >19,>11                    ;
        BYTE >36,>36                    ;
 close_window_below_open_4:
-       BYTE >0D,>37                    ;
+       BYTE >0D,>37                    ; Closed 4
        BYTE >15,>16                    ;
        BYTE >36,>36                    ;
 close_window_below_open_5:
-       BYTE >0B,>35                    ;
+       BYTE >0B,>35                    ; Closed 5
        BYTE >00,>3C                    ;
        BYTE >24,>25                    ;
 
 * Close window - closed window above (>00,>3C)
 close_window_below_closed_0:
-       BYTE >24,>25                    ;
+       BYTE >24,>25                    ; Open
        BYTE >09,>09                    ;
        BYTE >36,>36                    ;
 close_window_below_closed_1:
-       BYTE >01,>3B                    ;
+       BYTE >01,>3B                    ; Closed 1
        BYTE >0C,>0F                    ;
        BYTE >36,>36                    ;
 close_window_below_closed_2:
-       BYTE >1F,>12                    ;
+       BYTE >1F,>12                    ; Closed 2
        BYTE >10,>14                    ;
        BYTE >36,>36                    ;
 close_window_below_closed_3:
-       BYTE >33,>1B                    ;
+       BYTE >33,>1B                    ; Closed 3
        BYTE >19,>11                    ;
        BYTE >36,>36                    ;
 close_window_below_closed_4:
-       BYTE >07,>3E                    ;
+       BYTE >07,>3E                    ; Closed 4
        BYTE >15,>16                    ;
        BYTE >36,>36                    ;
 close_window_below_closed_5:
-       BYTE >23,>17                    ;
+       BYTE >23,>17                    ; Closed 5
        BYTE >00,>3C                    ;
        BYTE >24,>25                    ;
 

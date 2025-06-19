@@ -64,7 +64,8 @@ LOOP   MOV  @SCRLY,R0                  ; Get scroll position
        BL   @UPDPT
        BL   @UPDNT
 *      Animate window
-       bl   @animate_window
+       bl   @animate_windows
+       bl   @update_windows
 *      Update name table buffer
 *      Change scroll offset
        A    @SCRLDY,@SCRLY
@@ -81,46 +82,71 @@ CHGDY  NEG  @SCRLDY
 
 *********************************************************************
 *
-* Close window
+* Animate windows
 *
-animate_window:
+animate_windows:
        .proc
        mov  @SCRLY,r0
        andi r0,>0007
-       jne  animate_window_2
-       mov  @SCRLY,r0
-       srl  r0,2
-       andi r0,>001e                   ; Offset in animation table
-       li   r1,map_rows
-animate_window_1:
-       mov  *r1+,r2                    ; Map row address in r2
-       jeq  animate_window_2           ; Zero terminates
-       mov  *r1+,r3                    ; Window index (0 - 5) in r3
-       a    r3,r2                      ; Add to address x 1
-       a    r3,r2                      ; Add to address x 2
-       a    r3,r2                      ; Add to address x 3
-       inct r2
-       li   r3,close_window_below_open ; Animation table base
-       a    r0,r3                      ; Add offset in table
-       mov  *r3,r3                     ; Get address of animation bytes
-       movb *r3+,*r2+                  ; Top row
-       movb *r3+,*r2+
-       ai   r2,20                      ; Next row
-       movb *r3+,*r2+                  ; Middle row
-       movb *r3+,*r2+
-       ai   r2,20                      ; Next row
-       movb *r3+,*r2+                  ; Bottom row
-       movb *r3+,*r2+
-       jmp  animate_window_1           ; Next window
-animate_window_2:
+       jne  animate_windows_4
+       li   r1,windows
+animate_windows_1:
+       mov  *r1+,r2                    ; Window y in r2
+       jeq  animate_windows_4           ; Zero terminates
+       mpy  @MS0,r2                    ; Multiply by map width to r3
+       sla  r3,1                       ; Two rows per window
+       ai   r3,top_window_row+2        ; Add address of top of building + offset for left wall
+       mov  *r1+,r2                    ; Window x in r2 (0 - 5)
+       a    r2,r3                      ; Add to address x 1
+       a    r2,r3                      ; Add to address x 2
+       a    r2,r3                      ; Add to address x 3
+       mov  *r1,r2                     ; Get animation frame
+       sla  r2,1                       ; To word offset
+       cb   @-22(r3),@byte_closed      ; Is window above closed?
+       jeq  animate_windows_2
+       ai   r2,close_window_below_open ; Add animation table base
+       jmp  animate_windows_3
+animate_windows_2:
+       ai   r2,close_window_below_closed
+animate_windows_3:
+       mov  *r2,r2                     ; Get address of animation bytes
+       movb *r2+,*r3+                  ; Top row
+       movb *r2+,*r3+
+       ai   r3,20                      ; Next row
+       movb *r2+,*r3+                  ; Middle row
+       movb *r2+,*r3+
+       ai   r3,20                      ; Next row
+       movb *r2+,*r3+                  ; Bottom row
+       movb *r2+,*r3+
+       mov  *r1,r2                     ; Get animation frame
+       inc  r2                         ; Increment animation frame
+       andi r2,>000f                   ; Wrap at 16
+       mov  r2,*r1+                    ; Write it back
+       jmp  animate_windows_1           ; Next window
+animate_windows_4:
        .endproc
-map_rows:
-       data map_row_1,0
-       data map_row_2,2
-       data map_row_3,5
-       data map_row_4,3
+windows:
+       data 177,4,14
+       data 179,3,1
+       data 180,3,7
+       data 183,5,0
+       data 184,2,2
+       data 186,0,0
        data 0
-*// animate_window
+byte_closed:
+       byte >00
+*// animate_windows
+
+*********************************************************************
+*
+* Update windows
+*
+update_windows:
+       .proc
+
+
+       .endproc
+*// update_windows
 
 *********************************************************************
 *
@@ -137,7 +163,8 @@ map_rows:
 * instead of PSTRIP, and @SCRLY should be initilized so that the 3 least 
 * significant bits are all ones, e.g. 511 - not 512.
 *
-INISCR MOV  R11,*R10+                  ; Push return address onto the stack
+INISCR:
+       .proc
 *      Upload patterns
 ;       LI   R0,PTRNTB                  ; Destination address in VDP RAM
 ;       LI   R1,PSTRIP+7                ; Address of first scrolled pattern frame
@@ -208,9 +235,7 @@ INISC2 BL   @copy_row_hi
        li   r2,>300
        bl   @vsmw
 *      Return
-       DECT R10                        ; Pop return address off the stack
-       MOV  *R10,R11
-       B    *R11
+       .endproc
 *// INISCR
 
 *********************************************************************
@@ -244,7 +269,7 @@ VSYNC1 MOVB @VDPSTA,R0
 * 
 * Modifies R0
 *
-SETNT  MOV  R11,*R10+                  ; Push return address onto the stack
+SETNT  .proc
        MOV  @SCRLFR,R0                 ; Get scroll frame (0-15)
        COC  @EIGHT,R0                  ; Check which table set to use
        JEQ  SETNT2
@@ -262,9 +287,7 @@ SETNT3 LI   R0,>020D                   ; NAMET3
 *      Update register 3
 SETNT4 BL   @VWTR
 *      Return
-       DECT R10                        ; Pop return address off the stack
-       MOV  *R10,R11
-       B    *R11
+       .endproc
 *// SETNT
 
 *********************************************************************
@@ -287,7 +310,7 @@ SETNT4 BL   @VWTR
 * 
 * Modifies R0-R4
 *
-UPDPT  MOV  R11,*R10+                  ; Push return address onto the stack
+UPDPT  .proc
        MOV  @SCRLFR,R3                 ; Read scroll frame (0-15) into register
 *      Calculate VDP RAM destination address
        COC  @ONE,R3                    ; Check which character set to update
@@ -325,9 +348,7 @@ UPDPT2 MOV  R3,R1                      ; Start with scroll frame
        MOV  @TCHNUM,R2                 ; Number of patterns
        BL   @VM8BW8
 *      Return
-       DECT R10                        ; Pop return address off the stack
-       MOV  *R10,R11
-       B    *R11
+       .endproc
 *// UPDPT
 
 *********************************************************************
@@ -353,7 +374,7 @@ UPDPT2 MOV  R3,R1                      ; Start with scroll frame
 * 
 * Modifies R0-R4
 *
-UPDNT  MOV  R11,*R10+                  ; Push return address onto the stack
+UPDNT  .proc
        MOV  @SCRLFR,R3                 ; Get scroll frame (0-15)
 *      Calculate row offset to the 1/4 of the buffer to update
        MOV  R3,R0                      ; Start with frame number
@@ -401,9 +422,7 @@ UPDNT6 BL   @copy_row_hi
        DEC  R4
        JNE  UPDNT6
 *      Return
-UPDNT7 DECT R10                        ; Pop return address off the stack
-       MOV  *R10,R11
-       B    *R11
+UPDNT7 .endproc
 *// UPDNT
 
 *********************************************************************
