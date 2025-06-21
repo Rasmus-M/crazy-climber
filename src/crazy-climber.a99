@@ -94,8 +94,6 @@ padvar:                                ; Start of pad variables
 *
 * Variables and data
 *
-
-
 rand_no:
        equ  padvar
 frame:
@@ -140,7 +138,8 @@ start  limi 0                          ; disable interrupts
 *      display initial screen
        bl   @initial_screen
 *      scroll loop
-loop   mov  @scroll_y,r0               ; get scroll position
+main_loop:
+       mov  @scroll_y,r0               ; get scroll position
        andi r0,>000f                   ; frame = position mod 16
        mov  r0,@scroll_frame           ; write it back
 *      wait for vsync
@@ -152,7 +151,7 @@ loop   mov  @scroll_y,r0               ; get scroll position
        bl   @update_name_table
 *      animate window
        bl   @animate_windows
-       bl   @update_windows
+       bl   @create_windows
 *      update name table buffer
 *      change scroll offset
        a    @scroll_dy,@scroll_y
@@ -161,11 +160,11 @@ loop   mov  @scroll_y,r0               ; get scroll position
        jh   chgdy
 *      loop forever
        inc  @frame
-       jmp  loop
+       jmp  main_loop
 *      change direction
 chgdy  neg  @scroll_dy
        bl   @update_full_name_table
-       jmp  loop
+       jmp  main_loop
 
 *********************************************************************
 *
@@ -175,22 +174,28 @@ animate_windows:
        .proc
        mov  @scroll_y,r0
        andi r0,>0007
-       jne  animate_windows_4
+       jne  animate_windows_5
        li   r3,windows
 animate_windows_1:
        mov  *r3+,r1                    ; Window y
-       jlt  animate_windows_4          ; Negative terminates
+       jlt  animate_windows_5          ; Negative terminates
        mov  *r3+,r0                    ; Window x (0 - 5)
        bl   @window_addr               ; Map address in r2
+       mov  *r3+,r5                    ; Get animation type
        mov  *r3,r4                     ; Get animation frame
        sla  r4,1                       ; To word offset
-       cb   @-22(r2),@byte_closed      ; Is window above closed?
-       jeq  animate_windows_2
-       ai   r4,close_window_below_open ; Add animation table base
-       jmp  animate_windows_3
+       ci   r5,1
+       jne  animate_windows_2
+       ai   r4,face_appear
+       jmp  animate_windows_4
 animate_windows_2:
-       ai   r4,close_window_below_closed
+       cb   @-22(r2),@byte_closed      ; Is window above closed?
+       jeq  animate_windows_3
+       ai   r4,close_window_below_open ; Add animation table base
+       jmp  animate_windows_4
 animate_windows_3:
+       ai   r4,close_window_below_closed
+animate_windows_4:
        mov  *r4,r4                     ; Get address of animation bytes
        movb *r4+,*r2+                  ; Top row
        movb *r4+,*r2
@@ -206,23 +211,55 @@ animate_windows_3:
        andi r4,>000f                   ; Wrap at 16
        mov  r4,*r3+                    ; Write it back
        jmp  animate_windows_1          ; Next window
-animate_windows_4:
+animate_windows_5:
        .endproc
-windows:
-       data 177,4,14
-       data 179,3,1
-       data 180,3,7
-       data 183,5,0
-windows_2nd_last:
-       data 184,2,2
-windows_last:
-       data 186,0,0
-       data -1
-byte_closed:
-       byte >00
-byte_open:
-       byte >36
 *// animate_windows
+
+*********************************************************************
+*
+* Create window animations
+*
+create_windows:
+       .proc
+       mov  @scroll_frame,r0
+       ci   r0,15
+       jne  update_windows_2
+       mov  @scroll_y,r3
+       srl  r3,4                       ; Number of windows scrolled
+       ai   r3,12-8                    ; Y coord of bottom window row on screen
+       c    r3,@windows_last
+       jhe  update_windows_2
+       li   r0,windows_2nd_last
+       li   r1,windows_last
+*      Shift windows list down
+       li   r2,n_windows-1             ; Number of windows
+create_windows_1:
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       mov  *r0+,*r1+
+       ai   r0,-16
+       ai   r1,-16
+       dec  r2
+       jne  create_windows_1
+*      Add new window
+       li   r2,6                       ; X coord between 0 and 5
+       bl   @rand_max
+       mov  r3,r1                      ; Y coord of bottom window row on screen
+       ai   r1,-12                     ; Y coord of top window row on screen
+       bl   @window_addr               ; Window address in r2
+       cb   *r2,@byte_open             ; Is there an open window?
+       jne  update_windows_2           ; If not then skip
+       li   r3,windows
+       mov  r1,*r3+                    ; Write Y coord
+       mov  r0,*r3+                    ; Write X coord
+       bl   @rand
+       andi r0,1
+       mov  r0,*r3+                    ; Set type
+       clr  *r3                        ; Clear frame
+update_windows_2:
+       .endproc
+*// update_windows
 
 *********************************************************************
 *
@@ -245,48 +282,6 @@ window_addr:
        rt
 window_addr_tmp:
        data 0
-
-*********************************************************************
-*
-* Update windows
-*
-update_windows:
-       .proc
-       mov  @scroll_frame,r0
-       ci   r0,15
-       jne  update_windows_2
-       mov  @scroll_y,r3
-       srl  r3,4                       ; Number of windows scrolled
-       ai   r3,12-8                    ; Y coord of bottom window row on screen
-       c    r3,@windows_last
-       jhe  update_windows_2
-       li   r0,windows_2nd_last
-       li   r1,windows_last
-*      Shift windows list down
-       li   r2,n_windows-1             ; Number of windows
-update_windows_1:
-       mov  *r0+,*r1+
-       mov  *r0+,*r1+
-       mov  *r0+,*r1+
-       ai   r0,-12
-       ai   r1,-12
-       dec  r2
-       jne  update_windows_1
-*      Add new window
-       li   r2,6                       ; X coord between 0 and 5
-       bl   @rand_max
-       mov  r3,r1                      ; Y coord of bottom window row on screen
-       ai   r1,-12                     ; Y coord of top window row on screen
-       bl   @window_addr               ; Window address in r2
-       cb   *r2,@byte_open             ; Is there an open window?
-       jne  update_windows_2           ; If not then skip
-       li   r3,windows
-       mov  r1,*r3+                    ; Write Y coord
-       mov  r0,*r3+                    ; Write X coord
-       clr  *r3                        ; Clear frame
-update_windows_2:
-       .endproc
-*// update_windows
 
 *********************************************************************
 *
@@ -379,15 +374,15 @@ initial_screen:
        li   r1,>2800
        li   r2,>300
        bl   @vsmw
-       LI   R0,name_table_0+8          ; Destination address in VDP RAM
-       LI   R1,MD0                     ; Base address of map data
-       A    R6,R1                      ; Add map offset
-       LI   R7,24                      ; Number of rows
-INISC1:
-       BL   @copy_row
-       AI   R0,32
-       DEC  R7
-       JNE  INISC1
+       li   r0,name_table_0+8          ; destination address in vdp ram
+       li   r1,md0                     ; base address of map data
+       a    r6,r1                      ; add map offset
+       li   r7,24                      ; number of rows
+inisc1:
+       bl   @copy_row
+       ai   r0,32
+       dec  r7
+       jne  inisc1
 *      Table 1
        li   r0,name_table_1
        li   r1,>a800
@@ -830,7 +825,27 @@ vm8bh1:
 *       Includes
 *
        copy "vdp.a99"
-       COPY "graphics.a99"
+
+*********************************************************************
+*
+*       Data
+*
+       copy "graphics.a99"
        copy "map-animations.a99"
+
+windows:
+       data 177,4,0,14
+       data 179,3,1,1
+       data 180,3,0,7
+       data 183,5,0,0
+windows_2nd_last:
+       data 184,2,0,2
+windows_last:
+       data 186,0,0,0
+       data -1
+byte_closed:
+       byte >00
+byte_open:
+       byte >36
 
        end  start

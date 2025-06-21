@@ -86,4 +86,42 @@ close_window_below_closed_5:
        BYTE >00,>3C                    ;
        BYTE >24,>25                    ;
 
+face_appear:
+       data face_4
+       data face_3
+       data face_2
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_1
+       data face_2
+       data face_3
+       data face_4
+       data face_0
 
+* Face
+face_0:
+       BYTE >36,>36                    ; Open window
+       BYTE >09,>09                    ;
+       BYTE >36,>36                    ;
+face_1:
+       BYTE >0A,>34                    ; Face 1 - full
+       BYTE >18,>31                    ;
+       BYTE >36,>36                    ;
+face_2:
+       BYTE >3d,>1a                    ; Face 2 - 3/4
+       BYTE >26,>27                    ;
+       BYTE >36,>36                    ;
+face_3:
+       BYTE >40,>1d                    ; Face 3 - 1/2
+       BYTE >1e,>20                    ;
+       BYTE >36,>36                    ;
+face_4:
+       BYTE >3f,>1c                    ; Face 4 - 1/4
+       BYTE >21,>22                    ;
+       BYTE >36,>36                    ;
