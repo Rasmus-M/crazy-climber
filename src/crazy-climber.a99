@@ -117,14 +117,7 @@ pad_max:
 start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
-       li   r15,vdpwd
-       li   r0,1
-       mov  r0,@one
-       li   r0,8
-       mov  r0,@eight
-       mov  @>83c0,@rand_no
-*      setup graphics mode
-       bl   @graphics_mode             ; call setup routine
+       bl   @one_time_init
 *      init variables
        mov  @ms0+2,r0                  ; get map height in rows
        ai   r0,-24                     ; subtract one screen
@@ -650,6 +643,33 @@ upntf1:
 
 *********************************************************************
 *
+* One time initializations
+*
+one_time_init:
+       .proc
+       li   r15,vdpwd
+       li   r0,1
+       mov  r0,@one
+       li   r0,8
+       mov  r0,@eight
+       mov  @>83c0,@rand_no
+*      setup graphics mode
+       bl   @graphics_mode             ; call setup routine
+*      Sprite patterns
+       li   r0,sprite_pattern_table
+       li   r1,SPR0
+       li   r2,36*32
+       bl   @vmbw
+*      Sprite attributes
+       li   r0,sprite_attr_table
+       li   r1,sprite_attributes
+       li   r2,17
+       bl   @vmbw
+       .endproc
+*// one_time_init
+
+*********************************************************************
+*
 * Set graphics mode
 *
 graphics_mode:
@@ -831,6 +851,7 @@ vm8bh1:
 *       Data
 *
        copy "graphics.a99"
+       copy "sprite-patterns.a99"
        copy "map-animations.a99"
 
 windows:
@@ -847,5 +868,85 @@ byte_closed:
        byte >00
 byte_open:
        byte >36
+
+sprite_attributes:
+       byte >58,>a8,spr_lft_top_norm_1,>02
+       byte >58,>b8,spr_rgt_top_norm_1,>02
+       byte >68,>a8,spr_lft_bot_norm_1,>02
+       byte >68,>b8,spr_rgt_bot_norm_1,>02
+       byte >d0
+
+spr_lft_top_norm_1:
+       equ  >00
+spr_rgt_top_norm_1:
+       equ  >04
+spr_lft_top_norm_2:
+       equ  >08
+spr_rgt_top_norm_2:
+       equ  >0c
+spr_lft_top_norm_3:
+       equ  >10
+spr_rgt_top_norm_3:
+       equ  >14
+spr_lft_top_norm_4:
+       equ  >18
+spr_rgt_top_norm_4:
+       equ  >1c
+spr_lft_top_norm_5:
+       equ  >20
+spr_rgt_top_norm_5:
+       equ  >24
+spr_lft_top_wide_1:
+       equ  >28
+spr_rgt_top_wide_1:
+       equ  >2c
+spr_lft_top_wide_2:
+       equ  >30
+spr_rgt_top_wide_2:
+       equ  >34
+spr_lft_top_wide_3:
+       equ  >38
+spr_rgt_top_wide_3:
+       equ  >3c
+spr_lft_top_wide_4:
+       equ  >40
+spr_rgt_top_wide_4:
+       equ  >44
+spr_lft_top_wide_5:
+       equ  >48
+spr_rgt_top_wide_5:
+       equ  >4c
+spr_lft_bot_norm_1:
+       equ  >50
+spr_rgt_bot_norm_1:
+       equ  >54
+spr_lft_bot_norm_2:
+       equ  >58
+spr_rgt_bot_norm_2:
+       equ  >5c
+spr_lft_bot_norm_3:
+       equ  >60
+spr_rgt_bot_norm_3:
+       equ  >64
+spr_lft_bot_norm_4:
+       equ  >68
+spr_rgt_bot_norm_4:
+       equ  >6c
+spr_lft_bot_wide_1:
+       equ  >70
+spr_rgt_bot_wide_1:
+       equ  >74
+spr_lft_bot_wide_2:
+       equ  >78
+spr_rgt_bot_wide_2:
+       equ  >7c
+spr_lft_bot_wide_3:
+       equ  >80
+spr_rgt_bot_wide_3:
+       equ  >84
+spr_lft_bot_wide_4:
+       equ  >88
+spr_rgt_bot_wide_4:
+       equ  >8c
 
        end  start
