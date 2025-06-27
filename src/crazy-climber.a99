@@ -106,8 +106,16 @@ scroll_dy:
        equ  scroll_frame+2             ; Scroll direction (1 or -1)
 scroll_max:
        equ  scroll_dy+2                ; Maximimum scroll offset
-pad_max:
+left_anim_ptr:
         equ  scroll_max+2
+right_anim_ptr:
+        equ  left_anim_ptr+2
+left_anim_count:
+       equ  right_anim_ptr+2           ; Maximimum scroll offset
+right_anim_count:
+       equ  left_anim_count+2          ; Maximimum scroll offset
+pad_max:
+        equ  right_anim_count+2
 
 ********************************************************************************
 *
@@ -128,6 +136,9 @@ start  limi 0                          ; disable interrupts
        seto @scroll_dy                 ; scroll upwards
        li   r0,>0007
        clr  @frame
+       li   r0,left_norm
+       mov  r0,@left_anim_ptr
+       clr  @right_anim_ptr
 *      display initial screen
        bl   @initial_screen
 *      scroll loop
@@ -141,23 +152,84 @@ main_loop:
        bl   @set_name_table
 *      update patterns
        bl   @update_pattern_table
-       bl   @update_name_table
-*      animate window
-       bl   @animate_windows
-       bl   @create_windows
 *      update name table buffer
+       bl   @update_name_table
 *      change scroll offset
        a    @scroll_dy,@scroll_y
        jeq  chgdy                      ; check if at top
        c    @scroll_y,@scroll_max      ; check if at bottom
        jh   chgdy
+*      animate
+       bl   @animate_climber
+       bl   @animate_windows
+       bl   @create_windows
 *      loop forever
        inc  @frame
        jmp  main_loop
 *      change direction
 chgdy  neg  @scroll_dy
        bl   @update_full_name_table
+       inc  @frame
        jmp  main_loop
+
+*********************************************************************
+*
+* Animate climber
+*
+animate_climber:
+       .proc
+animate_climber_0:
+       mov  @left_anim_ptr,r0
+       jeq  animate_climber_3
+       mov  @left_anim_count,r1
+       jne  animate_climber_1
+       mov  *r0+,r1
+       jeq  animate_climber_2
+       mov  *r0+,@scroll_dy
+       mov  *r0+,@left_anim_count
+       mov  r0,@left_anim_ptr
+       li   r0,sprite_attr_table+2
+       bl   @vwad
+       movb *r1+,*r15
+       li   r0,sprite_attr_table+6
+       bl   @vwad
+       movb *r1+,*r15
+       jmp  animate_climber_3
+animate_climber_1:
+       dec  @left_anim_count
+       jmp  animate_climber_3
+animate_climber_2:
+       clr  @left_anim_ptr
+       li   r0,right_norm
+       mov  r0,@right_anim_ptr
+animate_climber_3:
+       mov  @right_anim_ptr,r0
+       jeq  animate_climber_6
+       mov  @right_anim_count,r1
+       jne  animate_climber_4
+       mov  *r0+,r1
+       jeq  animate_climber_5
+       mov  *r0+,@scroll_dy
+       mov  *r0+,@right_anim_count
+       mov  r0,@right_anim_ptr
+       li   r0,sprite_attr_table+10
+       bl   @vwad
+       movb *r1+,*r15
+       li   r0,sprite_attr_table+14
+       bl   @vwad
+       movb *r1+,*r15
+       jmp  animate_climber_6
+animate_climber_4:
+       dec  @right_anim_count
+       jmp  animate_climber_6
+animate_climber_5:
+       clr  @right_anim_ptr
+       li   r0,left_norm
+       mov  r0,@left_anim_ptr
+       jmp  animate_climber_0
+animate_climber_6:
+       .endproc
+*// animate_climber
 
 *********************************************************************
 *
@@ -438,7 +510,7 @@ vsync1:
 *
 set_name_table:
        .proc
-       MOV  @scroll_frame,R0           ; Get scroll frame (0-15)
+       mov  @scroll_frame,R0           ; Get scroll frame (0-15)
        coc  @eight,r0                  ; check which table set to use
        jeq  setnt2
        coc  @one,r0                    ; check which table to use
@@ -455,7 +527,7 @@ setnt2:
        jmp  setnt4
 setnt3:
        li   r0,>020d                   ; namet3
-*      update register 3
+*      update VR2
 setnt4:
        bl   @vwtr
        .endproc
@@ -483,7 +555,7 @@ setnt4:
 *
 update_pattern_table:
        .proc
-       MOV  @scroll_frame,R3           ; Read scroll frame (0-15) into register
+       mov  @scroll_frame,R3           ; Read scroll frame (0-15) into register
 *      Calculate VDP RAM destination address
        coc  @one,r3                    ; check which character set to update
        jeq  updpt1
@@ -504,16 +576,16 @@ updpt2:
        mov  @tchnum,r2                 ; number of patterns
        bl   @vm8bw8
 *      update 2nd and 3rd part of the pattern table
-*       mov   r4,r0
-*       ai    r0,>800
-*       mov   r5,r1
-*       mov   @tchnum,r2               ; number of patterns
-*       bl    @vm8bw8
-*       mov   r4,r0
-*       ai    r0,>1000
-*       mov   r5,r1
-*       mov   @tchnum,r2               ; number of patterns
-*       bl    @vm8bw8
+       mov   r4,r0
+       ai    r0,>800
+       mov   r5,r1
+       mov   @tchnum,r2               ; number of patterns
+       bl    @vm8bw8
+       mov   r4,r0
+       ai    r0,>1000
+       mov   r5,r1
+       mov   @tchnum,r2               ; number of patterns
+       bl    @vm8bw8
 *      copy colors
        mov  r4,r0
        ai   r0,color_table
@@ -549,7 +621,7 @@ updpt2:
 *
 update_name_table:
        .proc
-       MOV  @scroll_frame,R3           ; Get scroll frame (0-15)
+       mov  @scroll_frame,R3           ; Get scroll frame (0-15)
 *      Calculate row offset to the 1/4 of the buffer to update
        mov  r3,r0                      ; start with frame number
        andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
@@ -653,6 +725,13 @@ one_time_init:
        li   r0,8
        mov  r0,@eight
        mov  @>83c0,@rand_no
+*      Clear scratchpad
+       li   r0,padvar
+       li   r2,pad_max-padvar
+one_time_init_1:
+       clr  *r0+
+       dec  r2
+       jne  one_time_init_1
 *      setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
@@ -853,6 +932,7 @@ vm8bh1:
        copy "graphics.a99"
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
+       copy "sprite-animations.a99"
 
 windows:
        data 177,4,0,14
@@ -871,82 +951,9 @@ byte_open:
 
 sprite_attributes:
        byte >58,>a8,spr_lft_top_norm_1,>02
-       byte >58,>b8,spr_rgt_top_norm_1,>02
        byte >68,>a8,spr_lft_bot_norm_1,>02
+       byte >58,>b8,spr_rgt_top_norm_1,>02
        byte >68,>b8,spr_rgt_bot_norm_1,>02
        byte >d0
-
-spr_lft_top_norm_1:
-       equ  >00
-spr_rgt_top_norm_1:
-       equ  >04
-spr_lft_top_norm_2:
-       equ  >08
-spr_rgt_top_norm_2:
-       equ  >0c
-spr_lft_top_norm_3:
-       equ  >10
-spr_rgt_top_norm_3:
-       equ  >14
-spr_lft_top_norm_4:
-       equ  >18
-spr_rgt_top_norm_4:
-       equ  >1c
-spr_lft_top_norm_5:
-       equ  >20
-spr_rgt_top_norm_5:
-       equ  >24
-spr_lft_top_wide_1:
-       equ  >28
-spr_rgt_top_wide_1:
-       equ  >2c
-spr_lft_top_wide_2:
-       equ  >30
-spr_rgt_top_wide_2:
-       equ  >34
-spr_lft_top_wide_3:
-       equ  >38
-spr_rgt_top_wide_3:
-       equ  >3c
-spr_lft_top_wide_4:
-       equ  >40
-spr_rgt_top_wide_4:
-       equ  >44
-spr_lft_top_wide_5:
-       equ  >48
-spr_rgt_top_wide_5:
-       equ  >4c
-spr_lft_bot_norm_1:
-       equ  >50
-spr_rgt_bot_norm_1:
-       equ  >54
-spr_lft_bot_norm_2:
-       equ  >58
-spr_rgt_bot_norm_2:
-       equ  >5c
-spr_lft_bot_norm_3:
-       equ  >60
-spr_rgt_bot_norm_3:
-       equ  >64
-spr_lft_bot_norm_4:
-       equ  >68
-spr_rgt_bot_norm_4:
-       equ  >6c
-spr_lft_bot_wide_1:
-       equ  >70
-spr_rgt_bot_wide_1:
-       equ  >74
-spr_lft_bot_wide_2:
-       equ  >78
-spr_rgt_bot_wide_2:
-       equ  >7c
-spr_lft_bot_wide_3:
-       equ  >80
-spr_rgt_bot_wide_3:
-       equ  >84
-spr_lft_bot_wide_4:
-       equ  >88
-spr_rgt_bot_wide_4:
-       equ  >8c
 
        end  start

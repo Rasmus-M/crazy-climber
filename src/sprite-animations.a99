@@ -1,0 +1,120 @@
+spr_lft_top_norm_1:
+       equ  >00
+spr_rgt_top_norm_1:
+       equ  >04
+spr_lft_top_norm_2:
+       equ  >08
+spr_rgt_top_norm_2:
+       equ  >0c
+spr_lft_top_norm_3:
+       equ  >10
+spr_rgt_top_norm_3:
+       equ  >14
+spr_lft_top_norm_4:
+       equ  >18
+spr_rgt_top_norm_4:
+       equ  >1c
+spr_lft_top_norm_5:
+       equ  >20
+spr_rgt_top_norm_5:
+       equ  >24
+spr_lft_top_wide_1:
+       equ  >28
+spr_rgt_top_wide_1:
+       equ  >2c
+spr_lft_top_wide_2:
+       equ  >30
+spr_rgt_top_wide_2:
+       equ  >34
+spr_lft_top_wide_3:
+       equ  >38
+spr_rgt_top_wide_3:
+       equ  >3c
+spr_lft_top_wide_4:
+       equ  >40
+spr_rgt_top_wide_4:
+       equ  >44
+spr_lft_top_wide_5:
+       equ  >48
+spr_rgt_top_wide_5:
+       equ  >4c
+spr_lft_bot_norm_1:
+       equ  >50
+spr_rgt_bot_norm_1:
+       equ  >54
+spr_lft_bot_norm_2:
+       equ  >58
+spr_rgt_bot_norm_2:
+       equ  >5c
+spr_lft_bot_norm_3:
+       equ  >60
+spr_rgt_bot_norm_3:
+       equ  >64
+spr_lft_bot_norm_4:
+       equ  >68
+spr_rgt_bot_norm_4:
+       equ  >6c
+spr_lft_bot_wide_1:
+       equ  >70
+spr_rgt_bot_wide_1:
+       equ  >74
+spr_lft_bot_wide_2:
+       equ  >78
+spr_rgt_bot_wide_2:
+       equ  >7c
+spr_lft_bot_wide_3:
+       equ  >80
+spr_rgt_bot_wide_3:
+       equ  >84
+spr_lft_bot_wide_4:
+       equ  >88
+spr_rgt_bot_wide_4:
+       equ  >8c
+
+climber_animations:
+       data left_norm
+       data right_norm
+
+left_norm:
+       data left_norm_1,-1,4
+       data left_norm_2,-1,4
+       data left_norm_3,-1,4
+       data left_norm_4,-1,4
+       data left_norm_3,0,4
+       data left_norm_2,0,4
+       data left_norm_1,0,4
+       data left_norm_0,0,4
+       data 0
+
+right_norm:
+       data right_norm_1,-1,4
+       data right_norm_2,-1,4
+       data right_norm_3,-1,4
+       data right_norm_4,-1,4
+       data right_norm_3,0,4
+       data right_norm_2,0,4
+       data right_norm_1,0,4
+       data right_norm_0,0,4
+       data 0
+
+left_norm_0:
+       byte spr_lft_top_norm_1, spr_lft_bot_norm_1
+left_norm_1:
+       byte spr_lft_top_norm_2, spr_lft_bot_norm_2
+left_norm_2:
+       byte spr_lft_top_norm_3, spr_lft_bot_norm_3
+left_norm_3:
+       byte spr_lft_top_norm_4, spr_lft_bot_norm_2
+left_norm_4:
+       byte spr_lft_top_norm_5, spr_lft_bot_norm_4
+
+right_norm_0:
+       byte spr_rgt_top_norm_1, spr_rgt_bot_norm_1
+right_norm_1:
+       byte spr_rgt_top_norm_2, spr_rgt_bot_norm_2
+right_norm_2:
+       byte spr_rgt_top_norm_3, spr_rgt_bot_norm_3
+right_norm_3:
+       byte spr_rgt_top_norm_4, spr_rgt_bot_norm_2
+right_norm_4:
+       byte spr_rgt_top_norm_5, spr_rgt_bot_norm_4
