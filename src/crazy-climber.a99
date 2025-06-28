@@ -133,34 +133,35 @@ start  limi 0                          ; disable interrupts
        li   r0,left_norm
        mov  r0,@left_anim_ptr
        clr  @right_anim_ptr
-*      display initial screen
+*      Display initial screen
        bl   @initial_screen
-*      scroll loop
+*      Scroll loop
 main_loop:
-*      wait for vsync
+*      Wait for vsync
        bl   @vsync
-*      set name table
+*      Set name table
        bl   @set_name_table
-*      update patterns
+*      Update patterns
        bl   @update_pattern_table
-*      update name table buffer
+*      Update name table buffer
        bl   @update_name_table
-*      Animate windows
+*      Animate windows and faces
        bl   @animate_windows
        bl   @create_windows
-*      animate climber
+*      Animate climber
        bl   @animate_climber
-*      change scroll offset
+*      Change scroll offset
        a    @scroll_dy,@scroll_y
        c    @scroll_dy,@scroll_dy_old
        jeq  main_loop_1
-*      Update full name table when @scroll_dy changes
+*      Update full name table when scroll direction changes
        bl   @update_full_name_table
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
-*      loop forever
+*      Loop forever
        inc  @frame
        jmp  main_loop
+*// main_loop
 
 *********************************************************************
 *
@@ -184,7 +185,6 @@ animate_climber_0:
        li   r0,sprite_attr_table+6
        bl   @vwad
        movb *r1+,*r15
-;      jmp  animate_climber_3
 animate_climber_1:
        dec  @left_anim_count
        jmp  animate_climber_3
@@ -208,7 +208,6 @@ animate_climber_3:
        li   r0,sprite_attr_table+14
        bl   @vwad
        movb *r1+,*r15
-;      jmp  animate_climber_6
 animate_climber_4:
        dec  @right_anim_count
        jmp  animate_climber_6
@@ -502,8 +501,7 @@ vsync1:
 *
 set_name_table:
        .proc
-       mov  @frame,00                  ; Get scroll frame (0-15)
-       andi r0,>000f
+       mov  @frame,r0                  ; Get frame
        coc  @eight,r0                  ; check which table set to use
        jeq  setnt2
        coc  @one,r0                    ; check which table to use
@@ -548,7 +546,7 @@ setnt4:
 *
 update_pattern_table:
        .proc
-       mov  @frame,r3                  ; Read scroll frame (0-15) into register
+       mov  @frame,r3                  ; Read frame into register
 *      Calculate VDP RAM destination address
        coc  @one,r3                    ; check which character set to update
        jeq  updpt1
@@ -558,7 +556,7 @@ updpt1:
        li   r0,pattern_table           ; update low character set (128-255)
 *      calculate cpu ram source address
 updpt2:
-       mov  @scroll_y,r1               ; start with scroll frame
+       mov  @scroll_y,r1               ; start with scroll offset
        a    @scroll_dy,r1              ; add direction (1 or -1)
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
@@ -614,8 +612,7 @@ updpt2:
 *
 update_name_table:
        .proc
-       mov  @frame,r3                  ; Get scroll frame (0-15)
-       andi r3,>000f
+       mov  @frame,r3                  ; Get frame
 *      Calculate row offset to the 1/4 of the buffer to update
        mov  r3,r0                      ; start with frame number
        andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
@@ -692,17 +689,17 @@ updnt7:
 update_full_name_table:
        .proc
        mov  @frame,r3
-       .push r3                        ; push current scroll frame onto the stack
+       .push r3                        ; push current frame onto the stack
        andi r3,>0008                   ; move to beginning of frame cycle (0 or 8)
        mov  r3,@frame
 upntf1:
        bl   @update_name_table         ; call the incremental update routine
-       inc  @frame                     ; next scroll frame
+       inc  @frame                     ; next frame
        mov  @frame,r3
        andi r3,>0007                   ; check for end of cycle
-       jne  upntf1
+;      jne  upntf1                     ; For now we only need to draw the top part
 *      return
-       dect r10                        ; pop scroll frame off the stack
+       dect r10                        ; pop frame off the stack
        mov  *r10,@frame
        .endproc
 *// update_full_name_table
