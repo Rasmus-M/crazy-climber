@@ -104,8 +104,10 @@ scroll_frame:
        equ  scroll_y+2                 ; Scroll frame (0-15) = SCRLY mod 16
 scroll_dy:
        equ  scroll_frame+2             ; Scroll direction (1 or -1)
+scroll_dy_old:
+       equ  scroll_dy+2                ; Scroll direction (1 or -1)
 scroll_max:
-       equ  scroll_dy+2                ; Maximimum scroll offset
+       equ  scroll_dy_old+2            ; Maximimum scroll offset
 left_anim_ptr:
         equ  scroll_max+2
 right_anim_ptr:
@@ -154,21 +156,20 @@ main_loop:
        bl   @update_pattern_table
 *      update name table buffer
        bl   @update_name_table
-*      change scroll offset
-       a    @scroll_dy,@scroll_y
-       jeq  chgdy                      ; check if at top
-       c    @scroll_y,@scroll_max      ; check if at bottom
-       jh   chgdy
-*      animate
-       bl   @animate_climber
+*      Animate windows
        bl   @animate_windows
        bl   @create_windows
-*      loop forever
-       inc  @frame
-       jmp  main_loop
-*      change direction
-chgdy  neg  @scroll_dy
+*      animate climber
+       bl   @animate_climber
+*      change scroll offset
+       a    @scroll_dy,@scroll_y
+       c    @scroll_dy,@scroll_dy_old
+       jeq  main_loop_1
+*      Update full name table when @scroll_dy changes
        bl   @update_full_name_table
+       mov  @scroll_dy,@scroll_dy_old
+main_loop_1:
+*      loop forever
        inc  @frame
        jmp  main_loop
 
@@ -194,7 +195,7 @@ animate_climber_0:
        li   r0,sprite_attr_table+6
        bl   @vwad
        movb *r1+,*r15
-       jmp  animate_climber_3
+;      jmp  animate_climber_3
 animate_climber_1:
        dec  @left_anim_count
        jmp  animate_climber_3
@@ -218,7 +219,7 @@ animate_climber_3:
        li   r0,sprite_attr_table+14
        bl   @vwad
        movb *r1+,*r15
-       jmp  animate_climber_6
+;      jmp  animate_climber_6
 animate_climber_4:
        dec  @right_anim_count
        jmp  animate_climber_6
@@ -237,8 +238,9 @@ animate_climber_6:
 *
 animate_windows:
        .proc
-       mov  @scroll_y,r0
+       mov  @frame,r0
        andi r0,>0007
+       ci   r0,7
        jne  animate_windows_5
        li   r3,windows
 animate_windows_1:
@@ -270,7 +272,7 @@ animate_windows_4:
        ai   r2,map_width-1             ; Next row
        movb *r4+,*r2+                  ; Bottom row
        movb *r4+,*r2
-*      Update anumation frame
+*      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
        andi r4,>000f                   ; Wrap at 16
@@ -286,7 +288,8 @@ animate_windows_5:
 *
 create_windows:
        .proc
-       mov  @scroll_frame,r0
+       mov  @frame,r0
+       andi r0,>000f
        ci   r0,15
        jne  update_windows_2
        mov  @scroll_y,r3
@@ -510,7 +513,8 @@ vsync1:
 *
 set_name_table:
        .proc
-       mov  @scroll_frame,R0           ; Get scroll frame (0-15)
+       mov  @frame,00                  ; Get scroll frame (0-15)
+       andi r0,>000f
        coc  @eight,r0                  ; check which table set to use
        jeq  setnt2
        coc  @one,r0                    ; check which table to use
@@ -555,7 +559,7 @@ setnt4:
 *
 update_pattern_table:
        .proc
-       mov  @scroll_frame,R3           ; Read scroll frame (0-15) into register
+       mov  @frame,r3                  ; Read scroll frame (0-15) into register
 *      Calculate VDP RAM destination address
        coc  @one,r3                    ; check which character set to update
        jeq  updpt1
@@ -565,27 +569,27 @@ updpt1:
        li   r0,pattern_table           ; update low character set (128-255)
 *      calculate cpu ram source address
 updpt2:
-       mov  r3,r1                      ; start with scroll frame
+       mov  @scroll_frame,r1           ; start with scroll frame
        a    @scroll_dy,r1              ; add direction (1 or -1)
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
 *      save calculated values
        mov  r0,r4
        mov  r1,r5
-*      copy paterns
+*      copy patterns
        mov  @tchnum,r2                 ; number of patterns
        bl   @vm8bw8
 *      update 2nd and 3rd part of the pattern table
-       mov   r4,r0
-       ai    r0,>800
-       mov   r5,r1
-       mov   @tchnum,r2               ; number of patterns
-       bl    @vm8bw8
-       mov   r4,r0
-       ai    r0,>1000
-       mov   r5,r1
-       mov   @tchnum,r2               ; number of patterns
-       bl    @vm8bw8
+;       mov   r4,r0
+;       ai    r0,>800
+;       mov   r5,r1
+;       mov   @tchnum,r2               ; number of patterns
+;       bl    @vm8bw8
+;       mov   r4,r0
+;       ai    r0,>1000
+;       mov   r5,r1
+;       mov   @tchnum,r2               ; number of patterns
+;       bl    @vm8bw8
 *      copy colors
        mov  r4,r0
        ai   r0,color_table
@@ -621,7 +625,8 @@ updpt2:
 *
 update_name_table:
        .proc
-       mov  @scroll_frame,R3           ; Get scroll frame (0-15)
+       mov  @frame,r3                  ; Get scroll frame (0-15)
+       andi r3,>000f
 *      Calculate row offset to the 1/4 of the buffer to update
        mov  r3,r0                      ; start with frame number
        andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
@@ -697,19 +702,19 @@ updnt7:
 *
 update_full_name_table:
        .proc
-       mov  @scroll_frame,r3
+       mov  @frame,r3
        .push r3                        ; push current scroll frame onto the stack
        andi r3,>0008                   ; move to beginning of frame cycle (0 or 8)
-       mov  r3,@scroll_frame
+       mov  r3,@frame
 upntf1:
        bl   @update_name_table         ; call the incremental update routine
-       inc  @scroll_frame              ; next scroll frame
-       mov  @scroll_frame,r3
+       inc  @frame                     ; next scroll frame
+       mov  @frame,r3
        andi r3,>0007                   ; check for end of cycle
        jne  upntf1
 *      return
        dect r10                        ; pop scroll frame off the stack
-       mov  *r10,@scroll_frame
+       mov  *r10,@frame
        .endproc
 *// update_full_name_table
 
@@ -950,10 +955,10 @@ byte_open:
        byte >36
 
 sprite_attributes:
-       byte >58,>a8,spr_lft_top_norm_1,>02
-       byte >68,>a8,spr_lft_bot_norm_1,>02
-       byte >58,>b8,spr_rgt_top_norm_1,>02
-       byte >68,>b8,spr_rgt_bot_norm_1,>02
+       byte >5f,>a8,spr_lft_top_norm_1,>02
+       byte >6f,>a8,spr_lft_bot_norm_1,>02
+       byte >5f,>b8,spr_rgt_top_norm_1,>02
+       byte >6f,>b8,spr_rgt_bot_norm_1,>02
        byte >d0
 
        end  start
