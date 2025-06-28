@@ -100,16 +100,12 @@ frame:
        equ  rand_no+2
 scroll_y:
        equ  frame+2                    ; Vertical scroll offset
-scroll_frame:
-       equ  scroll_y+2                 ; Scroll frame (0-15) = SCRLY mod 16
 scroll_dy:
-       equ  scroll_frame+2             ; Scroll direction (1 or -1)
+       equ  scroll_y+2                 ; Scroll direction (1 or -1)
 scroll_dy_old:
        equ  scroll_dy+2                ; Scroll direction (1 or -1)
-scroll_max:
-       equ  scroll_dy_old+2            ; Maximimum scroll offset
 left_anim_ptr:
-        equ  scroll_max+2
+        equ  scroll_dy_old+2
 right_anim_ptr:
         equ  left_anim_ptr+2
 left_anim_count:
@@ -128,15 +124,11 @@ start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
-*      init variables
-       mov  @ms0+2,r0                  ; get map height in rows
-       ai   r0,-24                     ; subtract one screen
-       sla  r0,3                       ; convert to pixels
-       mov  r0,@scroll_max             ; this is where scrolling should stop
+*      Init variables
        li   r0,>0bf7                   ; start at the bottom of the map
        mov  r0,@scroll_y
-       seto @scroll_dy                 ; scroll upwards
-       li   r0,>0007
+       clr  @scroll_dy
+       clr  @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
@@ -145,9 +137,6 @@ start  limi 0                          ; disable interrupts
        bl   @initial_screen
 *      scroll loop
 main_loop:
-       mov  @scroll_y,r0               ; get scroll position
-       andi r0,>000f                   ; frame = position mod 16
-       mov  r0,@scroll_frame           ; write it back
 *      wait for vsync
        bl   @vsync
 *      set name table
@@ -569,7 +558,7 @@ updpt1:
        li   r0,pattern_table           ; update low character set (128-255)
 *      calculate cpu ram source address
 updpt2:
-       mov  @scroll_frame,r1           ; start with scroll frame
+       mov  @scroll_y,r1               ; start with scroll frame
        a    @scroll_dy,r1              ; add direction (1 or -1)
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
