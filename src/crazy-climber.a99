@@ -393,6 +393,10 @@ rand:
 initial_screen:
        .proc
 *      Upload patterns
+       li   r0,65*8+pattern_table
+       li   r1,PAT65
+       li   r2,55*8
+       bl   @vmbw
 ;       LI   R0,PTRNTB                  ; Destination address in VDP RAM
 ;       LI   R1,PSTRIP+7                ; Address of first scrolled pattern frame
 ;       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
@@ -411,10 +415,10 @@ initial_screen:
 *       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
 *       BL   @VM8BW8                    ; Call copying routine
 *       Upload colors
-;       LI   R0,COLRTB                  ; Destination address in VDP RAM
-;       LI   R1,CSTRIP+7                ; Address of first scrolled color frame
-;       MOV  @TCHNUM,R2                 ; Number of pattern colors of 8 bytes
-;       BL   @VM8BW8                    ; Call copying routine
+       li   r0,65*8+color_table
+       li   r1,COL65
+       li   r2,55*8
+       bl   @vmbw
        LI   R0,color_table+>400        ; Destination address in VDP RAM
        li   r1,CSTRIP+7                ; address of first scrolled color frame
        mov  @tchnum,r2                 ; number of pattern colors of 8 bytes
@@ -427,9 +431,9 @@ initial_screen:
        mpy  @MS0,r5                    ; convert to map offset in r6
 *      Table 0
        li   r0,name_table_0
-       li   r1,>2800
+       li   r1,MD2
        li   r2,>300
-       bl   @vsmw
+       bl   @vmbw
        li   r0,name_table_0+8          ; destination address in vdp ram
        li   r1,md0                     ; base address of map data
        a    r6,r1                      ; add map offset
@@ -441,9 +445,9 @@ inisc1:
        jne  inisc1
 *      Table 1
        li   r0,name_table_1
-       li   r1,>a800
+       li   r1,MD2
        li   r2,>300
-       bl   @vsmw
+       bl   @vmbw
        li   r0,name_table_1+8          ; destination address in vdp ram
        li   r1,MD0                     ; base address of map data
        a    r6,r1                      ; add map offset
@@ -455,14 +459,14 @@ inisc2:
        jne  inisc2
 *      Table 2
        li   r0,name_table_2
-       li   r1,>2800
+       li   r1,MD2
        li   r2,>300
-       bl   @vsmw
+       bl   @vmbw
 *      Table 3
        li   r0,name_table_3
-       li   r1,>a800
+       li   r1,MD2
        li   r2,>300
-       bl   @vsmw
+       bl   @vmbw
        .endproc
 *// initial_screen
 
@@ -921,6 +925,7 @@ vm8bh1:
 *       Data
 *
        copy "graphics.a99"
+       copy "screen.a99"
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
        copy "sprite-animations.a99"
