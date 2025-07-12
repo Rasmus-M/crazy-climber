@@ -150,6 +150,8 @@ main_loop:
        bl   @create_windows
 *      Animate climber
        bl   @animate_climber
+*      Handle sprites
+       bl   @handle_sprites
 *      Change scroll offset
        a    @scroll_dy,@scroll_y
        c    @scroll_dy,@scroll_dy_old
@@ -226,11 +228,11 @@ animate_climber_6:
 *
 animate_windows:
        .proc
-       mov  @frame,r0
+       mov  @frame,r0                  ; Only do this every 8th frame
        andi r0,>0007
        ci   r0,7
        jne  animate_windows_5
-       li   r3,windows
+       li   r3,windows                 ; List of window animations (inclusing resident faces)
 animate_windows_1:
        mov  *r3+,r1                    ; Window y
        jlt  animate_windows_5          ; Negative terminates
@@ -239,17 +241,17 @@ animate_windows_1:
        mov  *r3+,r5                    ; Get animation type
        mov  *r3,r4                     ; Get animation frame
        sla  r4,1                       ; To word offset
-       ci   r5,1
-       jne  animate_windows_2
-       ai   r4,face_appear
+       ci   r5,1                       ; Is it a face animation?
+       jne  animate_windows_2          ; No - move on
+       ai   r4,face_appear             ; Yes - add base address of face animations
        jmp  animate_windows_4
 animate_windows_2:
        cb   @-22(r2),@byte_closed      ; Is window above closed?
-       jeq  animate_windows_3
-       ai   r4,close_window_below_open ; Add animation table base
+       jeq  animate_windows_3          ; No - move on
+       ai   r4,close_window_below_open ; Yes - add base address of closing windows below open animation
        jmp  animate_windows_4
 animate_windows_3:
-       ai   r4,close_window_below_closed
+       ai   r4,close_window_below_closed ; Add base address of closing windows below closed animation
 animate_windows_4:
        mov  *r4,r4                     ; Get address of animation bytes
        movb *r4+,*r2+                  ; Top row
@@ -265,6 +267,11 @@ animate_windows_4:
        inc  r4                         ; Increment animation frame
        andi r4,>000f                   ; Wrap at 16
        mov  r4,*r3+                    ; Write it back
+       ci   r4,>0007                   ; Is it frame 8?
+       jne  animate_windows_1          ; No - next window
+       c    @window_anim-window_frame(r3),@one ; Is it a face animation?
+       jne  animate_windows_1          ; No - next window
+       bl   @create_resident           ; Create a new resident sprite
        jmp  animate_windows_1          ; Next window
 animate_windows_5:
        .endproc
@@ -310,12 +317,73 @@ create_windows_1:
        mov  r1,*r3+                    ; Write Y coord
        mov  r0,*r3+                    ; Write X coord
        bl   @rand
-       andi r0,1
-       mov  r0,*r3+                    ; Set type
+       andi r0,1                       ; Set type
+       mov  r0,*r3+                    ; 0 = empty window, 1 = window with resident
        clr  *r3                        ; Clear frame
 update_windows_2:
        .endproc
 *// update_windows
+
+*********************************************************************
+*
+* Create resident
+*
+* r3 points to window_frame word of window structure (must be preserved)
+*
+create_resident:
+       .proc
+       bl   @create_sprite
+       .endproc
+*// create_resident
+
+*********************************************************************
+*
+* Create sprite
+*
+create_sprite:
+       .proc
+       .endproc
+*// create_sprite
+
+*********************************************************************
+*
+* Handle sprites
+*
+handle_sprites:
+       .proc
+       li   r0,sprite_attr_table+16    ; Start after climber sprites
+       bl   @vwad
+       li   r4,sprites
+handle_sprites_1:
+       mov  *r4,r0
+       jeq  handle_sprites_2
+       bl   *r0
+handle_sprites_2:
+       ai   r4,sprite_size
+       ci   r4,sprites_end
+       jl   handle_sprites_1
+       li   r1,>d000                   ; Write end marker
+       movb r1,*r15
+       .endproc
+*// handle_sprites
+
+*********************************************************************
+*
+* Resident person handler
+*
+resident_handler:
+       .proc
+       .endproc
+*// resident_handler
+
+*********************************************************************
+*
+* Dropping plant handler
+*
+plant_handler:
+       .proc
+       .endproc
+*// plant_handler
 
 *********************************************************************
 *
@@ -723,22 +791,23 @@ one_time_init:
 *      Clear scratchpad
        li   r0,padvar
        li   r2,pad_max-padvar
-one_time_init_1:
-       clr  *r0+
-       dec  r2
-       jne  one_time_init_1
+       bl   @clear
 *      setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,SPR0
-       li   r2,36*32
+       li   r2,64*32
        bl   @vmbw
 *      Sprite attributes
        li   r0,sprite_attr_table
        li   r1,sprite_attributes
        li   r2,17
        bl   @vmbw
+*      Clear sprites table
+       li   r0,sprites
+       li   r2,sprites_end-sprites
+       bl   @clear
        .endproc
 *// one_time_init
 
@@ -781,138 +850,14 @@ vdp_registers:
 
 *********************************************************************
 *
-* Copy one row of the map (22 bytes) to VDP
+* Set graphics mode
 *
-copy_row:
-       .proc
-       bl   @vwad
-       li   r3,2                       ; 2 * 11
-copy_row_1:
-       movb *r1+,*r15                  ; Copy 11 bytes
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       movb *r1+,*r15
-       dec  r3
-       jne copy_row_1
-       .endproc
-*// copy_row
-
-*********************************************************************
-*
-* Copy one row of the map (22 bytes) to VDP,
-* setting the most significant bit of each byte written.
-*
-copy_row_hi:
-       .proc
-       bl   @vwad
-       li   r3,3                       ; 3 * 8 - 2
-       jmp  copy_row_hi_2              ; First time only copy 6 bytes
-copy_row_hi_1:
-       mov  *r1+,r2
-       ori  r2,>8080
-       movb r2,*r15                    ; Byte 1
-       movb @r2lb,*r15                 ; Byte 2
-copy_row_hi_2:
-       mov  *r1+,r2
-       ori  r2,>8080
-       movb r2,*r15                    ; Byte 3
-       movb @r2lb,*r15                 ; Byte 4
-       mov  *r1+,r2
-       ori  r2,>8080
-       movb r2,*r15                    ; Byte 5
-       movb @r2lb,*r15                 ; Byte 6
-       mov  *r1+,r2
-       ori  r2,>8080
-       movb r2,*r15                    ; Byte 7
-       movb @r2lb,*r15                 ; Byte 8
-       dec  r3
-       jne copy_row_hi_1
-       .endproc
-*// copy_row_hi
-
-*********************************************************************
-*
-* VDP Multiple 8 Byte Write
-*
-* This routine (or just the inner loop) can be moved into scratchpad
-* memory for a performance boost of about 10%.
-*
-* R0: Starting write address in VDP RAM
-* R1: Starting read address in CPU RAM
-* R2: Number of groups of 8 bytes to send to the VDP RAM
-* R3: Number of bytes to skip after reading 8 bytes 
-*
-* R0 is modified, R1 is next read address, R2 is zero
-*
-vm8bw8:
-       li   r3,8                       ; call here to skip 8 bytes
-       jmp  vm8bw0
-vm8bw:
-       clr  r3                         ; call here to skip zero bytes
-vm8bw0:
-       .proc
-       bl   @vwad                      ; setup write address
-       li   r0,vdpwd                   ; load vdp write data address into register
-vm8bw1:
-       movb *r1+,*r0                   ; write byte to vdp ram
-       movb *r1+,*r0                   ; repeat 2
-       movb *r1+,*r0                   ; repeat 3
-       movb *r1+,*r0                   ; repeat 4
-       movb *r1+,*r0                   ; repeat 5
-       movb *r1+,*r0                   ; repeat 6
-       movb *r1+,*r0                   ; repeat 7
-       movb *r1+,*r0                   ; repeat 8 times
-       a    r3,r1                      ; skip source bytes
-       dec  r2                         ; group counter
-       jne  vm8bw1                     ; loop if not done
-       .endproc
-*// vm8bw
-
-*********************************************************************
-*
-* VDP Multiple 8 Byte High Write
-*
-* Like VM8BW but sets the most significant bit of each byte written.
-* Note: only works correctly for even read addresses.
-*
-* R0: Starting write address in VDP RAM
-* R1: Starting read address in CPU RAM (must be even)
-* R2: Number of groups of 8 bytes to send to the VDP RAM
-*
-* R0 is modified, R1 is next read address, R2 is zero, R3 is modified
-*
-vm8bhw:
-       .proc
-       bl   @vwad                      ; setup write address
-       li   r3,vdpwd                   ; load vdp write data address into register
-vm8bh1:
-       mov  *r1+,r0                    ; read word from cpu ram
-       ori  r0,>8080                   ; set most significant bits
-       movb r0,*r3                     ; send msb to vdp
-       movb @r0lb,*r3                  ; send lsb to vdp
-       mov  *r1+,r0                    ; repeat 2
-       ori  r0,>8080                   ;
-       movb r0,*r3                     ;
-       movb @r0lb,*r3                  ;
-       mov  *r1+,r0                    ; repeat 3
-       ori  r0,>8080                   ;
-       movb r0,*r3                     ;
-       movb @r0lb,*r3                  ;
-       mov  *r1+,r0                    ; repeat 4 times
-       ori  r0,>8080                   ;
-       movb r0,*r3                     ;
-       movb @r0lb,*r3                  ;
-       dec  r2                         ; group counter
-       jne  vm8bh1                     ; loop if not done
-       .endproc
-*// vm8bhw
+clear:
+       clr  *r0+
+       dect r2
+       jne  clear
+       rt
+*// clear
 
 *********************************************************************
 *
@@ -929,6 +874,17 @@ vm8bh1:
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
        copy "sprite-animations.a99"
+
+window_row:
+       equ  0
+window_col:
+       equ  2
+window_anim:
+       equ  4
+window_frame:
+       equ  6
+window_size:
+       equ  8
 
 windows:
        data 177,4,0,14
@@ -951,5 +907,21 @@ sprite_attributes:
        byte >5f,>b8,spr_rgt_top_norm_1,>02
        byte >6f,>b8,spr_rgt_bot_norm_1,>02
        byte >d0
+
+sprite_handler:
+       equ  0
+sprite_y:
+       equ  2
+sprite_x:
+       equ  4
+sprite_count:
+       equ  6
+sprite_size:
+       equ  8
+
+sprites:
+       bss 16*sprite_size
+sprites_end:
+       equ  $
 
        end  start

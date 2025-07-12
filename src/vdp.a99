@@ -145,20 +145,134 @@ vmbr_1:
 
 *********************************************************************
 *
-* Unrolled VDP copy loop
+* VDP Multiple 8 Byte Write
 *
-vdp_copy:
-       movb *r1+,*r15                  ; Send by to VDP
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       movb *r1+,*r15                  ; ...
-       dec  r2                         ; Counter
-       jne  vdp_copy                   ; Loop
-       rt
-vdp_copy_end:
-       equ  $
-*// vdp_copy
+* This routine (or just the inner loop) can be moved into scratchpad
+* memory for a performance boost of about 10%.
+*
+* R0: Starting write address in VDP RAM
+* R1: Starting read address in CPU RAM
+* R2: Number of groups of 8 bytes to send to the VDP RAM
+* R3: Number of bytes to skip after reading 8 bytes
+*
+* R0 is modified, R1 is next read address, R2 is zero
+*
+vm8bw8:
+       li   r3,8                       ; call here to skip 8 bytes
+       jmp  vm8bw0
+vm8bw:
+       clr  r3                         ; call here to skip zero bytes
+vm8bw0:
+       .proc
+       bl   @vwad                      ; setup write address
+vm8bw1:
+       movb *r1+,*r15                  ; write byte to vdp ram
+       movb *r1+,*r15                  ; repeat 2
+       movb *r1+,*r15                  ; repeat 3
+       movb *r1+,*r15                  ; repeat 4
+       movb *r1+,*r15                  ; repeat 5
+       movb *r1+,*r15                  ; repeat 6
+       movb *r1+,*r15                  ; repeat 7
+       movb *r1+,*r15                  ; repeat 8 times
+       a    r3,r1                      ; skip source bytes
+       dec  r2                         ; group counter
+       jne  vm8bw1                     ; loop if not done
+       .endproc
+*// vm8bw
+
+*********************************************************************
+*
+* VDP Multiple 8 Byte High Write
+*
+* Like VM8BW but sets the most significant bit of each byte written.
+* Note: only works correctly for even read addresses.
+*
+* R0: Starting write address in VDP RAM
+* R1: Starting read address in CPU RAM (must be even)
+* R2: Number of groups of 8 bytes to send to the VDP RAM
+*
+* R0 is modified, R1 is next read address, R2 is zero, R3 is modified
+*
+vm8bhw:
+       .proc
+       bl   @vwad                      ; setup write address
+vm8bh1:
+       mov  *r1+,r0                    ; read word from cpu ram
+       ori  r0,>8080                   ; set most significant bits
+       movb r0,*r15                    ; send msb to vdp
+       movb @r0lb,*r15                 ; send lsb to vdp
+       mov  *r1+,r0                    ; repeat 2
+       ori  r0,>8080                   ;
+       movb r0,*r15                    ;
+       movb @r0lb,*r15                 ;
+       mov  *r1+,r0                    ; repeat 3
+       ori  r0,>8080                   ;
+       movb r0,*r15                    ;
+       movb @r0lb,*r15                 ;
+       mov  *r1+,r0                    ; repeat 4 times
+       ori  r0,>8080                   ;
+       movb r0,*r15                    ;
+       movb @r0lb,*r15                 ;
+       dec  r2                         ; group counter
+       jne  vm8bh1                     ; loop if not done
+       .endproc
+*// vm8bhw
+
+*********************************************************************
+*
+* Copy one row of the map (22 bytes) to VDP
+*
+copy_row:
+       .proc
+       bl   @vwad
+       li   r3,2                       ; 2 * 11
+copy_row_1:
+       movb *r1+,*r15                  ; Copy 11 bytes
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       dec  r3
+       jne copy_row_1
+       .endproc
+*// copy_row
+
+*********************************************************************
+*
+* Copy one row of the map (22 bytes) to VDP,
+* setting the most significant bit of each byte written.
+*
+copy_row_hi:
+       .proc
+       bl   @vwad
+       li   r3,3                       ; 3 * 8 - 2
+       jmp  copy_row_hi_2              ; First time only copy 6 bytes
+copy_row_hi_1:
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 1
+       movb @r2lb,*r15                 ; Byte 2
+copy_row_hi_2:
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 3
+       movb @r2lb,*r15                 ; Byte 4
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 5
+       movb @r2lb,*r15                 ; Byte 6
+       mov  *r1+,r2
+       ori  r2,>8080
+       movb r2,*r15                    ; Byte 7
+       movb @r2lb,*r15                 ; Byte 8
+       dec  r3
+       jne copy_row_hi_1
+       .endproc
+*// copy_row_hi
+
