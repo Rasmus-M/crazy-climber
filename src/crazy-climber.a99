@@ -338,13 +338,37 @@ create_resident:
        mov  r4,r4
        jeq  create_resident_1
        li   r0,resident_handler
-       mov  r0,*r4+                    ; Handler
-       mov  @window_row-window_size(r3),*r4+    ; y
-       mov  @window_col-window_size(r3),*r4+    ; x
-       clr  *r4
+       mov  r0,*r4+                            ; Handler
+       mov  @window_row-window_size(r3),*r4+   ; y
+       mov  @window_col-window_size(r3),*r4+   ; x
+       clr  *r4                                ; Counter
 create_resident_1:
        .endproc
 *// create_resident
+
+*********************************************************************
+*
+* Create plant
+*
+* r3 points to sprite structure of resident (must be preserved)
+*
+create_plant:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_plant_1
+       li   r0,plant_handler
+       mov  r0,*r4+                    ; Handler
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       bl   @window_screen_coords
+       ai   r1,16
+       mov  r1,*r4+                    ; y
+       mov  r0,*r4+                    ; x
+       clr  *r4                        ; Counter
+create_plant_1:
+       .endproc
+*// create_plant
 
 *********************************************************************
 *
@@ -373,14 +397,14 @@ handle_sprites:
        .proc
        li   r0,sprite_attr_table+16    ; Start after climber sprites
        bl   @vwad
-       li   r4,sprites
+       li   r3,sprites
 handle_sprites_1:
-       mov  *r4,r0
+       mov  *r3,r0
        jeq  handle_sprites_2
        bl   *r0
 handle_sprites_2:
-       ai   r4,sprite_size
-       ci   r4,sprites_end
+       ai   r3,sprite_size
+       ci   r3,sprites_end
        jl   handle_sprites_1
        li   r1,>d000                   ; Write end marker
        movb r1,*r15
@@ -391,17 +415,17 @@ handle_sprites_2:
 *
 * Resident person handler
 *
-* r4: sprite structure
+* r3: sprite structure
 *
 resident_handler:
        .proc
-       mov  @sprite_count(r4),r0       ; Init?
+       mov  @sprite_count(r3),r0       ; Init?
        jne  resident_handler_1         ; Jump if not
        li   r0,48
-       mov  r0,@sprite_count(r4)
+       mov  r0,@sprite_count(r3)
 resident_handler_1:
-       mov  @sprite_x(r4),r0
-       mov  @sprite_y(r4),r1
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
        bl   @window_screen_coords
        dec  r1
        swpb r1
@@ -412,19 +436,49 @@ resident_handler_1:
        movb r0,*r15
        li   r0,>0f00                   ; White
        movb r0,*r15
-       dec  @sprite_count(r4)
+       c    @sprite_count(r3),@resident_handler_drop
        jne  resident_handler_2
-       clr  *r4                        ; Handler done
+       bl   @rand
+       ci   r0,>c000
+       jl   resident_handler_2
+       bl   @create_plant
 resident_handler_2:
+       dec  @sprite_count(r3)
+       jne  resident_handler_3
+       clr  *r3                        ; Handler done
+resident_handler_3:
        .endproc
+resident_handler_drop:
+       data 32
 *// resident_handler
 
 *********************************************************************
 *
 * Dropping plant handler
 *
+* r3: sprite structure
+*
 plant_handler:
        .proc
+       mov  @sprite_y(r3),r1
+       dec  r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0
+       swpb r0
+       movb r0,*r15
+       li   r0,spr_plant_1*256
+       movb r0,*r15
+       li   r0,>0c00                   ; Green
+       movb r0,*r15
+       mov  @sprite_y(r3),r0
+       s    @scroll_dy,r0
+       inc  r0
+       mov  r0,@sprite_y(r3)
+       ci   r0,194
+       jl   plant_handler_1
+       clr  @sprite_handler(r3)
+plant_handler_1:
        .endproc
 *// plant_handler
 
@@ -456,7 +510,7 @@ window_map_addr:
 * r0: window column
 * r1: window row
 *
-* On return r0 and r1 contain th screen coordinates, r2 is modified
+* On return r0 and r1 contain the screen coordinates (x, y), r2 is modified
 *
 window_screen_coords:
        sla  r0,3                       ; column * 8
@@ -466,7 +520,7 @@ window_screen_coords:
        ai   r0,>50                     ; Add offset from left
        sla  r1,4                       ; row * 16
        s    @scroll_y,r1               ; Minus scroll offsset
-       ai   r1,-top_window_row_y
+       ai   r1,top_window_row_y
        rt
 *// window_screen_coords
 
