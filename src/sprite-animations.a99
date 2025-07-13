@@ -70,6 +70,14 @@ spr_lft_bot_wide_4:
        equ  >88
 spr_rgt_bot_wide_4:
        equ  >8c
+spr_plant_1:
+       equ  >90
+spr_plant_2:
+       equ  >94
+spr_plant_3:
+       equ  >98
+spr_resident:
+       equ  >9c
 
 climber_animations:
        data left_norm

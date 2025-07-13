@@ -56,6 +56,8 @@ map_width:
        equ   22
 n_windows:
        equ  6
+top_window_row_y:
+       equ 128
 
 **
 * Scratch pad
@@ -237,7 +239,7 @@ animate_windows_1:
        mov  *r3+,r1                    ; Window y
        jlt  animate_windows_5          ; Negative terminates
        mov  *r3+,r0                    ; Window x (0 - 5)
-       bl   @window_addr               ; Map address in r2
+       bl   @window_map_addr               ; Map address in r2
        mov  *r3+,r5                    ; Get animation type
        mov  *r3,r4                     ; Get animation frame
        sla  r4,1                       ; To word offset
@@ -269,7 +271,7 @@ animate_windows_4:
        mov  r4,*r3+                    ; Write it back
        ci   r4,>0007                   ; Is it frame 8?
        jne  animate_windows_1          ; No - next window
-       c    @window_anim-window_frame(r3),@one ; Is it a face animation?
+       c    @window_anim-window_size(r3),@one ; Is it a face animation?
        jne  animate_windows_1          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
        jmp  animate_windows_1          ; Next window
@@ -310,7 +312,7 @@ create_windows_1:
        bl   @rand_max
        mov  r3,r1                      ; Y coord of bottom window row on screen
        ai   r1,-12                     ; Y coord of top window row on screen
-       bl   @window_addr               ; Window address in r2
+       bl   @window_map_addr               ; Window address in r2
        cb   *r2,@byte_open             ; Is there an open window?
        jne  update_windows_2           ; If not then skip
        li   r3,windows
@@ -328,22 +330,40 @@ update_windows_2:
 *
 * Create resident
 *
-* r3 points to window_frame word of window structure (must be preserved)
+* r3 points to window structure of next window (must be preserved)
 *
 create_resident:
        .proc
-       bl   @create_sprite
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_resident_1
+       li   r0,resident_handler
+       mov  r0,*r4+                    ; Handler
+       mov  @window_row-window_size(r3),*r4+    ; y
+       mov  @window_col-window_size(r3),*r4+    ; x
+       clr  *r4
+create_resident_1:
        .endproc
 *// create_resident
 
 *********************************************************************
 *
-* Create sprite
+* Allocate sprite
 *
-create_sprite:
-       .proc
-       .endproc
-*// create_sprite
+* Return sprite address in r4 or zero if no sprte available
+*
+allocate_sprite:
+       li   r4,sprites
+allocate_sprite_1:
+       mov  *r4,*r4
+       jeq  allocate_sprite_2
+       ai   r4,sprite_size
+       ci   r4,sprites_end
+       jne  allocate_sprite_1
+       clr  r4
+allocate_sprite_2:
+       rt
+*// allocate_sprite
 
 *********************************************************************
 *
@@ -371,8 +391,31 @@ handle_sprites_2:
 *
 * Resident person handler
 *
+* r4: sprite structure
+*
 resident_handler:
        .proc
+       mov  @sprite_count(r4),r0       ; Init?
+       jne  resident_handler_1         ; Jump if not
+       li   r0,48
+       mov  r0,@sprite_count(r4)
+resident_handler_1:
+       mov  @sprite_x(r4),r0
+       mov  @sprite_y(r4),r1
+       bl   @window_screen_coords
+       dec  r1
+       swpb r1
+       movb r1,*r15
+       swpb r0
+       movb r0,*r15
+       li   r0,spr_resident*256
+       movb r0,*r15
+       li   r0,>0f00                   ; White
+       movb r0,*r15
+       dec  @sprite_count(r4)
+       jne  resident_handler_2
+       clr  *r4                        ; Handler done
+resident_handler_2:
        .endproc
 *// resident_handler
 
@@ -387,25 +430,45 @@ plant_handler:
 
 *********************************************************************
 *
-* Window address
+* Window address in map
 *
-* r0: window x
-* r1: window y
+* r0: window column
+* r1: window row
 *
 * On return r2 contains the address in the map
 *
-window_addr:
-       mov  r1,@window_addr_tmp
+window_map_addr:
+       .push r1
        mpy  @MS0,r1                    ; Multiply by map width to r2
        sla  r2,1                       ; Two rows per window
        ai   r2,top_window_row+2        ; Add address of top of building + offset for left wall
        a    r0,r2                      ; Add x to address x 1
        a    r0,r2                      ; Add x to address x 2
        a    r0,r2                      ; Add x to address x 3
-       mov  @window_addr_tmp,r1
+       .pop r1
        rt
-window_addr_tmp:
-       data 0
+*// window_map_addr
+
+*********************************************************************
+*
+* Window screen coordinates
+*
+* r0: window column
+* r1: window row
+*
+* On return r0 and r1 contain th screen coordinates, r2 is modified
+*
+window_screen_coords:
+       sla  r0,3                       ; column * 8
+       mov  r0,r2
+       sla  r0,1                       ; column * 16
+       a    r2,r0                      ; column * 24
+       ai   r0,>50                     ; Add offset from left
+       sla  r1,4                       ; row * 16
+       s    @scroll_y,r1               ; Minus scroll offsset
+       ai   r1,-top_window_row_y
+       rt
+*// window_screen_coords
 
 *********************************************************************
 *
@@ -802,7 +865,7 @@ one_time_init:
 *      Sprite attributes
        li   r0,sprite_attr_table
        li   r1,sprite_attributes
-       li   r2,17
+       li   r2,16
        bl   @vmbw
 *      Clear sprites table
        li   r0,sprites
@@ -906,7 +969,8 @@ sprite_attributes:
        byte >6f,>a8,spr_lft_bot_norm_1,>02
        byte >5f,>b8,spr_rgt_top_norm_1,>02
        byte >6f,>b8,spr_rgt_bot_norm_1,>02
-       byte >d0
+
+       even
 
 sprite_handler:
        equ  0
