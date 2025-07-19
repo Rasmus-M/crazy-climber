@@ -32,9 +32,9 @@ spchrd:
 *       VPD RAM Map
 pattern_table:
        EQU  >0000                      ; Pattern table base
-PTRNT1:
+pattern_table_1:
        EQU  >0800                      ; Pattern table part 2
-PTRNT2:
+pattern_table_2:
        EQU  >1000                      ; Pattern table part 3
 sprite_pattern_table:
        EQU  >1800                      ; Sprite pattern table (>03)
@@ -250,30 +250,31 @@ update_pattern_table:
        jmp  updpt2
 updpt1:
        li   r0,pattern_table           ; update low character set (128-255)
-*      calculate cpu ram source address
+*      Calculate cpu ram source address
 updpt2:
        mov  @scroll_y,r1               ; start with scroll offset
        a    @scroll_dy,r1              ; add direction (1 or -1)
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
-*      save calculated values
+*      Save calculated values
        mov  r0,r4
        mov  r1,r5
-*      copy patterns
+*      Copy patterns 1st part
        mov  @tchnum,r2                 ; number of patterns
        bl   @vm8bw8
-*      update 2nd and 3rd part of the pattern table
-;       mov   r4,r0
-;       ai    r0,>800
-;       mov   r5,r1
-;       mov   @tchnum,r2               ; number of patterns
-;       bl    @vm8bw8
-;       mov   r4,r0
-;       ai    r0,>1000
-;       mov   r5,r1
-;       mov   @tchnum,r2               ; number of patterns
-;       bl    @vm8bw8
-*      copy colors
+*      Copy patterns 2nd part
+       mov   r4,r0
+       ai    r0,>800
+       mov   r5,r1
+       mov   @tchnum,r2                ; number of patterns
+       bl    @vm8bw8
+*      Copy patterns 3rd part
+       mov   r4,r0
+       ai    r0,>1000
+       mov   r5,r1
+       mov   @tchnum,r2                ; number of patterns
+       bl    @vm8bw8
+*      Copy colors
        mov  r4,r0
        ai   r0,color_table
        mov  r5,r1
@@ -828,30 +829,35 @@ rand:
 *
 initial_screen:
        .proc
-*      Upload patterns
-       li   r0,65*8+pattern_table
+*      Upload patterns 1st part
+       li   r0,65*8+pattern_table      ; Non-scrolling characters
        li   r1,PAT65
        li   r2,55*8
        bl   @vmbw
-;       LI   R0,PTRNTB                  ; Destination address in VDP RAM
-;       LI   R1,PSTRIP+7                ; Address of first scrolled pattern frame
-;       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
-;       BL   @VM8BW8                    ; Call copying routine
        li   r0,pattern_table+>400      ; destination address in vdp ram
        li   r1,PSTRIP+7                ; address of first scrolled pattern frame
        mov  @tchnum,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
-*       Upload 2nd and 3rd part of the pattern table
-*       LI   R0,PTRNT1                  ; Destination address in VDP RAM
-*       LI   R1,PSTRIP                  ; Address of first scrolled pattern frame
-*       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
-*       BL   @VM8BW8                    ; Call copying routine
-*       LI   R0,PTRNT2                  ; Destination address in VDP RAM
-*       LI   R1,PSTRIP                  ; Address of first scrolled pattern frame
-*       MOV  @TCHNUM,R2                 ; Number of patterns of 8 bytes
-*       BL   @VM8BW8                    ; Call copying routine
-*       Upload colors
-       li   r0,65*8+color_table
+*      Upload patterns 2nd part
+       li   r0,65*8+pattern_table_1    ; Non-scrolling characters
+       li   r1,PAT65
+       li   r2,55*8
+       bl   @vmbw
+       li   r0,pattern_table_1         ; destination address in vdp ram
+       li   r1,PSTRIP+7                ; address of first scrolled pattern frame
+       mov  @tchnum,r2                 ; number of patterns of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+*      Upload patterns 3rd part
+       li   r0,65*8+pattern_table_2    ; Non-scrolling characters
+       li   r1,PAT65
+       li   r2,55*8
+       bl   @vmbw
+       li   r0,pattern_table_2         ; destination address in vdp ram
+       li   r1,PSTRIP+7                ; address of first scrolled pattern frame
+       mov  @tchnum,r2                 ; number of patterns of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+*      Upload colors
+       li   r0,65*8+color_table        ; Non-scrolling colors
        li   r1,COL65
        li   r2,55*8
        bl   @vmbw
@@ -972,7 +978,7 @@ vdp_registers:
        byte >c2                        ; 16K, display on, no interrupt
        byte name_table_0/>400          ; Name table
        byte >9f                        ; Color table
-       byte pattern_table/>800+>00     ; Pattern table
+       byte pattern_table/>800+>03     ; Pattern table x 3
        byte sprite_attr_table/>80      ; Sprite attribute table
        byte sprite_pattern_table/>800  ; Sprite pattern table
        byte >07                        ; Backdrop color
