@@ -78,31 +78,79 @@ spr_plant_3:
        equ  >98
 spr_resident:
        equ  >9c
+spr_lft_top_2nd_norm_1:
+       equ  >a0
+spr_rgt_top_2nd_norm_1:
+       equ  >a4
+spr_lft_top_2nd_norm_2:
+       equ  >a8
+spr_rgt_top_2nd_norm_2:
+       equ  >ac
+spr_lft_top_2nd_norm_3:
+       equ  >b0
+spr_rgt_top_2nd_norm_3:
+       equ  >b4
+spr_lft_top_2nd_norm_4:
+       equ  >b8
+spr_rgt_top_2nd_norm_4:
+       equ  >bc
+spr_lft_top_2nd_norm_5:
+       equ  >c0
+spr_rgt_top_2nd_norm_5:
+       equ  >c4
+spr_lft_top_2nd_wide_1:
+       equ  >c8
+spr_rgt_top_2nd_wide_1:
+       equ  >cc
+spr_lft_top_2nd_wide_2:
+       equ  >d0
+spr_rgt_top_2nd_wide_2:
+       equ  >d4
+spr_lft_top_2nd_wide_3:
+       equ  >d8
+spr_rgt_top_2nd_wide_3:
+       equ  >dc
+spr_lft_top_2nd_wide_4:
+       equ  >e0
+spr_rgt_top_2nd_wide_4:
+       equ  >e4
+spr_unused_1:
+       equ  >e8
+spr_unused_2:
+       equ  >ec
+spr_lft_bot_2nd_wide_3:
+       equ  >f0
+spr_rgt_bot_2nd_wide_3:
+       equ  >f4
+spr_lft_bot_2nd_norm_4:
+       equ  >f8
+spr_rgt_bot_2nd_norm_4:
+       equ  >fc
 
 climber_animations:
        data left_norm
        data right_norm
 
 left_norm:
-       data left_norm_1,-1,4
-       data left_norm_2,-1,4
-       data left_norm_3,-1,4
-       data left_norm_4,-1,4
-       data left_norm_3,0,4
-       data left_norm_2,0,4
-       data left_norm_1,0,4
-       data left_norm_0,0,4
+       data left_norm_1,left_2nd_norm_1,-1,4
+       data left_norm_2,left_2nd_norm_2,-1,4
+       data left_norm_3,left_2nd_norm_3,-1,4
+       data left_norm_4,left_2nd_norm_4,-1,4
+       data left_norm_3,left_2nd_norm_3,0,4
+       data left_norm_2,left_2nd_norm_2,0,4
+       data left_norm_1,left_2nd_norm_1,0,4
+       data left_norm_0,left_2nd_norm_0,0,4
        data 0
 
 right_norm:
-       data right_norm_1,-1,4
-       data right_norm_2,-1,4
-       data right_norm_3,-1,4
-       data right_norm_4,-1,4
-       data right_norm_3,0,4
-       data right_norm_2,0,4
-       data right_norm_1,0,4
-       data right_norm_0,0,4
+       data right_norm_1,right_2nd_norm_1,-1,4
+       data right_norm_2,right_2nd_norm_2,-1,4
+       data right_norm_3,right_2nd_norm_3,-1,4
+       data right_norm_4,right_2nd_norm_4,-1,4
+       data right_norm_3,right_2nd_norm_3,0,4
+       data right_norm_2,right_2nd_norm_2,0,4
+       data right_norm_1,right_2nd_norm_1,0,4
+       data right_norm_0,right_2nd_norm_0,0,4
        data 0
 
 left_norm_0:
@@ -126,3 +174,25 @@ right_norm_3:
        byte spr_rgt_top_norm_4, spr_rgt_bot_norm_2
 right_norm_4:
        byte spr_rgt_top_norm_5, spr_rgt_bot_norm_4
+
+left_2nd_norm_0:
+       byte spr_lft_top_2nd_norm_1
+left_2nd_norm_1:
+       byte spr_lft_top_2nd_norm_2
+left_2nd_norm_2:
+       byte spr_lft_top_2nd_norm_3
+left_2nd_norm_3:
+       byte spr_lft_top_2nd_norm_4
+left_2nd_norm_4:
+       byte spr_lft_top_2nd_norm_5
+
+right_2nd_norm_0:
+       byte spr_rgt_top_2nd_norm_1
+right_2nd_norm_1:
+       byte spr_rgt_top_2nd_norm_2
+right_2nd_norm_2:
+       byte spr_rgt_top_2nd_norm_3
+right_2nd_norm_3:
+       byte spr_rgt_top_2nd_norm_4
+right_2nd_norm_4:
+       byte spr_rgt_top_2nd_norm_5

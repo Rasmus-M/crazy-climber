@@ -98,8 +98,10 @@ padvar:                                ; Start of pad variables
 *
 rand_no:
        equ  padvar
-frame:
+vdp_status:
        equ  rand_no+2
+frame:
+       equ  vdp_status+2
 scroll_y:
        equ  frame+2                    ; Vertical scroll offset
 scroll_dy:
@@ -150,15 +152,13 @@ main_loop:
 *      Animate windows and faces
        bl   @animate_windows
        bl   @create_windows
-*      Animate climber
-       bl   @animate_climber
-*      Handle sprites
-       bl   @handle_sprites
+*      Display climber and other sprites
+       bl   @display_sprites
 *      Change scroll offset
        a    @scroll_dy,@scroll_y
        c    @scroll_dy,@scroll_dy_old
        jeq  main_loop_1
-*      Update full name table when scroll direction changes
+*      Update full name table when scroll increment changes
        bl   @update_full_name_table
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
@@ -169,60 +169,201 @@ main_loop_1:
 
 *********************************************************************
 *
-* Animate climber
+* Wait for vsync
 *
-animate_climber:
+* Modifies R0
+*
+vsync:
+       movb @vdpsta,@vdp_status        ; clear flag if already set
+       clr  r12
+vsync1:
+       tb   2
+       jeq  vsync1
+       socb @vdpsta,@vdp_status
+       b    *r11
+*// vsync
+
+*********************************************************************
+*
+* Set name table
+*
+* Altenate between tables 0 and 1 in frames 0-7
+* Alternate between tables 2 and 3 in frames 8-15
+*
+* Tables 0 and 2 contain 'names' from the low character set (0-127)
+* Tables 1 and 3 contain 'names' from the high character set (128-255)
+*
+* Modifies R0
+*
+set_name_table:
        .proc
-animate_climber_0:
-       mov  @left_anim_ptr,r0
-       jeq  animate_climber_3
-       mov  @left_anim_count,r1
-       jne  animate_climber_1
-       mov  *r0+,r1
-       jeq  animate_climber_2
-       mov  *r0+,@scroll_dy
-       mov  *r0+,@left_anim_count
-       mov  r0,@left_anim_ptr
-       li   r0,sprite_attr_table+2
-       bl   @vwad
-       movb *r1+,*r15
-       li   r0,sprite_attr_table+6
-       bl   @vwad
-       movb *r1+,*r15
-animate_climber_1:
-       dec  @left_anim_count
-       jmp  animate_climber_3
-animate_climber_2:
-       clr  @left_anim_ptr
-       li   r0,right_norm
-       mov  r0,@right_anim_ptr
-animate_climber_3:
-       mov  @right_anim_ptr,r0
-       jeq  animate_climber_6
-       mov  @right_anim_count,r1
-       jne  animate_climber_4
-       mov  *r0+,r1
-       jeq  animate_climber_5
-       mov  *r0+,@scroll_dy
-       mov  *r0+,@right_anim_count
-       mov  r0,@right_anim_ptr
-       li   r0,sprite_attr_table+10
-       bl   @vwad
-       movb *r1+,*r15
-       li   r0,sprite_attr_table+14
-       bl   @vwad
-       movb *r1+,*r15
-animate_climber_4:
-       dec  @right_anim_count
-       jmp  animate_climber_6
-animate_climber_5:
-       clr  @right_anim_ptr
-       li   r0,left_norm
-       mov  r0,@left_anim_ptr
-       jmp  animate_climber_0
-animate_climber_6:
+       mov  @frame,r0                  ; Get frame
+       coc  @eight,r0                  ; check which table set to use
+       jeq  setnt2
+       coc  @one,r0                    ; check which table to use
+       jeq  setnt1
+       li   r0,>020a                   ; namet0
+       jmp  setnt4
+setnt1:
+       li   r0,>020b                   ; namet1
+       jmp  setnt4
+setnt2:
+       coc  @one,r0                    ; check which table to use
+       jeq  setnt3
+       li   r0,>020c                   ; namet2
+       jmp  setnt4
+setnt3:
+       li   r0,>020d                   ; namet3
+*      update VR2
+setnt4:
+       bl   @vwtr
        .endproc
-*// animate_climber
+*// set_name_table
+
+*********************************************************************
+*
+* Update pattern and color tables
+*
+* Alternate between updating low (0-127) or high (128-255) half of
+* the character set. The set that is updated is not used (and therefore
+* not visible) in the currently displayed name table. This provides the
+* desired double buffering effect.
+*
+* Magellan is exporting the patterns and colors in strips of 16 bytes,
+* each strip representing the transition between two original characters.
+* In terms of the Transition Character Pairs table it's the 'to' character
+* (pattern or color) followed by the 'from' character (pattern or color).
+*
+* If sprites beyond 0-7 are to be used on a real 9918A VDP we need to update
+* the second and third part of the pattern table as well (with the same
+* patterns). The color table is always OK at >800 bytes. See GMODE.
+*
+* Modifies R0-R4
+*
+update_pattern_table:
+       .proc
+       mov  @frame,r3                  ; Read frame into register
+*      Calculate VDP RAM destination address
+       coc  @one,r3                    ; check which character set to update
+       jeq  updpt1
+       li   r0,pattern_table+>400      ; update high character set (128-255)
+       jmp  updpt2
+updpt1:
+       li   r0,pattern_table           ; update low character set (128-255)
+*      calculate cpu ram source address
+updpt2:
+       mov  @scroll_y,r1               ; start with scroll offset
+       a    @scroll_dy,r1              ; add direction (1 or -1)
+       andi r1,>0007                   ; mod 8
+       ai   r1,pstrip                  ; add base address of pattern strips
+*      save calculated values
+       mov  r0,r4
+       mov  r1,r5
+*      copy patterns
+       mov  @tchnum,r2                 ; number of patterns
+       bl   @vm8bw8
+*      update 2nd and 3rd part of the pattern table
+;       mov   r4,r0
+;       ai    r0,>800
+;       mov   r5,r1
+;       mov   @tchnum,r2               ; number of patterns
+;       bl    @vm8bw8
+;       mov   r4,r0
+;       ai    r0,>1000
+;       mov   r5,r1
+;       mov   @tchnum,r2               ; number of patterns
+;       bl    @vm8bw8
+*      copy colors
+       mov  r4,r0
+       ai   r0,color_table
+       mov  r5,r1
+       ai   r1,cstrip-pstrip           ; add offset betweem patterns and colors
+       mov  @tchnum,r2                 ; number of patterns
+       bl   @vm8bw8
+       .endproc
+*// update_pattern_table
+
+*********************************************************************
+*
+* Update name table off-screen buffer
+*
+* The prepared buffers have a one row (8 pixels) offset from
+* from the currently visible buffers, allowing a smooth transition
+* after we have scrolled 7 pixels.
+*
+* We altenate between updating table buffers 2 and 3 in frames 0-7
+* We alternate between updating table buffers 0 and 1 in frames 8-15
+*
+* Since we have 8 frames to update two buffers we need to update
+* 1/4 buffer each frame, i.e. 6 screen rows. First frame we update
+* rows 0-5 of the first buffer. Second frame we update the same 6
+* rows of the second buffer, but this time we set the most significant
+* bit to use the high character set. Third frame we update rows 6-11
+* of the first buffer, and so on.
+*
+* Note: As for SETNT we could also calculate the buffer number
+* instead of using 'if' statements.
+*
+* Modifies R0-R4
+*
+update_name_table:
+       .proc
+       mov  @frame,r3                  ; Get frame
+*      Calculate row offset to the 1/4 of the buffer to update
+       mov  r3,r0                      ; start with frame number
+       andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
+       mov  r0,r2                      ; copy to r2
+       sla  r0,1                       ; multiply by 2
+       a    r0,r2                      ; add to r2 to multiply by 6 and get
+*                                      ; row offset: 0,0,6,6,12,12,18,18...
+       mov  r2,r0                      ; copy back into r0 for later
+*      Calculate map source address in R1
+       mov  @scroll_y,r1               ; get scroll offset in pixels
+       srl  r1,3                       ; divide by 8 to get row offset
+       a    @scroll_dy,r1              ; add dy: prepared buffer has a 1 row offset
+       a    r2,r1                      ; add the row offset we calculated before
+       mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
+       li   r1,md0                     ; get the map base address
+       a    r2,r1                      ; add the character offset
+*      calculate buffer destination address in r0
+       sla  r0,5                       ; convert row offset to chcracter offset
+*      decide which buffer to update
+       coc  @eight,r3                  ; bit weight >08 determines the group
+       jne  updnt2                     ; if not set we update buffer 2 or 3
+       coc  @one,r3                    ; bit weight >01 determines the buffer
+       jeq  updnt1
+       ai   r0,name_table_0+8          ; add base address to character offset
+       jmp  updnt4
+updnt1:
+       ai   r0,name_table_1+8          ; add base address to character offset
+       jmp  updnt4
+updnt2:
+       coc  @one,r3                    ; bit weight >01 determines the buffer
+       jeq  updnt3
+       ai   r0,name_table_2+8          ; add base address to character offset
+       jmp  updnt4
+updnt3:
+       ai   r0,name_table_3+8          ; add base address to character offset
+*      copy to vdp ram buffer
+updnt4:
+       li   r4,6                       ; number of rows to copy
+       coc  @one,r3                    ; high or low character set copy?
+       jeq  updnt6
+updnt5:
+       bl   @copy_row                  ; low character set
+       ai   r0,32
+       dec  r4
+       jne  updnt5
+       jmp  updnt7
+updnt6:
+       bl   @copy_row_hi
+       ai   r0,32
+       dec  r4
+       jne  updnt6
+*      return
+updnt7:
+       .endproc
+*// update_name_table
 
 *********************************************************************
 *
@@ -328,88 +469,100 @@ update_windows_2:
 
 *********************************************************************
 *
-* Create resident
+* Display sprites
 *
-* r3 points to window structure of next window (must be preserved)
-*
-create_resident:
+display_sprites:
        .proc
-       bl   @allocate_sprite
-       mov  r4,r4
-       jeq  create_resident_1
-       li   r0,resident_handler
-       mov  r0,*r4+                            ; Handler
-       mov  @window_row-window_size(r3),*r4+   ; y
-       mov  @window_col-window_size(r3),*r4+   ; x
-       clr  *r4                                ; Counter
-create_resident_1:
-       .endproc
-*// create_resident
-
-*********************************************************************
-*
-* Create plant
-*
-* r3 points to sprite structure of resident (must be preserved)
-*
-create_plant:
-       .proc
-       bl   @allocate_sprite
-       mov  r4,r4
-       jeq  create_plant_1
-       li   r0,plant_handler
-       mov  r0,*r4+                    ; Handler
-       mov  @sprite_x(r3),r0
-       mov  @sprite_y(r3),r1
-       bl   @window_screen_coords
-       ai   r1,16
-       mov  r1,*r4+                    ; y
-       mov  r0,*r4+                    ; x
-       clr  *r4                        ; Counter
-create_plant_1:
-       .endproc
-*// create_plant
-
-*********************************************************************
-*
-* Allocate sprite
-*
-* Return sprite address in r4 or zero if no sprte available
-*
-allocate_sprite:
-       li   r4,sprites
-allocate_sprite_1:
-       mov  *r4,*r4
-       jeq  allocate_sprite_2
-       ai   r4,sprite_size
-       ci   r4,sprites_end
-       jne  allocate_sprite_1
-       clr  r4
-allocate_sprite_2:
-       rt
-*// allocate_sprite
-
-*********************************************************************
-*
-* Handle sprites
-*
-handle_sprites:
-       .proc
-       li   r0,sprite_attr_table+16    ; Start after climber sprites
+       li   r0,sprite_attr_table
        bl   @vwad
-       li   r3,sprites
-handle_sprites_1:
-       mov  *r3,r0
-       jeq  handle_sprites_2
-       bl   *r0
-handle_sprites_2:
-       ai   r3,sprite_size
-       ci   r3,sprites_end
-       jl   handle_sprites_1
+       bl   @animate_climber
+       bl   @handle_other_sprites
        li   r1,>d000                   ; Write end marker
        movb r1,*r15
        .endproc
-*// handle_sprites
+*// display_sprites
+
+*********************************************************************
+*
+* Animate climber
+*
+animate_climber:
+       .proc
+animate_climber_0:
+       mov  @left_anim_ptr,r0
+       jeq  animate_climber_3
+       mov  @left_anim_count,r1
+       jne  animate_climber_1
+       mov  *r0+,r1
+       jeq  animate_climber_2
+       mov  *r0+,r2
+       movb *r2,@sprite_attributes_head+2
+       mov  *r0+,@scroll_dy
+       mov  *r0+,@left_anim_count
+       mov  r0,@left_anim_ptr
+       movb *r1+,@sprite_attributes_body+2
+       movb *r1+,@sprite_attributes_body+6
+animate_climber_1:
+       dec  @left_anim_count
+       jmp  animate_climber_3
+animate_climber_2:
+       clr  @left_anim_ptr
+       li   r0,right_norm
+       mov  r0,@right_anim_ptr
+animate_climber_3:
+       mov  @right_anim_ptr,r0
+       jeq  animate_climber_6
+       mov  @right_anim_count,r1
+       jne  animate_climber_4
+       mov  *r0+,r1
+       jeq  animate_climber_5
+       mov  *r0+,r2
+       movb *r2,@sprite_attributes_head+6
+       mov  *r0+,@scroll_dy
+       mov  *r0+,@right_anim_count
+       mov  r0,@right_anim_ptr
+       movb *r1+,@sprite_attributes_body+10
+       movb *r1+,@sprite_attributes_body+14
+animate_climber_4:
+       dec  @right_anim_count
+       jmp  animate_climber_6
+animate_climber_5:
+       clr  @right_anim_ptr
+       li   r0,left_norm
+       mov  r0,@left_anim_ptr
+       jmp  animate_climber_0
+animate_climber_6:
+       mov  @vdp_status,r0
+       andi r0,>4000                   ; Test 5th sprite flag
+       jeq  animate_climber_7
+       li   r1,sprite_attributes_body
+       li   r2,2
+       jmp  animate_climber_8
+animate_climber_7:
+       li   r1,sprite_attributes_head
+       li   r2,3
+animate_climber_8:
+       bl   @vdp_copy
+       .endproc
+*// animate_climber
+
+*********************************************************************
+*
+* Handle other sprites
+*
+handle_other_sprites:
+       .proc
+       li   r3,sprites
+handle_other_sprites_1:
+       mov  *r3,r0
+       jeq  handle_other_sprites_2
+       bl   *r0
+handle_other_sprites_2:
+       ai   r3,sprite_size
+       ci   r3,sprites_end
+       jl   handle_other_sprites_1
+       .endproc
+*// handle_other_sprites
 
 *********************************************************************
 *
@@ -481,6 +634,104 @@ plant_handler:
 plant_handler_1:
        .endproc
 *// plant_handler
+
+*********************************************************************
+*
+* Create resident
+*
+* r3 points to window structure of next window (must be preserved)
+*
+create_resident:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_resident_1
+       li   r0,resident_handler
+       mov  r0,*r4+                            ; Handler
+       mov  @window_row-window_size(r3),*r4+   ; y
+       mov  @window_col-window_size(r3),*r4+   ; x
+       clr  *r4                                ; Counter
+create_resident_1:
+       .endproc
+*// create_resident
+
+*********************************************************************
+*
+* Create plant
+*
+* r3 points to sprite structure of resident (must be preserved)
+*
+create_plant:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_plant_1
+       li   r0,plant_handler
+       mov  r0,*r4+                    ; Handler
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       bl   @window_screen_coords
+       ai   r1,16
+       mov  r1,*r4+                    ; y
+       mov  r0,*r4+                    ; x
+       clr  *r4                        ; Counter
+create_plant_1:
+       .endproc
+*// create_plant
+
+*********************************************************************
+*
+* Allocate sprite
+*
+* Return sprite address in r4 or zero if no sprte available
+*
+allocate_sprite:
+       li   r4,sprites
+allocate_sprite_1:
+       mov  *r4,*r4
+       jeq  allocate_sprite_2
+       ai   r4,sprite_size
+       ci   r4,sprites_end
+       jne  allocate_sprite_1
+       clr  r4
+allocate_sprite_2:
+       rt
+*// allocate_sprite
+
+*********************************************************************
+*
+* Update full name table off-screen buffers
+*
+* If the direction of scrolling, @SCRLDY, is changed in the middle of
+* a frame cycle, the part of the off-screen buffers that has already
+* been prepared will become invalid. When scrolling up it should be safe
+* to change direction (to down) in frames 0 and 8, and when scrolling
+* down it should be safe to change direction (to up) in frames 7 and 15.
+* Otherwise this routine should be called.
+*
+* This implementation is simply calling the incremental update routine,
+* UPDNT, 8 times. It could be done more efficient, but code reusing is
+* also a virtue.
+*
+* Modifies R0-R4
+*
+update_full_name_table:
+       .proc
+       mov  @frame,r3
+       .push r3                        ; push current frame onto the stack
+       andi r3,>0008                   ; move to beginning of frame cycle (0 or 8)
+       mov  r3,@frame
+upntf1:
+       bl   @update_name_table         ; call the incremental update routine
+       inc  @frame                     ; next frame
+       mov  @frame,r3
+       andi r3,>0007                   ; check for end of cycle
+;      jne  upntf1                     ; For now we only need to draw the top part
+*      return
+       dect r10                        ; pop frame off the stack
+       mov  *r10,@frame
+       .endproc
+*// update_full_name_table
 
 *********************************************************************
 *
@@ -657,244 +908,6 @@ inisc2:
 
 *********************************************************************
 *
-* Wait for vsync
-*
-* Modifies R0
-*
-vsync:
-       movb @vdpsta,r0                 ; clear flag if already set
-vsync1:
-       movb @vdpsta,r0
-       andi r0,>8000                   ; check interrupt flag
-       jeq  vsync1                     ; loop until set
-       b    *r11
-*// vsync
-
-*********************************************************************
-*
-* Set name table
-*
-* Altenate between tables 0 and 1 in frames 0-7
-* Alternate between tables 2 and 3 in frames 8-15
-*
-* Tables 0 and 2 contain 'names' from the low character set (0-127)
-* Tables 1 and 3 contain 'names' from the high character set (128-255)
-*
-* Note that if we have fixed the location of the names tables
-* we could also calculate the value of register 3 instead of using
-* 'if' statements, e.g.:
-* reg3 = >0A + f & 8 >> 2 + f & 1
-* for name tables >0A - >0C.
-* 
-* Modifies R0
-*
-set_name_table:
-       .proc
-       mov  @frame,r0                  ; Get frame
-       coc  @eight,r0                  ; check which table set to use
-       jeq  setnt2
-       coc  @one,r0                    ; check which table to use
-       jeq  setnt1
-       li   r0,>020a                   ; namet0
-       jmp  setnt4
-setnt1:
-       li   r0,>020b                   ; namet1
-       jmp  setnt4
-setnt2:
-       coc  @one,r0                    ; check which table to use
-       jeq  setnt3
-       li   r0,>020c                   ; namet2
-       jmp  setnt4
-setnt3:
-       li   r0,>020d                   ; namet3
-*      update VR2
-setnt4:
-       bl   @vwtr
-       .endproc
-*// set_name_table
-
-*********************************************************************
-*
-* Update pattern and color tables
-*
-* Alternate between updating low (0-127) or high (128-255) half of
-* the character set. The set that is updated is not used (and therefore
-* not visible) in the currently displayed name table. This provides the
-* desired double buffering effect.
-*
-* Magellan is exporting the patterns and colors in strips of 16 bytes,
-* each strip representing the transition between two original characters.
-* In terms of the Transition Character Pairs table it's the 'to' character
-* (pattern or color) followed by the 'from' character (pattern or color). 
-*
-* If sprites beyond 0-7 are to be used on a real 9918A VDP we need to update
-* the second and third part of the pattern table as well (with the same 
-* patterns). The color table is always OK at >800 bytes. See GMODE.
-* 
-* Modifies R0-R4
-*
-update_pattern_table:
-       .proc
-       mov  @frame,r3                  ; Read frame into register
-*      Calculate VDP RAM destination address
-       coc  @one,r3                    ; check which character set to update
-       jeq  updpt1
-       li   r0,pattern_table+>400      ; update high character set (128-255)
-       jmp  updpt2
-updpt1:
-       li   r0,pattern_table           ; update low character set (128-255)
-*      calculate cpu ram source address
-updpt2:
-       mov  @scroll_y,r1               ; start with scroll offset
-       a    @scroll_dy,r1              ; add direction (1 or -1)
-       andi r1,>0007                   ; mod 8
-       ai   r1,pstrip                  ; add base address of pattern strips
-*      save calculated values
-       mov  r0,r4
-       mov  r1,r5
-*      copy patterns
-       mov  @tchnum,r2                 ; number of patterns
-       bl   @vm8bw8
-*      update 2nd and 3rd part of the pattern table
-;       mov   r4,r0
-;       ai    r0,>800
-;       mov   r5,r1
-;       mov   @tchnum,r2               ; number of patterns
-;       bl    @vm8bw8
-;       mov   r4,r0
-;       ai    r0,>1000
-;       mov   r5,r1
-;       mov   @tchnum,r2               ; number of patterns
-;       bl    @vm8bw8
-*      copy colors
-       mov  r4,r0
-       ai   r0,color_table
-       mov  r5,r1
-       ai   r1,cstrip-pstrip           ; add offset betweem patterns and colors
-       mov  @tchnum,r2                 ; number of patterns
-       bl   @vm8bw8
-       .endproc
-*// update_pattern_table
-
-*********************************************************************
-*
-* Update name table off-screen buffer
-*
-* The prepared buffers have a one row (8 pixels) offset from
-* from the currently visible buffers, allowing a smooth transition
-* after we have scrolled 7 pixels.
-*
-* We altenate between updating table buffers 2 and 3 in frames 0-7
-* We alternate between updating table buffers 0 and 1 in frames 8-15
-*
-* Since we have 8 frames to update two buffers we need to update
-* 1/4 buffer each frame, i.e. 6 screen rows. First frame we update 
-* rows 0-5 of the first buffer. Second frame we update the same 6 
-* rows of the second buffer, but this time we set the most significant
-* bit to use the high character set. Third frame we update rows 6-11 
-* of the first buffer, and so on.
-*
-* Note: As for SETNT we could also calculate the buffer number
-* instead of using 'if' statements.
-* 
-* Modifies R0-R4
-*
-update_name_table:
-       .proc
-       mov  @frame,r3                  ; Get frame
-*      Calculate row offset to the 1/4 of the buffer to update
-       mov  r3,r0                      ; start with frame number
-       andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
-       mov  r0,r2                      ; copy to r2
-       sla  r0,1                       ; multiply by 2
-       a    r0,r2                      ; add to r2 to multiply by 6 and get
-*                                      ; row offset: 0,0,6,6,12,12,18,18...
-       mov  r2,r0                      ; copy back into r0 for later
-*      Calculate map source address in R1
-       mov  @scroll_y,r1               ; get scroll offset in pixels
-       srl  r1,3                       ; divide by 8 to get row offset
-       a    @scroll_dy,r1              ; add dy: prepared buffer has a 1 row offset
-       a    r2,r1                      ; add the row offset we calculated before
-       mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
-       li   r1,md0                     ; get the map base address
-       a    r2,r1                      ; add the character offset
-*      calculate buffer destination address in r0
-       sla  r0,5                       ; convert row offset to chcracter offset
-*      decide which buffer to update
-       coc  @eight,r3                  ; bit weight >08 determines the group
-       jne  updnt2                     ; if not set we update buffer 2 or 3
-       coc  @one,r3                    ; bit weight >01 determines the buffer
-       jeq  updnt1
-       ai   r0,name_table_0+8          ; add base address to character offset
-       jmp  updnt4
-updnt1:
-       ai   r0,name_table_1+8          ; add base address to character offset
-       jmp  updnt4
-updnt2:
-       coc  @one,r3                    ; bit weight >01 determines the buffer
-       jeq  updnt3
-       ai   r0,name_table_2+8          ; add base address to character offset
-       jmp  updnt4
-updnt3:
-       ai   r0,name_table_3+8          ; add base address to character offset
-*      copy to vdp ram buffer
-updnt4:
-       li   r4,6                       ; number of rows to copy
-       coc  @one,r3                    ; high or low character set copy?
-       jeq  updnt6
-updnt5:
-       bl   @copy_row                  ; low character set
-       ai   r0,32
-       dec  r4
-       jne  updnt5
-       jmp  updnt7
-updnt6:
-       bl   @copy_row_hi
-       ai   r0,32
-       dec  r4
-       jne  updnt6
-*      return
-updnt7:
-       .endproc
-*// update_name_table
-
-*********************************************************************
-*
-* Update full name table off-screen buffers
-*
-* If the direction of scrolling, @SCRLDY, is changed in the middle of
-* a frame cycle, the part of the off-screen buffers that has already 
-* been prepared will become invalid. When scrolling up it should be safe
-* to change direction (to down) in frames 0 and 8, and when scrolling 
-* down it should be safe to change direction (to up) in frames 7 and 15.
-* Otherwise this routine should be called.
-*
-* This implementation is simply calling the incremental update routine,
-* UPDNT, 8 times. It could be done more efficient, but code reusing is
-* also a virtue.
-*
-* Modifies R0-R4
-*
-update_full_name_table:
-       .proc
-       mov  @frame,r3
-       .push r3                        ; push current frame onto the stack
-       andi r3,>0008                   ; move to beginning of frame cycle (0 or 8)
-       mov  r3,@frame
-upntf1:
-       bl   @update_name_table         ; call the incremental update routine
-       inc  @frame                     ; next frame
-       mov  @frame,r3
-       andi r3,>0007                   ; check for end of cycle
-;      jne  upntf1                     ; For now we only need to draw the top part
-*      return
-       dect r10                        ; pop frame off the stack
-       mov  *r10,@frame
-       .endproc
-*// update_full_name_table
-
-*********************************************************************
-*
 * One time initializations
 *
 one_time_init:
@@ -918,7 +931,7 @@ one_time_init:
        bl   @vmbw
 *      Sprite attributes
        li   r0,sprite_attr_table
-       li   r1,sprite_attributes
+       li   r1,sprite_attributes_body
        li   r2,16
        bl   @vmbw
 *      Clear sprites table
@@ -967,7 +980,7 @@ vdp_registers:
 
 *********************************************************************
 *
-* Set graphics mode
+* Clear CPU memory
 *
 clear:
        clr  *r0+
@@ -1018,13 +1031,14 @@ byte_closed:
 byte_open:
        byte >36
 
-sprite_attributes:
+sprite_attributes_head:
+       byte >5f,>a8,spr_lft_top_2nd_norm_1,>06
+       byte >5f,>b8,spr_rgt_top_2nd_norm_1,>06
+sprite_attributes_body:
        byte >5f,>a8,spr_lft_top_norm_1,>02
        byte >6f,>a8,spr_lft_bot_norm_1,>02
        byte >5f,>b8,spr_rgt_top_norm_1,>02
        byte >6f,>b8,spr_rgt_bot_norm_1,>02
-
-       even
 
 sprite_handler:
        equ  0
@@ -1037,6 +1051,7 @@ sprite_count:
 sprite_size:
        equ  8
 
+       even
 sprites:
        bss 16*sprite_size
 sprites_end:
