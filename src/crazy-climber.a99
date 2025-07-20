@@ -31,25 +31,25 @@ spchrd:
 
 *       VPD RAM Map
 pattern_table:
-       EQU  >0000                      ; Pattern table base
+       equ  >0000                      ; Pattern table base
 pattern_table_1:
-       EQU  >0800                      ; Pattern table part 2
+       equ  >0800                      ; Pattern table part 2
 pattern_table_2:
-       EQU  >1000                      ; Pattern table part 3
+       equ  >1000                      ; Pattern table part 3
 sprite_pattern_table:
-       EQU  >1800                      ; Sprite pattern table (>03)
+       equ  >1800                      ; Sprite pattern table (>03)
 color_table:
-       EQU  >2000                      ; Color table base
+       equ  >2000                      ; Color table base
 name_table_0:
-       EQU  >2800                      ; Name table base 0 (>0A)
+       equ  >2800                      ; Name table base 0 (>0A)
 name_table_1:
-       EQU  >2C00                      ; Name table base 1 (>0B)
+       equ  >2C00                      ; Name table base 1 (>0B)
 name_table_2:
-       EQU  >3000                      ; Name table base 2 (>0C)
+       equ  >3000                      ; Name table base 2 (>0C)
 name_table_3:
-       EQU  >3400                      ; Name table base 3 (>0D)
+       equ  >3400                      ; Name table base 3 (>0D)
 sprite_attr_table:
-       EQU  >3700                      ; Sprite attribute table (>6E)
+       equ  >3700                      ; Sprite attribute table (>6E)
 
 *      Constants
 map_width:
@@ -131,8 +131,8 @@ start  limi 0                          ; disable interrupts
 *      Init variables
        li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
-       dect  @scroll_dy
-       dect  @scroll_dy_old
+       clr  @scroll_dy
+       clr  @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
@@ -145,6 +145,8 @@ main_loop:
        bl   @vsync
 *      Set name table
        bl   @set_name_table
+*      Display sprites
+       bl   @display_sprites
 *      Update patterns
        bl   @update_pattern_table
 *      Update name table buffer
@@ -160,8 +162,9 @@ main_loop:
        bl   @update_full_name_table
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
-*      Display climber and other sprites
-       bl   @display_sprites
+*      Update climber
+       bl   @control_climber
+;      bl   @animate_climber
 *      Loop forever
        inc  @frame
        jmp  main_loop
@@ -219,6 +222,21 @@ setnt4:
        bl   @vwtr
        .endproc
 *// set_name_table
+
+*********************************************************************
+*
+* Display sprites
+*
+display_sprites:
+       .proc
+       li   r0,sprite_attr_table
+       bl   @vwad
+       bl   @display_climber_sprites
+       bl   @handle_other_sprites
+       li   r1,>d000                   ; Write end marker
+       movb r1,*r15
+       .endproc
+*// display_sprites
 
 *********************************************************************
 *
@@ -461,18 +479,44 @@ update_windows_2:
 
 *********************************************************************
 *
-* Display sprites
+* Update full name table off-screen buffers
 *
-display_sprites:
+* If the direction of scrolling, @scroll_dy, is changed in the middle of
+* a frame cycle, the part of the off-screen buffers that has already
+* been prepared will become invalid. When scrolling up it should be safe
+* to change direction (to down) in frames 0 and 8, and when scrolling
+* down it should be safe to change direction (to up) in frames 7 and 15.
+* Otherwise this routine should be called.
+*
+* Modifies R0-R4
+*
+update_full_name_table:
        .proc
-       li   r0,sprite_attr_table
-       bl   @vwad
-       bl   @animate_climber
-       bl   @handle_other_sprites
-       li   r1,>d000                   ; Write end marker
-       movb r1,*r15
+       mov  @frame,r3
+       .push r3                        ; push current frame onto the stack
+       andi r3,>0004                   ; move to beginning of frame cycle (0 or 4)
+       mov  r3,@frame
+upntf1:
+       bl   @update_name_table         ; call the incremental update routine
+       inc  @frame                     ; next frame
+       mov  @frame,r3
+       andi r3,>0003                   ; check for end of cycle
+;      jne  upntf1                     ; For now we only need to draw the top part
+*      return
+       dect r10                        ; pop frame off the stack
+       mov  *r10,@frame
        .endproc
-*// display_sprites
+*// update_full_name_table
+
+*********************************************************************
+*
+* Control climber
+*
+control_climber:
+       .proc
+
+       .endproc
+*// control_climber
 
 *********************************************************************
 *
@@ -524,19 +568,28 @@ animate_climber_5:
        mov  r0,@left_anim_ptr
        jmp  animate_climber_0
 animate_climber_6:
-       mov  @vdp_status,r0
-       andi r0,>4000                   ; Test 5th sprite flag
-       jeq  animate_climber_7
-       li   r1,sprite_attributes_body
-       li   r2,2
-       jmp  animate_climber_8
-animate_climber_7:
-       li   r1,sprite_attributes_head
-       li   r2,3
-animate_climber_8:
-       bl   @vdp_copy
        .endproc
 *// animate_climber
+
+*********************************************************************
+*
+* Display climber sprites
+*
+display_climber_sprites:
+       .proc
+       mov  @vdp_status,r0
+       andi r0,>4000                   ; Test 5th sprite flag
+       jeq  display_climber_sprites_1
+       li   r1,sprite_attributes_body
+       li   r2,2
+       jmp  display_climber_sprites_2
+display_climber_sprites_1:
+       li   r1,sprite_attributes_head
+       li   r2,3
+display_climber_sprites_2:
+       bl   @vdp_copy
+       .endproc
+*// display_climber_sprites
 
 *********************************************************************
 *
@@ -689,41 +742,6 @@ allocate_sprite_1:
 allocate_sprite_2:
        rt
 *// allocate_sprite
-
-*********************************************************************
-*
-* Update full name table off-screen buffers
-*
-* If the direction of scrolling, @SCRLDY, is changed in the middle of
-* a frame cycle, the part of the off-screen buffers that has already
-* been prepared will become invalid. When scrolling up it should be safe
-* to change direction (to down) in frames 0 and 8, and when scrolling
-* down it should be safe to change direction (to up) in frames 7 and 15.
-* Otherwise this routine should be called.
-*
-* This implementation is simply calling the incremental update routine,
-* UPDNT, 8 times. It could be done more efficient, but code reusing is
-* also a virtue.
-*
-* Modifies R0-R4
-*
-update_full_name_table:
-       .proc
-       mov  @frame,r3
-       .push r3                        ; push current frame onto the stack
-       andi r3,>0004                   ; move to beginning of frame cycle (0 or 4)
-       mov  r3,@frame
-upntf1:
-       bl   @update_name_table         ; call the incremental update routine
-       inc  @frame                     ; next frame
-       mov  @frame,r3
-       andi r3,>0003                   ; check for end of cycle
-;       jne  upntf1                     ; For now we only need to draw the top part
-*      return
-       dect r10                        ; pop frame off the stack
-       mov  *r10,@frame
-       .endproc
-*// update_full_name_table
 
 *********************************************************************
 *
@@ -984,6 +1002,88 @@ clear:
        jne  clear
        rt
 *// clear
+
+***************************************************************************
+*
+* Check key
+*
+* r0: Column in MSB: >0000 - >0700, Row in LSB: >0006 - >0014
+*
+*       Column   0      1    2    3    4    5     6       7
+*     Row
+*     >0006      =      .    ,    M    N    /    Fire    Fire
+*     >0008    Space    L    K    J    H    ;    Left    Left
+*     >000A    Enter    O    I    U    Y    P    Right   Right
+*     >000C             9    8    7    6    0    Down    Down
+*     >000E    Fctn     2    3    4    5    1    Up      Up
+*     >0010    Shift    S    D    F    G    A
+*     >0012    Ctrl     W    E    R    T    Q
+*     >0014             X    C    V    B    Z
+*
+* On return NEQ means that the key is pressed
+*
+KEY_FI EQU  >0606
+KEY_LF EQU  >0608
+KEY_RG EQU  >060A
+KEY_DN EQU  >060C
+KEY_UP EQU  >060E
+KEY_CM EQU  >0206
+KEY_FS EQU  >0106
+KEY_0  EQU  >050C
+KEY_1  EQU  >050E
+KEY_2  EQU  >010E
+KEY_3  EQU  >020E
+KEY_4  EQU  >030E
+KEY_5  EQU  >040E
+KEY_6  EQU  >040C
+KEY_7  EQU  >030C
+KEY_8  EQU  >020C
+KEY_9  EQU  >010C
+KEY_A  EQU  >0510
+KEY_B  EQU  >0414
+KEY_C  EQU  >0214
+KEY_D  EQU  >0210
+KEY_E  EQU  >0212
+KEY_F  EQU  >0310
+KEY_G  EQU  >0410
+KEY_H  EQU  >0408
+KEY_I  EQU  >020A
+KEY_J  EQU  >0308
+KEY_K  EQU  >0208
+KEY_L  EQU  >0108
+KEY_M  EQU  >0306
+KEY_N  EQU  >0406
+KEY_O  EQU  >010A
+KEY_P  EQU  >050A
+KEY_Q  EQU  >0512
+KEY_R  EQU  >0312
+KEY_S  EQU  >0110
+KEY_T  EQU  >0412
+KEY_U  EQU  >030A
+KEY_V  EQU  >0314
+KEY_W  EQU  >0112
+KEY_X  EQU  >0114
+KEY_Y  EQU  >040A
+KEY_Z  EQU  >0514
+KEY_SP EQU  >0008
+KEY_EN EQU  >000A
+KEY_FN EQU  >000E
+KEY_SH EQU  >0010
+KEY_CT EQU  >0012
+JOY_FI EQU  >0606
+JOY_LT EQU  >0608
+JOY_RT EQU  >060A
+JOY_DN EQU  >060C
+JOY_UP EQU  >060E
+*
+check_key:
+       li   r12,>0024                  ; CRU address of the column decoder
+       ldcr r0,3                       ; Select column
+       andi r0,>00ff
+       mov  r0,r12                     ; Select row
+       tb   0                          ; Test key, EQ if not pressed
+       rt
+*// check_key
 
 *********************************************************************
 *
