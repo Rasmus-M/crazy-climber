@@ -132,25 +132,25 @@ climber_animations:
        data right_norm
 
 left_norm:
-       data left_norm_1,left_2nd_norm_1,-1,4
-       data left_norm_2,left_2nd_norm_2,-1,4
-       data left_norm_3,left_2nd_norm_3,-1,4
-       data left_norm_4,left_2nd_norm_4,-1,4
-       data left_norm_3,left_2nd_norm_3,0,4
-       data left_norm_2,left_2nd_norm_2,0,4
-       data left_norm_1,left_2nd_norm_1,0,4
-       data left_norm_0,left_2nd_norm_0,0,4
+       data left_norm_1,left_2nd_norm_1,-2,2
+       data left_norm_2,left_2nd_norm_2,-2,2
+       data left_norm_3,left_2nd_norm_3,-2,2
+       data left_norm_4,left_2nd_norm_4,-2,2
+       data left_norm_3,left_2nd_norm_3,0,2
+       data left_norm_2,left_2nd_norm_2,0,2
+       data left_norm_1,left_2nd_norm_1,0,2
+       data left_norm_0,left_2nd_norm_0,0,2
        data 0
 
 right_norm:
-       data right_norm_1,right_2nd_norm_1,-1,4
-       data right_norm_2,right_2nd_norm_2,-1,4
-       data right_norm_3,right_2nd_norm_3,-1,4
-       data right_norm_4,right_2nd_norm_4,-1,4
-       data right_norm_3,right_2nd_norm_3,0,4
-       data right_norm_2,right_2nd_norm_2,0,4
-       data right_norm_1,right_2nd_norm_1,0,4
-       data right_norm_0,right_2nd_norm_0,0,4
+       data right_norm_1,right_2nd_norm_1,-2,2
+       data right_norm_2,right_2nd_norm_2,-2,2
+       data right_norm_3,right_2nd_norm_3,-2,2
+       data right_norm_4,right_2nd_norm_4,-2,2
+       data right_norm_3,right_2nd_norm_3,0,2
+       data right_norm_2,right_2nd_norm_2,0,2
+       data right_norm_1,right_2nd_norm_1,0,2
+       data right_norm_0,right_2nd_norm_0,0,2
        data 0
 
 left_norm_0:

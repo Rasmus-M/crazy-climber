@@ -85,13 +85,13 @@ padcon:
        equ  stack+>16                  ; Start of pad constants
 one:
        equ  padcon
-eight:
+four:
        equ  padcon+2
 **
 * PAD variables
 *
 padvar:                                ; Start of pad variables
-       equ  eight+2
+       equ  four+2
 *********************************************************************
 *
 * Variables and data
@@ -129,7 +129,7 @@ start  limi 0                          ; disable interrupts
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
 *      Init variables
-       li   r0,>0bf7                   ; start at the bottom of the map
+       li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
        clr  @scroll_dy
        clr  @scroll_dy_old
@@ -187,8 +187,8 @@ vsync1:
 *
 * Set name table
 *
-* Altenate between tables 0 and 1 in frames 0-7
-* Alternate between tables 2 and 3 in frames 8-15
+* Altenate between tables 0 and 1 in frames 0-3
+* Alternate between tables 2 and 3 in frames 4-7
 *
 * Tables 0 and 2 contain 'names' from the low character set (0-127)
 * Tables 1 and 3 contain 'names' from the high character set (128-255)
@@ -198,7 +198,7 @@ vsync1:
 set_name_table:
        .proc
        mov  @frame,r0                  ; Get frame
-       coc  @eight,r0                  ; check which table set to use
+       coc  @four,r0                   ; check which table set to use
        jeq  setnt2
        coc  @one,r0                    ; check which table to use
        jeq  setnt1
@@ -229,15 +229,6 @@ setnt4:
 * not visible) in the currently displayed name table. This provides the
 * desired double buffering effect.
 *
-* Magellan is exporting the patterns and colors in strips of 16 bytes,
-* each strip representing the transition between two original characters.
-* In terms of the Transition Character Pairs table it's the 'to' character
-* (pattern or color) followed by the 'from' character (pattern or color).
-*
-* If sprites beyond 0-7 are to be used on a real 9918A VDP we need to update
-* the second and third part of the pattern table as well (with the same
-* patterns). The color table is always OK at >800 bytes. See GMODE.
-*
 * Modifies R0-R4
 *
 update_pattern_table:
@@ -253,7 +244,7 @@ updpt1:
 *      Calculate cpu ram source address
 updpt2:
        mov  @scroll_y,r1               ; start with scroll offset
-       a    @scroll_dy,r1              ; add direction (1 or -1)
+       a    @scroll_dy,r1              ; add direction (0 or -2)
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
 *      Save calculated values
@@ -292,44 +283,44 @@ updpt2:
 * from the currently visible buffers, allowing a smooth transition
 * after we have scrolled 7 pixels.
 *
-* We altenate between updating table buffers 2 and 3 in frames 0-7
-* We alternate between updating table buffers 0 and 1 in frames 8-15
+* We altenate between updating table buffers 2 and 3 in frames 0-3
+* We alternate between updating table buffers 0 and 1 in frames 4-7
 *
-* Since we have 8 frames to update two buffers we need to update
-* 1/4 buffer each frame, i.e. 6 screen rows. First frame we update
-* rows 0-5 of the first buffer. Second frame we update the same 6
+* Since we have 4 frames to update two buffers we need to update
+* 1/2 buffer each frame, i.e. 12 screen rows. First frame we update
+* rows 0-11 of the first buffer. Second frame we update the same 12
 * rows of the second buffer, but this time we set the most significant
-* bit to use the high character set. Third frame we update rows 6-11
+* bit to use the high character set. Third frame we update rows 12-23
 * of the first buffer, and so on.
-*
-* Note: As for SETNT we could also calculate the buffer number
-* instead of using 'if' statements.
 *
 * Modifies R0-R4
 *
 update_name_table:
        .proc
        mov  @frame,r3                  ; Get frame
-*      Calculate row offset to the 1/4 of the buffer to update
+*      Calculate row offset to the 1/2 of the buffer to update
        mov  r3,r0                      ; start with frame number
-       andi r0,>0006                   ; transform to sequence: 0,0,2,2,4,4,6,6...
+       andi r0,>0002                   ; transform to sequence: 0,0,2,2,0,0,2,2...
+       sla  r0,1                       ; transform to sequence: 0,0,4,4,0,0,4,4...
        mov  r0,r2                      ; copy to r2
-       sla  r0,1                       ; multiply by 2
-       a    r0,r2                      ; add to r2 to multiply by 6 and get
-*                                      ; row offset: 0,0,6,6,12,12,18,18...
+       sla  r0,1                       ; multiply by 2: 0,0,8,8,0,0,8,8...
+       a    r0,r2                      ; add to r2 to multiply by 12 and get
+*                                      ; row offset: 0,0,12,12,0,0,12,12...
        mov  r2,r0                      ; copy back into r0 for later
 *      Calculate map source address in R1
        mov  @scroll_y,r1               ; get scroll offset in pixels
        srl  r1,3                       ; divide by 8 to get row offset
-       a    @scroll_dy,r1              ; add dy: prepared buffer has a 1 row offset
+       mov  @scroll_dy,r4              ; 0 or -2
+       sra  r4,1                       ; 0 or -1
+       a    r4,r1                      ; prepared buffer has a 0 or 1 row offset
        a    r2,r1                      ; add the row offset we calculated before
        mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
        li   r1,md0                     ; get the map base address
        a    r2,r1                      ; add the character offset
 *      calculate buffer destination address in r0
-       sla  r0,5                       ; convert row offset to chcracter offset
+       sla  r0,5                       ; convert row offset to character offset
 *      decide which buffer to update
-       coc  @eight,r3                  ; bit weight >08 determines the group
+       coc  @four,r3                   ; bit weight >04 determines the group
        jne  updnt2                     ; if not set we update buffer 2 or 3
        coc  @one,r3                    ; bit weight >01 determines the buffer
        jeq  updnt1
@@ -347,7 +338,7 @@ updnt3:
        ai   r0,name_table_3+8          ; add base address to character offset
 *      copy to vdp ram buffer
 updnt4:
-       li   r4,6                       ; number of rows to copy
+       li   r4,12                      ; number of rows to copy
        coc  @one,r3                    ; high or low character set copy?
        jeq  updnt6
 updnt5:
@@ -720,13 +711,13 @@ update_full_name_table:
        .proc
        mov  @frame,r3
        .push r3                        ; push current frame onto the stack
-       andi r3,>0008                   ; move to beginning of frame cycle (0 or 8)
+       andi r3,>0004                   ; move to beginning of frame cycle (0 or 4)
        mov  r3,@frame
 upntf1:
        bl   @update_name_table         ; call the incremental update routine
        inc  @frame                     ; next frame
        mov  @frame,r3
-       andi r3,>0007                   ; check for end of cycle
+       andi r3,>0003                   ; check for end of cycle
 ;      jne  upntf1                     ; For now we only need to draw the top part
 *      return
        dect r10                        ; pop frame off the stack
@@ -835,7 +826,7 @@ initial_screen:
        li   r2,55*8
        bl   @vmbw
        li   r0,pattern_table+>400      ; destination address in vdp ram
-       li   r1,PSTRIP+7                ; address of first scrolled pattern frame
+       li   r1,PSTRIP+6                ; address of first scrolled pattern frame
        mov  @tchnum,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload patterns 2nd part
@@ -844,7 +835,7 @@ initial_screen:
        li   r2,55*8
        bl   @vmbw
        li   r0,pattern_table_1         ; destination address in vdp ram
-       li   r1,PSTRIP+7                ; address of first scrolled pattern frame
+       li   r1,PSTRIP+6                ; address of first scrolled pattern frame
        mov  @tchnum,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload patterns 3rd part
@@ -853,7 +844,7 @@ initial_screen:
        li   r2,55*8
        bl   @vmbw
        li   r0,pattern_table_2         ; destination address in vdp ram
-       li   r1,PSTRIP+7                ; address of first scrolled pattern frame
+       li   r1,PSTRIP+6                ; address of first scrolled pattern frame
        mov  @tchnum,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload colors
@@ -862,7 +853,7 @@ initial_screen:
        li   r2,55*8
        bl   @vmbw
        LI   R0,color_table+>400        ; Destination address in VDP RAM
-       li   r1,CSTRIP+7                ; address of first scrolled color frame
+       li   r1,CSTRIP+6                ; address of first scrolled color frame
        mov  @tchnum,r2                 ; number of pattern colors of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Init name tables
@@ -921,8 +912,8 @@ one_time_init:
        li   r15,vdpwd
        li   r0,1
        mov  r0,@one
-       li   r0,8
-       mov  r0,@eight
+       li   r0,4
+       mov  r0,@four
        mov  @>83c0,@rand_no
 *      Clear scratchpad
        li   r0,padvar
@@ -975,7 +966,7 @@ graphics_mode_1:
 *      VDP registers
 vdp_registers:
        byte >02                        ; Graphics II mode
-       byte >c2                        ; 16K, display on, no interrupt
+       byte >e2                        ; 16K, display on, interrupt
        byte name_table_0/>400          ; Name table
        byte >9f                        ; Color table
        byte pattern_table/>800+>03     ; Pattern table x 3
