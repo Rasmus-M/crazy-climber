@@ -131,8 +131,8 @@ start  limi 0                          ; disable interrupts
 *      Init variables
        li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
-       clr  @scroll_dy
-       clr  @scroll_dy_old
+       dect  @scroll_dy
+       dect  @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
@@ -152,8 +152,6 @@ main_loop:
 *      Animate windows and faces
        bl   @animate_windows
        bl   @create_windows
-*      Display climber and other sprites
-       bl   @display_sprites
 *      Change scroll offset
        a    @scroll_dy,@scroll_y
        c    @scroll_dy,@scroll_dy_old
@@ -162,6 +160,8 @@ main_loop:
        bl   @update_full_name_table
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
+*      Display climber and other sprites
+       bl   @display_sprites
 *      Loop forever
        inc  @frame
        jmp  main_loop
@@ -718,7 +718,7 @@ upntf1:
        inc  @frame                     ; next frame
        mov  @frame,r3
        andi r3,>0003                   ; check for end of cycle
-;      jne  upntf1                     ; For now we only need to draw the top part
+;       jne  upntf1                     ; For now we only need to draw the top part
 *      return
        dect r10                        ; pop frame off the stack
        mov  *r10,@frame
@@ -825,7 +825,7 @@ initial_screen:
        li   r1,PAT65
        li   r2,55*8
        bl   @vmbw
-       li   r0,pattern_table+>400      ; destination address in vdp ram
+       li   r0,pattern_table           ; destination address in vdp ram
        li   r1,PSTRIP+6                ; address of first scrolled pattern frame
        mov  @tchnum,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
@@ -852,7 +852,7 @@ initial_screen:
        li   r1,COL65
        li   r2,55*8
        bl   @vmbw
-       LI   R0,color_table+>400        ; Destination address in VDP RAM
+       LI   r0,color_table             ; Destination address in VDP RAM
        li   r1,CSTRIP+6                ; address of first scrolled color frame
        mov  @tchnum,r2                 ; number of pattern colors of 8 bytes
        bl   @vm8bw8                    ; call copying routine
@@ -860,7 +860,6 @@ initial_screen:
        mov  @scroll_y,r4               ; get initial scroll offset in pixels
        srl  r4,3                       ; convert to row offset
        mov  r4,r5
-       sla  r4,5                       ; convert to name table offset
        mpy  @MS0,r5                    ; convert to map offset in r6
 *      Table 0
        li   r0,name_table_0
