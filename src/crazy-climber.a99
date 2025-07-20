@@ -132,7 +132,9 @@ start  limi 0                          ; disable interrupts
        li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
        clr  @scroll_dy
+       dect @scroll_dy
        clr  @scroll_dy_old
+       dect @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
@@ -163,8 +165,8 @@ main_loop:
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
 *      Update climber
-       bl   @control_climber
-;      bl   @animate_climber
+;       bl   @control_climber
+       bl   @animate_climber
 *      Loop forever
        inc  @frame
        jmp  main_loop
