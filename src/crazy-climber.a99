@@ -109,15 +109,15 @@ scroll_dy:
 scroll_dy_old:
        equ  scroll_dy+2                ; Scroll direction (1 or -1)
 left_anim_ptr:
-        equ  scroll_dy_old+2
+       equ  scroll_dy_old+2
 right_anim_ptr:
-        equ  left_anim_ptr+2
-left_anim_count:
+       equ  left_anim_ptr+2
+animation_count:
        equ  right_anim_ptr+2           ; Maximimum scroll offset
-right_anim_count:
-       equ  left_anim_count+2          ; Maximimum scroll offset
+animation_changed:
+       equ  animation_count+2           ; Maximimum scroll offset
 pad_max:
-        equ  right_anim_count+2
+       equ  animation_changed+2
 
 ********************************************************************************
 *
@@ -132,13 +132,12 @@ start  limi 0                          ; disable interrupts
        li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
        clr  @scroll_dy
-       dect @scroll_dy
        clr  @scroll_dy_old
-       dect @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
-       clr  @right_anim_ptr
+       li   r0,right_norm
+       mov  r0,@right_anim_ptr
 *      Display initial screen
        bl   @initial_screen
 *      Scroll loop
@@ -164,9 +163,8 @@ main_loop:
        bl   @update_full_name_table
        mov  @scroll_dy,@scroll_dy_old
 main_loop_1:
-*      Update climber
-;       bl   @control_climber
-       bl   @animate_climber
+*      Control climber
+       bl   @control_climber
 *      Loop forever
        inc  @frame
        jmp  main_loop
@@ -516,62 +514,55 @@ upntf1:
 *
 control_climber:
        .proc
-
-       .endproc
-*// control_climber
-
-*********************************************************************
-*
-* Animate climber
-*
-animate_climber:
-       .proc
-animate_climber_0:
-       mov  @left_anim_ptr,r0
-       jeq  animate_climber_3
-       mov  @left_anim_count,r1
-       jne  animate_climber_1
-       mov  *r0+,r1
-       jeq  animate_climber_2
-       mov  *r0+,r2
-       movb *r2,@sprite_attributes_head+2
-       mov  *r0+,@scroll_dy
-       mov  *r0+,@left_anim_count
-       mov  r0,@left_anim_ptr
+       clr  @animation_changed
+       mov  @animation_count,r1        ; Is an animation count already taking place?
+       jne  control_climber_3          ; Skip ahead if so
+       clr  @scroll_dy
+*      Left
+       mov  @left_anim_ptr,r3          ; Get pointer for left side animation
+       jeq  control_climber_1          ; Skip if zero
+       ci   r3,left_norm_last          ; Check if last
+       jeq  control_climber_1          ; Skip if last
+       li   r0,KEY_K                   ; Check down key
+       bl   @check_key
+       jeq  control_climber_1          ; Move on if not pressed
+       ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@left_anim_ptr          ; Save new pointer
+       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
+       mov  *r3+,r2                    ; Pointer to head/hands sprite pattern
+       mov  *r3+,@scroll_dy            ; Scroll increment for current frame
+       mov  *r3+,@animation_count      ; Animation count for current frame
        movb *r1+,@sprite_attributes_body+2
        movb *r1+,@sprite_attributes_body+6
-animate_climber_1:
-       dec  @left_anim_count
-       jmp  animate_climber_3
-animate_climber_2:
-       clr  @left_anim_ptr
-       li   r0,right_norm
-       mov  r0,@right_anim_ptr
-animate_climber_3:
-       mov  @right_anim_ptr,r0
-       jeq  animate_climber_6
-       mov  @right_anim_count,r1
-       jne  animate_climber_4
-       mov  *r0+,r1
-       jeq  animate_climber_5
-       mov  *r0+,r2
-       movb *r2,@sprite_attributes_head+6
-       mov  *r0+,@scroll_dy
-       mov  *r0+,@right_anim_count
-       mov  r0,@right_anim_ptr
+       movb *r2,@sprite_attributes_head+2
+       seto @animation_changed
+*      Right
+control_climber_1:
+       mov  @right_anim_ptr,r3         ; Get pointer for right side animation
+       jeq  control_climber_2          ; Skip if zero
+       ci   r3,right_norm_last         ; Check if last
+       jeq  control_climber_2          ; Skip if last
+       li   r0,KEY_D                   ; Check down key
+       bl   @check_key
+       jeq  control_climber_2          ; Move on if not pressed
+       ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@right_anim_ptr         ; Save new pointer
+       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
+       mov  *r3+,r2                    ; Pointer to head/hands sprite pattern
+       mov  *r3+,@scroll_dy            ; Scroll increment for current frame
+       mov  *r3+,@animation_count      ; Animation count for current frame
        movb *r1+,@sprite_attributes_body+10
        movb *r1+,@sprite_attributes_body+14
-animate_climber_4:
-       dec  @right_anim_count
-       jmp  animate_climber_6
-animate_climber_5:
-       clr  @right_anim_ptr
-       li   r0,left_norm
-       mov  r0,@left_anim_ptr
-       jmp  animate_climber_0
-animate_climber_6:
+       movb *r2,@sprite_attributes_head+6
+       seto @animation_changed
+control_climber_2:
+       abs  @animation_changed
+       jeq  control_climber_4
+control_climber_3:
+       dec  @animation_count
+control_climber_4:
        .endproc
-*// animate_climber
+*// control_climber
 
 *********************************************************************
 *

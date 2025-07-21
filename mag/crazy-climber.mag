@@ -261,11 +261,11 @@ CC:1|0
 CC:1|0
 * CHAR DEFS
 CH:ffffffffffffffff
-CH:ffffffffffffffff
-CH:3c7e3c7e3c7e3c7e
+CH:ffeffd7ffff7febf
+CH:3c3c7e7e3c3c7e7e
 CH:fff6eddbbfefdfbf
 CH:ffffffffffffffff
-CH:ffffffffffffffff
+CH:ffffffef7ffddfff
 CH:7f00ffffffffffff
 CH:fe00ffffffffffff
 CH:7f7f7e00ffffffff
@@ -276,8 +276,8 @@ CH:7f7f7f7d7b776f00
 CH:fefeeedebe7efe00
 CH:007f7f7d7b776e7f
 CH:00feeedebefefefe
-CH:7f00ffffffffffff
-CH:fe00ffffffffffff
+CH:7f00ffef7ffddfff
+CH:fe00ffef7ffddfff
 CH:0f1b333e17180f07
 CH:e0b098f8d030e0c0
 CH:00000f1b333e1718
@@ -2310,11 +2310,11 @@ CH:0000000000000000
 CH:0000000000000000
 * CHAR COLORS
 CO:7171717171717171
-CO:bbbbbbbbbbbbbbbb
+CO:bbbabababbbababa
 CO:6b6b6b6b6b6b6b6b
 CO:7b7f7f7f7f7f7f7f
 CO:1b1b1b1b1b1b1b1b
-CO:1010b0b0b0b0b0b0
+CO:1010b0bababababa
 CO:7f1f1b1b1b1b1b1b
 CO:7f1f1b1b1b1b1b1b
 CO:7f7f7f1f1b1b1b1b
@@ -2325,8 +2325,8 @@ CO:7f7f7f7f7f7f7f1f
 CO:7f7f7f7f7f7f7f1f
 CO:7f7f7f7f7f7f7f7f
 CO:7f7f7f7f7f7f7f7f
-CO:7f1fb0b0b0b0b0b0
-CO:7f1fb0b0b0b0b0b0
+CO:7f1fb0babababab0
+CO:7f1fb0babababab0
 CO:d1d1d1d1d1d1d1d1
 CO:d1d1d1d1d1d1d1d1
 CO:d1d1d1d1d1d1d1d1

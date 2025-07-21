@@ -127,11 +127,15 @@ spr_lft_bot_2nd_norm_4:
 spr_rgt_bot_2nd_norm_4:
        equ  >fc
 
+spr_anim_size:
+       equ  8
+
 climber_animations:
        data left_norm
        data right_norm
 
 left_norm:
+       data left_norm_0,left_2nd_norm_0,0,2
        data left_norm_1,left_2nd_norm_1,-2,2
        data left_norm_2,left_2nd_norm_2,-2,2
        data left_norm_3,left_2nd_norm_3,-2,2
@@ -139,10 +143,11 @@ left_norm:
        data left_norm_3,left_2nd_norm_3,0,2
        data left_norm_2,left_2nd_norm_2,0,2
        data left_norm_1,left_2nd_norm_1,0,2
+left_norm_last:
        data left_norm_0,left_2nd_norm_0,0,2
-       data 0
 
 right_norm:
+       data right_norm_0,right_2nd_norm_0,0,2
        data right_norm_1,right_2nd_norm_1,-2,2
        data right_norm_2,right_2nd_norm_2,-2,2
        data right_norm_3,right_2nd_norm_3,-2,2
@@ -150,8 +155,8 @@ right_norm:
        data right_norm_3,right_2nd_norm_3,0,2
        data right_norm_2,right_2nd_norm_2,0,2
        data right_norm_1,right_2nd_norm_1,0,2
+right_norm_last:
        data right_norm_0,right_2nd_norm_0,0,2
-       data 0
 
 left_norm_0:
        byte spr_lft_top_norm_1, spr_lft_bot_norm_1
