@@ -44,10 +44,6 @@ name_table_0:                          ; Name table base 0 (>0A)
        equ  >2800
 name_table_1:                          ; Name table base 1 (>0B)
        equ  >2C00
-name_table_2:                          ; Name table base 2 (>0C)
-       equ  >3000
-name_table_3:                          ; Name table base 3 (>0D)
-       equ  >3400
 sprite_attr_table:                     ; Sprite attribute table
        equ  >3700
 
@@ -106,10 +102,8 @@ scroll_y:                              ; Vertical scroll offset
        equ  frame+2
 scroll_dy:                             ; Scroll direction
        equ  scroll_y+2
-scroll_dy_old:                         ; Previous scroll direction
-       equ  scroll_dy+2
 left_anim_ptr:                         ; Left animation pointer
-       equ  scroll_dy_old+2
+       equ  scroll_dy+2
 right_anim_ptr:                        ; Right animation pointer
        equ  left_anim_ptr+2
 left_ascending:                        ; Flag: ascending on left side?
@@ -120,8 +114,10 @@ animation_count:                       ; Number of frames to repeat last animati
        equ  right_ascending+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
-pad_max:                               ; Max scratchpad address used
+vm8bw_pad:
        equ  animation_changed+2
+pad_max:                               ; Max scratchpad address used
+       equ  vm8bw_pad+24
 
 ********************************************************************************
 *
@@ -136,7 +132,6 @@ start  limi 0                          ; disable interrupts
        li   r0,>0bf6                   ; start at the bottom of the map
        mov  r0,@scroll_y
        clr  @scroll_dy
-       clr  @scroll_dy_old
        clr  @frame
        li   r0,left_norm
        mov  r0,@left_anim_ptr
@@ -152,23 +147,17 @@ main_loop:
        bl   @set_name_table
 *      Display sprites
        bl   @display_sprites
+*      Control climber
+       bl   @control_climber
+*      Change scroll offset
+       a    @scroll_dy,@scroll_y
+*      Animate windows and faces
+       bl   @animate_windows
+       bl   @create_windows
 *      Update patterns
        bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
-*      Animate windows and faces
-       bl   @animate_windows
-       bl   @create_windows
-*      Change scroll offset
-       a    @scroll_dy,@scroll_y
-       c    @scroll_dy,@scroll_dy_old
-       jeq  main_loop_1
-*      Update full name table when scroll increment changes
-       bl   @update_full_name_table
-       mov  @scroll_dy,@scroll_dy_old
-main_loop_1:
-*      Control climber
-       bl   @control_climber
 *      Loop forever
        inc  @frame
        jmp  main_loop
@@ -194,35 +183,18 @@ vsync1:
 *
 * Set name table
 *
-* Altenate between tables 0 and 1 in frames 0-3
-* Alternate between tables 2 and 3 in frames 4-7
+* Altenate between tables 0 and 1
 *
-* Tables 0 and 2 contain 'names' from the low character set (0-127)
-* Tables 1 and 3 contain 'names' from the high character set (128-255)
+* Tables 0 contain 'names' from the low character set (0-127)
+* Tables 1 contain 'names' from the high character set (128-255)
 *
-* Modifies R0
+* Modifies r0
 *
 set_name_table:
        .proc
        mov  @frame,r0                  ; Get frame
-       coc  @four,r0                   ; check which table set to use
-       jeq  setnt2
-       coc  @one,r0                    ; check which table to use
-       jeq  setnt1
-       li   r0,>020a                   ; namet0
-       jmp  setnt4
-setnt1:
-       li   r0,>020b                   ; namet1
-       jmp  setnt4
-setnt2:
-       coc  @one,r0                    ; check which table to use
-       jeq  setnt3
-       li   r0,>020c                   ; namet2
-       jmp  setnt4
-setnt3:
-       li   r0,>020d                   ; namet3
-*      update VR2
-setnt4:
+       andi r0,1
+       ai   r0,>020a
        bl   @vwtr
        .endproc
 *// set_name_table
@@ -255,18 +227,14 @@ display_sprites:
 *
 update_pattern_table:
        .proc
-       mov  @frame,r3                  ; Read frame into register
 *      Calculate VDP RAM destination address
-       coc  @one,r3                    ; check which character set to update
-       jeq  updpt1
-       li   r0,pattern_table+>400      ; update high character set (128-255)
-       jmp  updpt2
-updpt1:
-       li   r0,pattern_table           ; update low character set (128-255)
+       mov  @frame,r0                  ; Read frame into register
+       inv  r0
+       andi r0,1
+       sla  r0,10                      ; 0 or >400
+       ai   r0,pattern_table
 *      Calculate cpu ram source address
-updpt2:
-       mov  @scroll_y,r1               ; start with scroll offset
-       a    @scroll_dy,r1              ; add direction (0 or -2)
+       mov  @scroll_y,r1               ; scroll offset
        andi r1,>0007                   ; mod 8
        ai   r1,pstrip                  ; add base address of pattern strips
 *      Save calculated values
@@ -301,81 +269,37 @@ updpt2:
 *
 * Update name table off-screen buffer
 *
-* The prepared buffers have a one row (8 pixels) offset from
-* from the currently visible buffers, allowing a smooth transition
-* after we have scrolled 7 pixels.
-*
-* We altenate between updating table buffers 2 and 3 in frames 0-3
-* We alternate between updating table buffers 0 and 1 in frames 4-7
-*
-* Since we have 4 frames to update two buffers we need to update
-* 1/2 buffer each frame, i.e. 12 screen rows. First frame we update
-* rows 0-11 of the first buffer. Second frame we update the same 12
-* rows of the second buffer, but this time we set the most significant
-* bit to use the high character set. Third frame we update rows 12-23
-* of the first buffer, and so on.
-*
 * Modifies R0-R4
 *
 update_name_table:
        .proc
-       mov  @frame,r3                  ; Get frame
-*      Calculate row offset to the 1/2 of the buffer to update
-       mov  r3,r0                      ; start with frame number
-       andi r0,>0002                   ; transform to sequence: 0,0,2,2,0,0,2,2...
-       sla  r0,1                       ; transform to sequence: 0,0,4,4,0,0,4,4...
-       mov  r0,r2                      ; copy to r2
-       sla  r0,1                       ; multiply by 2: 0,0,8,8,0,0,8,8...
-       a    r0,r2                      ; add to r2 to multiply by 12 and get
-*                                      ; row offset: 0,0,12,12,0,0,12,12...
-       mov  r2,r0                      ; copy back into r0 for later
-*      Calculate map source address in R1
+*      Calculate map source address in r1
        mov  @scroll_y,r1               ; get scroll offset in pixels
        srl  r1,3                       ; divide by 8 to get row offset
-       mov  @scroll_dy,r4              ; 0 or -2
-       sra  r4,1                       ; 0 or -1
-       a    r4,r1                      ; prepared buffer has a 0 or 1 row offset
-       a    r2,r1                      ; add the row offset we calculated before
        mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
        li   r1,md0                     ; get the map base address
        a    r2,r1                      ; add the character offset
-*      calculate buffer destination address in r0
-       sla  r0,5                       ; convert row offset to character offset
-*      decide which buffer to update
-       coc  @four,r3                   ; bit weight >04 determines the group
-       jne  updnt2                     ; if not set we update buffer 2 or 3
-       coc  @one,r3                    ; bit weight >01 determines the buffer
-       jeq  updnt1
-       ai   r0,name_table_0+8          ; add base address to character offset
-       jmp  updnt4
-updnt1:
-       ai   r0,name_table_1+8          ; add base address to character offset
-       jmp  updnt4
-updnt2:
-       coc  @one,r3                    ; bit weight >01 determines the buffer
-       jeq  updnt3
-       ai   r0,name_table_2+8          ; add base address to character offset
-       jmp  updnt4
-updnt3:
-       ai   r0,name_table_3+8          ; add base address to character offset
-*      copy to vdp ram buffer
-updnt4:
-       li   r4,12                      ; number of rows to copy
-       coc  @one,r3                    ; high or low character set copy?
-       jeq  updnt6
-updnt5:
+       li   r4,24                      ; number of rows to copy
+*      Decide which buffer to update
+       mov  @frame,r0                  ; Read frame into register
+       andi r0,1
+       jeq  update_name_table_2
+*      Copy to vdp ram buffer
+       li   r0,name_table_0+8          ; VDP address
+update_name_table_1:
        bl   @copy_row                  ; low character set
        ai   r0,32
        dec  r4
-       jne  updnt5
-       jmp  updnt7
-updnt6:
+       jne  update_name_table_1
+       jmp  update_name_table_4
+update_name_table_2:
+       li   r0,name_table_1+8          ; VDP address
+update_name_table_3:
        bl   @copy_row_hi
        ai   r0,32
        dec  r4
-       jne  updnt6
-*      return
-updnt7:
+       jne  update_name_table_3
+update_name_table_4:
        .endproc
 *// update_name_table
 
@@ -440,7 +364,7 @@ animate_windows_5:
 *
 create_windows:
        .proc
-       mov  @frame,r0
+       mov  @frame,r0                  ; Only do this every 16th frame
        andi r0,>000f
        ci   r0,15
        jne  update_windows_2
@@ -483,37 +407,6 @@ update_windows_2:
 
 *********************************************************************
 *
-* Update full name table off-screen buffers
-*
-* If the direction of scrolling, @scroll_dy, is changed in the middle of
-* a frame cycle, the part of the off-screen buffers that has already
-* been prepared will become invalid. When scrolling up it should be safe
-* to change direction (to down) in frames 0 and 8, and when scrolling
-* down it should be safe to change direction (to up) in frames 7 and 15.
-* Otherwise this routine should be called.
-*
-* Modifies R0-R4
-*
-update_full_name_table:
-       .proc
-       mov  @frame,r3
-       .push r3                        ; push current frame onto the stack
-       andi r3,>0004                   ; move to beginning of frame cycle (0 or 4)
-       mov  r3,@frame
-upntf1:
-       bl   @update_name_table         ; call the incremental update routine
-       inc  @frame                     ; next frame
-       mov  @frame,r3
-       andi r3,>0003                   ; check for end of cycle
-;      jne  upntf1                     ; For now we only need to draw the top part
-*      return
-       dect r10                        ; pop frame off the stack
-       mov  *r10,@frame
-       .endproc
-*// update_full_name_table
-
-*********************************************************************
-*
 * Control climber
 *
 control_climber:
@@ -522,12 +415,6 @@ control_climber:
        jeq  control_climber_1          ; Skip ahead if not
        b    @control_climber_11        ; Branch to decrement counter
 control_climber_1:
-       mov  @frame,r0
-       andi r0,3
-       ci   r0,3
-       jeq  control_climber_2
-       b    @control_climber_12
-control_climber_2:
        clr  @animation_changed
        clr  @scroll_dy
 *      Left
@@ -962,16 +849,6 @@ inisc2:
        ai   r0,32
        dec  r7
        jne  inisc2
-*      Table 2
-       li   r0,name_table_2
-       li   r1,MD2
-       li   r2,>300
-       bl   @vmbw
-*      Table 3
-       li   r0,name_table_3
-       li   r1,MD2
-       li   r2,>300
-       bl   @vmbw
        .endproc
 *// initial_screen
 
@@ -991,6 +868,11 @@ one_time_init:
        li   r0,padvar
        li   r2,pad_max-padvar
        bl   @clear
+*      Copy code to scratchpad
+       li   r0,vm8bw1
+       li   r1,vm8bw_pad
+       li   r2,vm8bw1_end-vm8bw1
+       bl   @copy
 *      setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
@@ -1057,6 +939,18 @@ clear:
        jne  clear
        rt
 *// clear
+
+
+*********************************************************************
+*
+* Copy CPU memory
+*
+copy:
+       mov  *r0+,*r1+
+       dect r2
+       jne  copy
+       rt
+*// copy
 
 ***************************************************************************
 *

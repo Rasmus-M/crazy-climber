@@ -165,6 +165,8 @@ vm8bw:
 vm8bw0:
        .proc
        bl   @vwad                      ; setup write address
+       bl   @vm8bw_pad
+       .endproc
 vm8bw1:
        movb *r1+,*r15                  ; write byte to vdp ram
        movb *r1+,*r15                  ; repeat 2
@@ -177,7 +179,9 @@ vm8bw1:
        a    r3,r1                      ; skip source bytes
        dec  r2                         ; group counter
        jne  vm8bw1                     ; loop if not done
-       .endproc
+       rt
+vm8bw1_end:
+       equ  $
 *// vm8bw
 
 *********************************************************************
