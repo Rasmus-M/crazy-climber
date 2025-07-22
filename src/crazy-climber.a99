@@ -30,26 +30,26 @@ spchrd:
 
 
 *       VPD RAM Map
-pattern_table:
-       equ  >0000                      ; Pattern table base
-pattern_table_1:
-       equ  >0800                      ; Pattern table part 2
-pattern_table_2:
-       equ  >1000                      ; Pattern table part 3
-sprite_pattern_table:
-       equ  >1800                      ; Sprite pattern table (>03)
-color_table:
-       equ  >2000                      ; Color table base
-name_table_0:
-       equ  >2800                      ; Name table base 0 (>0A)
-name_table_1:
-       equ  >2C00                      ; Name table base 1 (>0B)
-name_table_2:
-       equ  >3000                      ; Name table base 2 (>0C)
-name_table_3:
-       equ  >3400                      ; Name table base 3 (>0D)
-sprite_attr_table:
-       equ  >3700                      ; Sprite attribute table (>6E)
+pattern_table:                         ; Pattern table base
+       equ  >0000
+pattern_table_1:                       ; Pattern table part 2
+       equ  >0800
+pattern_table_2:                       ; Pattern table part 3
+       equ  >1000
+sprite_pattern_table:                  ; Sprite pattern table
+       equ  >1800
+color_table:                           ; Color table base
+       equ  >2000
+name_table_0:                          ; Name table base 0 (>0A)
+       equ  >2800
+name_table_1:                          ; Name table base 1 (>0B)
+       equ  >2C00
+name_table_2:                          ; Name table base 2 (>0C)
+       equ  >3000
+name_table_3:                          ; Name table base 3 (>0D)
+       equ  >3400
+sprite_attr_table:                     ; Sprite attribute table
+       equ  >3700
 
 *      Constants
 map_width:
@@ -96,27 +96,31 @@ padvar:                                ; Start of pad variables
 *
 * Variables and data
 *
-rand_no:
+rand_no:                               ; Random number seed
        equ  padvar
-vdp_status:
+vdp_status:                            ; VDP status byte
        equ  rand_no+2
-frame:
+frame:                                 ; Frame counter
        equ  vdp_status+2
-scroll_y:
-       equ  frame+2                    ; Vertical scroll offset
-scroll_dy:
-       equ  scroll_y+2                 ; Scroll direction (1 or -1)
-scroll_dy_old:
-       equ  scroll_dy+2                ; Scroll direction (1 or -1)
-left_anim_ptr:
+scroll_y:                              ; Vertical scroll offset
+       equ  frame+2
+scroll_dy:                             ; Scroll direction
+       equ  scroll_y+2
+scroll_dy_old:                         ; Previous scroll direction
+       equ  scroll_dy+2
+left_anim_ptr:                         ; Left animation pointer
        equ  scroll_dy_old+2
-right_anim_ptr:
+right_anim_ptr:                        ; Right animation pointer
        equ  left_anim_ptr+2
-animation_count:
-       equ  right_anim_ptr+2           ; Maximimum scroll offset
-animation_changed:
-       equ  animation_count+2           ; Maximimum scroll offset
-pad_max:
+left_ascending:                        ; Flag: ascending on left side?
+       equ  right_anim_ptr+2
+right_ascending:                       ; Flag: ascending on right side?
+       equ  left_ascending+2
+animation_count:                       ; Number of frames to repeat last animation frame
+       equ  right_ascending+2
+animation_changed:                     ; Flag: did animation frame (left or right) change?
+       equ  animation_count+2
+pad_max:                               ; Max scratchpad address used
        equ  animation_changed+2
 
 ********************************************************************************
@@ -514,53 +518,111 @@ upntf1:
 *
 control_climber:
        .proc
-       clr  @animation_changed
        mov  @animation_count,r1        ; Is an animation count already taking place?
-       jne  control_climber_3          ; Skip ahead if so
+       jeq  control_climber_1          ; Skip ahead if not
+       b    @control_climber_11        ; Branch to decrement counter
+control_climber_1:
+       mov  @frame,r0
+       andi r0,3
+       ci   r0,3
+       jeq  control_climber_2
+       b    @control_climber_12
+control_climber_2:
+       clr  @animation_changed
        clr  @scroll_dy
 *      Left
        mov  @left_anim_ptr,r3          ; Get pointer for left side animation
-       jeq  control_climber_1          ; Skip if zero
-       ci   r3,left_norm_last          ; Check if last
-       jeq  control_climber_1          ; Skip if last
-       li   r0,KEY_K                   ; Check down key
-       bl   @check_key
-       jeq  control_climber_1          ; Move on if not pressed
-       ai   r3,spr_anim_size           ; Next frame
-       mov  r3,@left_anim_ptr          ; Save new pointer
-       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
-       mov  *r3+,r2                    ; Pointer to head/hands sprite pattern
-       mov  *r3+,@scroll_dy            ; Scroll increment for current frame
-       mov  *r3+,@animation_count      ; Animation count for current frame
-       movb *r1+,@sprite_attributes_body+2
-       movb *r1+,@sprite_attributes_body+6
-       movb *r2,@sprite_attributes_head+2
-       seto @animation_changed
-*      Right
-control_climber_1:
-       mov  @right_anim_ptr,r3         ; Get pointer for right side animation
-       jeq  control_climber_2          ; Skip if zero
-       ci   r3,right_norm_last         ; Check if last
-       jeq  control_climber_2          ; Skip if last
+*      Left maybe check down
+       ci   r3,left_norm_last          ; Last frame?
+       jeq  control_climber_4
+*      Left check down
        li   r0,KEY_D                   ; Check down key
        bl   @check_key
-       jeq  control_climber_2          ; Move on if not pressed
+       jeq  control_climber_4          ; Move on if not pressed
+       ci   r3,left_norm               ; Is it the first frame
+       jne  control_climber_3          ; No - move on
+       seto @left_ascending            ; Yes - set ascending flag
+control_climber_3:
+       ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@left_anim_ptr          ; Save new pointer
+       mov  @left_ascending,r0         ; Ascending?
+       jeq  control_climber_5
+       li   r0,-2                      ; Yes - scroll down 2 pixels
+       mov  r0,@scroll_dy
+       ci   r3,left_norm_last          ; Is it now the last frame?
+       jne  control_climber_5          ; No - move on
+       clr  @left_ascending            ; Yes - clear ascending flag
+       jmp  control_climber_5
+control_climber_4:
+*      Left, maybe check up
+       ci   r3,left_norm               ; First frame?
+       jeq  control_climber_6
+       mov  @left_ascending,r0
+       jne  control_climber_6          ; Can't descend again while ascending
+*      Left, check up
+       li   r0,KEY_E                   ; Check up key
+       bl   @check_key
+       jeq  control_climber_6          ; Move on if not pressed
+       ai   r3,-spr_anim_size          ; Previous frame
+       mov  r3,@left_anim_ptr          ; Save new pointer
+control_climber_5:
+       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
+       movb *r1+,@sprite_attributes_body+2
+       movb *r1,@sprite_attributes_body+6
+       mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
+       movb *r1,@sprite_attributes_head+2
+       inct @animation_count           ; Animation count = 2
+       seto @animation_changed
+*      Right
+control_climber_6:
+       mov  @right_anim_ptr,r3          ; Get pointer for right side animation
+*      Right, maybe check down
+       ci   r3,right_norm_last          ; Last frame?
+       jeq  control_climber_8
+*      Right check down
+       li   r0,KEY_K                   ; Check down key
+       bl   @check_key
+       jeq  control_climber_8          ; Move on if not pressed
+       ci   r3,right_norm              ; Is it the first frame
+       jne  control_climber_7          ; No - move on
+       seto @right_ascending           ; Yes - climber is ascending
+control_climber_7:
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@right_anim_ptr         ; Save new pointer
+       mov  @right_ascending,r0
+       jeq  control_climber_9
+       li   r0,-2                      ; Scroll down 2 pixels
+       mov  r0,@scroll_dy
+       ci   r3,right_norm_last         ; Is it now the last frame?
+       jne  control_climber_9          ; No - move on
+       clr  @right_ascending           ; Yes - climber has stopped ascending
+       jmp  control_climber_9
+control_climber_8:
+*      Right, maybe check up
+       ci   r3,right_norm              ; First frame?
+       jeq  control_climber_10
+       mov  @right_ascending,r0
+       jne  control_climber_10         ; Can't descend again while ascending
+*      Right, check up
+       li   r0,KEY_I                   ; Check up key
+       bl   @check_key
+       jeq  control_climber_10         ; Move on if not pressed
+       ai   r3,-spr_anim_size          ; Previous frame
+       mov  r3,@right_anim_ptr         ; Save new pointer
+control_climber_9:
        mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
-       mov  *r3+,r2                    ; Pointer to head/hands sprite pattern
-       mov  *r3+,@scroll_dy            ; Scroll increment for current frame
-       mov  *r3+,@animation_count      ; Animation count for current frame
        movb *r1+,@sprite_attributes_body+10
-       movb *r1+,@sprite_attributes_body+14
-       movb *r2,@sprite_attributes_head+6
+       movb *r1,@sprite_attributes_body+14
+       mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
+       movb *r1,@sprite_attributes_head+6
+       inct @animation_count           ; Animation count = 2
        seto @animation_changed
-control_climber_2:
+control_climber_10:
        abs  @animation_changed
-       jeq  control_climber_4
-control_climber_3:
+       jeq  control_climber_12
+control_climber_11:
        dec  @animation_count
-control_climber_4:
+control_climber_12:
        .endproc
 *// control_climber
 
