@@ -118,36 +118,36 @@ spr_unused_1:
        equ  >e8
 spr_unused_2:
        equ  >ec
-spr_lft_bot_2nd_wide_3:
+spr_lft_bot_2nd_wide_5:
        equ  >f0
-spr_rgt_bot_2nd_wide_3:
+spr_rgt_bot_2nd_wide_5:
        equ  >f4
-spr_lft_bot_2nd_norm_4:
+spr_lft_bot_2nd_norm_5:
        equ  >f8
-spr_rgt_bot_2nd_norm_4:
+spr_rgt_bot_2nd_norm_5:
        equ  >fc
 
 spr_anim_size:
-       equ  4
+       equ  8
 
 climber_animations:
-       data left_norm
-       data right_norm
+       data left_anim
+       data right_anim
 
-left_norm:
-       data left_norm_0,left_2nd_norm_0
-       data left_norm_1,left_2nd_norm_1
-       data left_norm_2,left_2nd_norm_2
-       data left_norm_3,left_2nd_norm_3
-left_norm_last:
-       data left_norm_4,left_2nd_norm_4
-right_norm:
-       data right_norm_0,right_2nd_norm_0
-       data right_norm_1,right_2nd_norm_1
-       data right_norm_2,right_2nd_norm_2
-       data right_norm_3,right_2nd_norm_3
-right_norm_last:
-       data right_norm_4,right_2nd_norm_4
+left_anim:
+       data left_norm_0,left_2nd_norm_0,left_wide_0,left_2nd_wide_0
+       data left_norm_1,left_2nd_norm_1,left_wide_1,left_2nd_wide_1
+       data left_norm_2,left_2nd_norm_2,left_wide_2,left_2nd_wide_2
+       data left_norm_3,left_2nd_norm_3,left_wide_3,left_2nd_wide_3
+left_anim_last:
+       data left_norm_4,left_2nd_norm_4,left_wide_4,left_2nd_wide_4
+right_anim:
+       data right_norm_0,right_2nd_norm_0,right_wide_0,right_2nd_wide_0
+       data right_norm_1,right_2nd_norm_1,right_wide_1,right_2nd_wide_1
+       data right_norm_2,right_2nd_norm_2,right_wide_2,right_2nd_wide_2
+       data right_norm_3,right_2nd_norm_3,right_wide_3,right_2nd_wide_3
+right_anim_last:
+       data right_norm_4,right_2nd_norm_4,right_wide_4,right_2nd_wide_4
 
 left_norm_0:
        byte spr_lft_top_norm_1, spr_lft_bot_norm_1
@@ -160,6 +160,17 @@ left_norm_3:
 left_norm_4:
        byte spr_lft_top_norm_5, spr_lft_bot_norm_4
 
+left_wide_0:
+       byte spr_lft_top_wide_1, spr_lft_bot_wide_1
+left_wide_1:
+       byte spr_lft_top_wide_2, spr_lft_bot_wide_2
+left_wide_2:
+       byte spr_lft_top_wide_3, spr_lft_bot_wide_3
+left_wide_3:
+       byte spr_lft_top_wide_4, spr_lft_bot_wide_2
+left_wide_4:
+       byte spr_lft_top_wide_5, spr_lft_bot_wide_4
+
 right_norm_0:
        byte spr_rgt_top_norm_1, spr_rgt_bot_norm_1
 right_norm_1:
@@ -171,24 +182,57 @@ right_norm_3:
 right_norm_4:
        byte spr_rgt_top_norm_5, spr_rgt_bot_norm_4
 
+right_wide_0:
+       byte spr_rgt_top_wide_1, spr_rgt_bot_wide_1
+right_wide_1:
+       byte spr_rgt_top_wide_2, spr_rgt_bot_wide_2
+right_wide_2:
+       byte spr_rgt_top_wide_3, spr_rgt_bot_wide_3
+right_wide_3:
+       byte spr_rgt_top_wide_4, spr_rgt_bot_wide_2
+right_wide_4:
+       byte spr_rgt_top_wide_5, spr_rgt_bot_wide_4
+
 left_2nd_norm_0:
-       byte spr_lft_top_2nd_norm_1
+       byte spr_lft_top_2nd_norm_1, 0
 left_2nd_norm_1:
-       byte spr_lft_top_2nd_norm_2
+       byte spr_lft_top_2nd_norm_2, 0
 left_2nd_norm_2:
-       byte spr_lft_top_2nd_norm_3
+       byte spr_lft_top_2nd_norm_3, 0
 left_2nd_norm_3:
-       byte spr_lft_top_2nd_norm_4
+       byte spr_lft_top_2nd_norm_4, 0
 left_2nd_norm_4:
-       byte spr_lft_top_2nd_norm_5
+       byte spr_lft_top_2nd_norm_5, spr_lft_bot_2nd_norm_5
+
+left_2nd_wide_0:
+       byte spr_lft_top_2nd_wide_1, 0
+left_2nd_wide_1:
+       byte spr_lft_top_2nd_wide_2, 0
+left_2nd_wide_2:
+       byte spr_lft_top_2nd_wide_3, 0
+left_2nd_wide_3:
+       byte spr_lft_top_2nd_wide_4, 0
+left_2nd_wide_4:
+       byte spr_lft_top_2nd_norm_5, spr_lft_bot_2nd_wide_5
 
 right_2nd_norm_0:
-       byte spr_rgt_top_2nd_norm_1
+       byte spr_rgt_top_2nd_norm_1, 0
 right_2nd_norm_1:
-       byte spr_rgt_top_2nd_norm_2
+       byte spr_rgt_top_2nd_norm_2, 0
 right_2nd_norm_2:
-       byte spr_rgt_top_2nd_norm_3
+       byte spr_rgt_top_2nd_norm_3, 0
 right_2nd_norm_3:
-       byte spr_rgt_top_2nd_norm_4
+       byte spr_rgt_top_2nd_norm_4, 0
 right_2nd_norm_4:
-       byte spr_rgt_top_2nd_norm_5
+       byte spr_rgt_top_2nd_norm_5, spr_rgt_bot_2nd_norm_5
+
+right_2nd_wide_0:
+       byte spr_rgt_top_2nd_wide_1, 0
+right_2nd_wide_1:
+       byte spr_rgt_top_2nd_wide_2, 0
+right_2nd_wide_2:
+       byte spr_rgt_top_2nd_wide_3, 0
+right_2nd_wide_3:
+       byte spr_rgt_top_2nd_wide_4, 0
+right_2nd_wide_4:
+       byte spr_rgt_top_2nd_norm_5, spr_rgt_bot_2nd_wide_5

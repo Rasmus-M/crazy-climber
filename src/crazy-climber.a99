@@ -81,13 +81,13 @@ padcon:
        equ  stack+>16                  ; Start of pad constants
 one:
        equ  padcon
-four:
+two:
        equ  padcon+2
 **
 * PAD variables
 *
 padvar:                                ; Start of pad variables
-       equ  four+2
+       equ  two+2
 *********************************************************************
 *
 * Variables and data
@@ -110,8 +110,16 @@ left_ascending:                        ; Flag: ascending on left side?
        equ  right_anim_ptr+2
 right_ascending:                       ; Flag: ascending on right side?
        equ  left_ascending+2
-animation_count:                       ; Number of frames to repeat last animation frame
+left_grip:                             ; Flag: ascending on left side?
        equ  right_ascending+2
+right_grip:                            ; Flag: ascending on right side?
+       equ  left_grip+2
+left_wide:                             ; Flag: ascending on left side?
+       equ  right_grip+2
+right_wide:                            ; Flag: ascending on right side?
+       equ  left_wide+2
+animation_count:                       ; Number of frames to repeat last animation frame
+       equ  right_wide+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
 vm8bw_pad:
@@ -133,9 +141,9 @@ start  limi 0                          ; disable interrupts
        mov  r0,@scroll_y
        clr  @scroll_dy
        clr  @frame
-       li   r0,left_norm
+       li   r0,left_anim
        mov  r0,@left_anim_ptr
-       li   r0,right_norm
+       li   r0,right_anim
        mov  r0,@right_anim_ptr
 *      Display initial screen
        bl   @initial_screen
@@ -420,13 +428,13 @@ control_climber_1:
 *      Left
        mov  @left_anim_ptr,r3          ; Get pointer for left side animation
 *      Left maybe check down
-       ci   r3,left_norm_last          ; Last frame?
+       ci   r3,left_anim_last          ; Last frame?
        jeq  control_climber_4
 *      Left check down
        li   r0,KEY_D                   ; Check down key
        bl   @check_key
        jeq  control_climber_4          ; Move on if not pressed
-       ci   r3,left_norm               ; Is it the first frame
+       ci   r3,left_anim               ; Is it the first frame
        jne  control_climber_3          ; No - move on
        seto @left_ascending            ; Yes - set ascending flag
 control_climber_3:
@@ -436,13 +444,13 @@ control_climber_3:
        jeq  control_climber_5
        li   r0,-2                      ; Yes - scroll down 2 pixels
        mov  r0,@scroll_dy
-       ci   r3,left_norm_last          ; Is it now the last frame?
+       ci   r3,left_anim_last          ; Is it now the last frame?
        jne  control_climber_5          ; No - move on
        clr  @left_ascending            ; Yes - clear ascending flag
        jmp  control_climber_5
 control_climber_4:
 *      Left, maybe check up
-       ci   r3,left_norm               ; First frame?
+       ci   r3,left_anim               ; First frame?
        jeq  control_climber_6
        mov  @left_ascending,r0
        jne  control_climber_6          ; Can't descend again while ascending
@@ -458,19 +466,19 @@ control_climber_5:
        movb *r1,@sprite_attributes_body+6
        mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
        movb *r1,@sprite_attributes_head+2
-       inct @animation_count           ; Animation count = 2
+       mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
 *      Right
 control_climber_6:
-       mov  @right_anim_ptr,r3          ; Get pointer for right side animation
+       mov  @right_anim_ptr,r3         ; Get pointer for right side animation
 *      Right, maybe check down
-       ci   r3,right_norm_last          ; Last frame?
+       ci   r3,right_anim_last         ; Last frame?
        jeq  control_climber_8
 *      Right check down
        li   r0,KEY_K                   ; Check down key
        bl   @check_key
        jeq  control_climber_8          ; Move on if not pressed
-       ci   r3,right_norm              ; Is it the first frame
+       ci   r3,right_anim              ; Is it the first frame
        jne  control_climber_7          ; No - move on
        seto @right_ascending           ; Yes - climber is ascending
 control_climber_7:
@@ -480,13 +488,13 @@ control_climber_7:
        jeq  control_climber_9
        li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
-       ci   r3,right_norm_last         ; Is it now the last frame?
+       ci   r3,right_anim_last         ; Is it now the last frame?
        jne  control_climber_9          ; No - move on
        clr  @right_ascending           ; Yes - climber has stopped ascending
        jmp  control_climber_9
 control_climber_8:
 *      Right, maybe check up
-       ci   r3,right_norm              ; First frame?
+       ci   r3,right_anim              ; First frame?
        jeq  control_climber_10
        mov  @right_ascending,r0
        jne  control_climber_10         ; Can't descend again while ascending
@@ -502,7 +510,7 @@ control_climber_9:
        movb *r1,@sprite_attributes_body+14
        mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
        movb *r1,@sprite_attributes_head+6
-       inct @animation_count           ; Animation count = 2
+       mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
 control_climber_10:
        abs  @animation_changed
@@ -529,7 +537,8 @@ display_climber_sprites_1:
        li   r1,sprite_attributes_head
        li   r2,3
 display_climber_sprites_2:
-       bl   @vdp_copy
+       clr  r3
+       bl   @vm8bw_pad
        .endproc
 *// display_climber_sprites
 
@@ -613,7 +622,7 @@ plant_handler:
        movb r0,*r15
        mov  @sprite_y(r3),r0
        s    @scroll_dy,r0
-       inc  r0
+       inct r0
        mov  r0,@sprite_y(r3)
        ci   r0,194
        jl   plant_handler_1
@@ -861,8 +870,8 @@ one_time_init:
        li   r15,vdpwd
        li   r0,1
        mov  r0,@one
-       li   r0,4
-       mov  r0,@four
+       li   r0,2
+       mov  r0,@two
        mov  @>83c0,@rand_no
 *      Clear scratchpad
        li   r0,padvar
