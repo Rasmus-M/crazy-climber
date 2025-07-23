@@ -441,9 +441,19 @@ control_climber_3:
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@left_anim_ptr          ; Save new pointer
        mov  @left_ascending,r0         ; Ascending?
-       jeq  control_climber_5
+       jeq  control_climber_5          ; No - move on
+       mov  @right_ascending,r0
+       jeq  control_climber_3a
+       mov  r3,r4
+       ai   r4,-left_anim
+       mov  @right_anim_ptr,r5
+       ai   r5,-right_anim
+       c    r4,r5
+       jle  control_climber_3b
+control_climber_3a:
        li   r0,-2                      ; Yes - scroll down 2 pixels
        mov  r0,@scroll_dy
+control_climber_3b:
        ci   r3,left_anim_last          ; Is it now the last frame?
        jne  control_climber_5          ; No - move on
        clr  @left_ascending            ; Yes - clear ascending flag
@@ -463,8 +473,9 @@ control_climber_4:
 control_climber_5:
        mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
        movb *r1+,@sprite_attributes_body+2
-       movb *r1,@sprite_attributes_body+6
+       movb *r1,@sprite_attributes_body+10
        mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
+       movb *r1+,@sprite_attributes_head+10
        movb *r1,@sprite_attributes_head+2
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
@@ -484,10 +495,20 @@ control_climber_6:
 control_climber_7:
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@right_anim_ptr         ; Save new pointer
-       mov  @right_ascending,r0
-       jeq  control_climber_9
+       mov  @right_ascending,r0        ; Ascending?
+       jeq  control_climber_9          ; No - move on
+       mov  @left_ascending,r0
+       jeq  control_climber_7a
+       mov  r3,r4
+       ai   r4,-right_anim
+       mov  @left_anim_ptr,r5
+       ai   r5,-left_anim
+       c    r4,r5
+       jle  control_climber_7b
+control_climber_7a:
        li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
+control_climber_7b:
        ci   r3,right_anim_last         ; Is it now the last frame?
        jne  control_climber_9          ; No - move on
        clr  @right_ascending           ; Yes - climber has stopped ascending
@@ -506,9 +527,10 @@ control_climber_8:
        mov  r3,@right_anim_ptr         ; Save new pointer
 control_climber_9:
        mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
-       movb *r1+,@sprite_attributes_body+10
+       movb *r1+,@sprite_attributes_body+6
        movb *r1,@sprite_attributes_body+14
        mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
+       movb *r1+,@sprite_attributes_head+14
        movb *r1,@sprite_attributes_head+6
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
@@ -532,11 +554,27 @@ display_climber_sprites:
        jeq  display_climber_sprites_1
        li   r1,sprite_attributes_body
        li   r2,2
-       jmp  display_climber_sprites_2
+       jmp  display_climber_sprites_4
 display_climber_sprites_1:
-       li   r1,sprite_attributes_head
-       li   r2,3
+       movb @sprite_attributes_head+2,r0
+       jeq  display_climber_sprites_2
+       li   r0,sprite_attributes_head
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
 display_climber_sprites_2:
+       movb @sprite_attributes_head+6,r0
+       jeq  display_climber_sprites_3
+       li   r0,sprite_attributes_head+4
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+display_climber_sprites_3:
+       li   r1,sprite_attributes_head+8
+       li   r2,3
+display_climber_sprites_4:
        clr  r3
        bl   @vm8bw_pad
        .endproc
@@ -1086,12 +1124,14 @@ byte_open:
        byte >36
 
 sprite_attributes_head:
+       byte >6f,>a8,0,>06
+       byte >6f,>b8,0,>06
        byte >5f,>a8,spr_lft_top_2nd_norm_1,>06
        byte >5f,>b8,spr_rgt_top_2nd_norm_1,>06
 sprite_attributes_body:
        byte >5f,>a8,spr_lft_top_norm_1,>02
-       byte >6f,>a8,spr_lft_bot_norm_1,>02
        byte >5f,>b8,spr_rgt_top_norm_1,>02
+       byte >6f,>a8,spr_lft_bot_norm_1,>02
        byte >6f,>b8,spr_rgt_bot_norm_1,>02
 
 sprite_handler:
