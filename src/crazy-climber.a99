@@ -455,7 +455,7 @@ check_grip_2:
 
 *********************************************************************
 *
-* Control climber
+* Control climber vertically
 *
 control_climber:
        .proc
@@ -470,7 +470,7 @@ control_climber_1:
 *      Left maybe check down
        ci   r3,left_anim_last          ; Last frame?
        jeq  control_climber_4
-*      Left check down
+*      Left, not last frame, check down
        li   r0,KEY_D                   ; Check down key
        bl   @check_key
        jeq  control_climber_4          ; Move on if not pressed
@@ -492,7 +492,7 @@ control_climber_3b:
        clr  @left_ascending            ; Yes - clear ascending flag
        jmp  control_climber_5
 control_climber_4:
-*      Left, maybe check up
+*      Left, last frame, maybe check up
        ci   r3,left_anim               ; First frame?
        jeq  control_climber_6
        mov  @left_ascending,r0
@@ -513,7 +513,7 @@ control_climber_6:
 *      Right, maybe check down
        ci   r3,right_anim_last         ; Last frame?
        jeq  control_climber_8
-*      Right check down
+*      Right, not last frame, check down
        li   r0,KEY_K                   ; Check down key
        bl   @check_key
        jeq  control_climber_8          ; Move on if not pressed
@@ -535,7 +535,7 @@ control_climber_7b:
        clr  @right_ascending           ; Yes - climber has stopped ascending
        jmp  control_climber_9
 control_climber_8:
-*      Right, maybe check up
+*      Right, last frame, maybe check up
        ci   r3,right_anim              ; First frame?
        jeq  control_climber_10
        mov  @right_ascending,r0
@@ -956,6 +956,27 @@ window_screen_coords:
        ai   r1,top_window_row_y
        rt
 *// window_screen_coords
+
+*********************************************************************
+*
+* Checks whether r2 points to an open window in the map
+*
+* On return EQ means that window is open. r1 is modified.
+*
+is_open_window:
+       movb *r2,r1
+       srl  r1,8
+       sla  r1,2
+       mov  @TCHARS(r1),r1
+       cb   @b_window_open_bottom,r1
+       jeq  is_open_window_1
+       swpb r1
+       cb   @b_window_open_bottom,r1
+is_open_window_1:
+       rt
+b_window_open_bottom:
+       byte >05,>05
+*// is_open_window
 
 *********************************************************************
 *
