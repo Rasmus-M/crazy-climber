@@ -102,21 +102,25 @@ scroll_y:                              ; Vertical scroll offset
        equ  frame+2
 scroll_dy:                             ; Scroll direction
        equ  scroll_y+2
-left_anim_ptr:                         ; Left animation pointer
+climber_x:                             ; Climber x position in screen coordinates
        equ  scroll_dy+2
+climber_y:                             ; Climber y position in screen coordinates
+       equ  climber_x+2
+left_anim_ptr:                         ; Left animation pointer
+       equ  climber_y+2
 right_anim_ptr:                        ; Right animation pointer
        equ  left_anim_ptr+2
 left_ascending:                        ; Flag: ascending on left side?
        equ  right_anim_ptr+2
 right_ascending:                       ; Flag: ascending on right side?
        equ  left_ascending+2
-left_grip:                             ; Flag: ascending on left side?
+left_grip:                             ; Flag: has grip on left side?
        equ  right_ascending+2
-right_grip:                            ; Flag: ascending on right side?
+right_grip:                            ; Flag: has grip on right side?
        equ  left_grip+2
-left_wide:                             ; Flag: ascending on left side?
+left_wide:                             ; Flag: wide on left side?
        equ  right_grip+2
-right_wide:                            ; Flag: ascending on right side?
+right_wide:                            ; Flag: wide on right side?
        equ  left_wide+2
 animation_count:                       ; Number of frames to repeat last animation frame
        equ  right_wide+2
@@ -141,6 +145,10 @@ start  limi 0                          ; disable interrupts
        mov  r0,@scroll_y
        clr  @scroll_dy
        clr  @frame
+       li   r0,>a800
+       mov  r0,@climber_x
+       li   r0,>5f00
+       mov  r0,@climber_y
        li   r0,left_anim
        mov  r0,@left_anim_ptr
        li   r0,right_anim
@@ -157,6 +165,7 @@ main_loop:
        bl   @display_sprites
 *      Control climber
        bl   @control_climber
+       bl   @control_climber_horz
 *      Change scroll offset
        a    @scroll_dy,@scroll_y
 *      Animate windows and faces
@@ -471,12 +480,7 @@ control_climber_4:
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@left_anim_ptr          ; Save new pointer
 control_climber_5:
-       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
-       movb *r1+,@sprite_attributes_body+2
-       movb *r1,@sprite_attributes_body+10
-       mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
-       movb *r1+,@sprite_attributes_head+10
-       movb *r1,@sprite_attributes_head+2
+       bl   @update_climber_attrs_left
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
 *      Right
@@ -526,12 +530,7 @@ control_climber_8:
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@right_anim_ptr         ; Save new pointer
 control_climber_9:
-       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
-       movb *r1+,@sprite_attributes_body+6
-       movb *r1,@sprite_attributes_body+14
-       mov  *r3+,r1                    ; Pointer to head/hands sprite pattern
-       movb *r1+,@sprite_attributes_head+14
-       movb *r1,@sprite_attributes_head+6
+       bl   @update_climber_attrs_right
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
 control_climber_10:
@@ -542,6 +541,148 @@ control_climber_11:
 control_climber_12:
        .endproc
 *// control_climber
+
+*********************************************************************
+*
+* Update left climber attributes
+*
+update_climber_attrs_left:
+       mov  @left_anim_ptr,r3
+       mov  @left_wide,r0
+       jeq  update_climber_attrs_left_1
+       ai   r3,4                       ; Move to wide patterns
+update_climber_attrs_left_1:
+       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
+       movb *r1+,@sprite_attributes_body+2
+       movb *r1,@sprite_attributes_body+10
+       mov  *r3,r1                     ; Pointer to head/hands sprite pattern
+       movb *r1+,@sprite_attributes_head+10
+       movb *r1,@sprite_attributes_head+2
+*      Update x
+       mov  @climber_x,r0
+       movb r0,@sprite_attributes_head+1
+       movb r0,@sprite_attributes_head+9
+       movb r0,@sprite_attributes_body+1
+       movb r0,@sprite_attributes_body+9
+       rt
+*// update_climber_attrs_left
+
+*********************************************************************
+*
+* Update right climber attributes
+*
+update_climber_attrs_right:
+       mov  @right_anim_ptr,r3
+       mov  @right_wide,r0
+       jeq  update_climber_attrs_right_1
+       ai   r3,4                       ; Move to wide patterns
+update_climber_attrs_right_1:
+       mov  *r3+,r1                    ; Pointer to top/bottom body sprite patterns
+       movb *r1+,@sprite_attributes_body+6
+       movb *r1,@sprite_attributes_body+14
+       mov  *r3,r1                     ; Pointer to head/hands sprite pattern
+       movb *r1+,@sprite_attributes_head+14
+       movb *r1,@sprite_attributes_head+6
+*      Update x
+       mov  @climber_x,r0
+       ai   r0,>1000
+       movb r0,@sprite_attributes_head+5
+       movb r0,@sprite_attributes_head+13
+       movb r0,@sprite_attributes_body+5
+       movb r0,@sprite_attributes_body+13
+       rt
+*// update_climber_attrs_right
+
+*********************************************************************
+*
+* Control climber horizontal
+*
+control_climber_horz:
+       .proc
+       mov  @animation_count,r1        ; Is an animation count already taking place?
+       jne  control_climber_horz_11    ; Skip ahead if so
+*      Left
+       abs  @left_wide
+       jne  control_climber_horz_1
+*      Left is normal
+       li   r0,KEY_S
+       bl   @check_key
+       jeq  control_climber_horz_5
+       seto @left_wide                 ; Make left wide
+       jmp  control_climber_horz_4
+*      Left is wide
+control_climber_horz_1:
+       abs  @right_wide
+       jne  control_climber_horz_3
+*      Left is wide and right is normal
+       li   r0,KEY_S
+       bl   @check_key
+       jeq  control_climber_horz_2
+       seto @right_wide                ; Make right wide
+       li   r0,>0800                   ; Move 8 pixels left
+       s    r0,@climber_x
+       jmp  control_climber_horz_9
+control_climber_horz_2:
+       li   r0,KEY_F
+       bl   @check_key
+       jeq  control_climber_horz_5
+       clr  @left_wide                 ; Make left normal
+       jmp  control_climber_horz_4
+*      Left is wide and right is wide
+control_climber_horz_3:
+       li   r0,KEY_F
+       bl   @check_key
+       jeq  control_climber_horz_5
+       clr  @right_wide                ; Make right normal
+       li   r0,>0800                   ; Move 8 pixels right
+       a    r0,@climber_x
+       jmp  control_climber_horz_9
+control_climber_horz_4:
+       bl   @update_climber_attrs_left
+       jmp  control_climber_horz_11
+*      Right
+control_climber_horz_5:
+       abs  @right_wide
+       jne  control_climber_horz_6
+*      Right is normal
+       li   r0,KEY_L
+       bl   @check_key
+       jeq  control_climber_horz_11
+       seto @right_wide                 ; Make right wide
+       jmp  control_climber_horz_10
+*      Right is wide
+control_climber_horz_6:
+       abs  @left_wide
+       jne  control_climber_horz_8
+*      Right is wide and left is normal
+       li   r0,KEY_L
+       bl   @check_key
+       jeq  control_climber_horz_7
+       seto @left_wide                 ; Make left wide
+       li   r0,>0800                   ; Move 8 pixels right
+       a    r0,@climber_x
+       jmp  control_climber_horz_9
+control_climber_horz_7:
+       li   r0,KEY_J
+       bl   @check_key
+       jeq  control_climber_horz_11
+       clr  @right_wide                 ; Make right normal
+       jmp  control_climber_horz_10
+*      Right is wide and left is wide
+control_climber_horz_8:
+       li   r0,KEY_J
+       bl   @check_key
+       jeq  control_climber_horz_11
+       clr  @left_wide                 ; Make left normal
+       li   r0,>0800                   ; Move 8 pixels left
+       s    r0,@climber_x
+control_climber_horz_9:
+       bl   @update_climber_attrs_left
+control_climber_horz_10:
+       bl   @update_climber_attrs_right
+control_climber_horz_11:
+       .endproc
+*// control_climber_horz
 
 *********************************************************************
 *
@@ -1124,10 +1265,10 @@ byte_open:
        byte >36
 
 sprite_attributes_head:
-       byte >6f,>a8,0,>06
-       byte >6f,>b8,0,>06
-       byte >5f,>a8,spr_lft_top_2nd_norm_1,>06
-       byte >5f,>b8,spr_rgt_top_2nd_norm_1,>06
+       byte >6f,>a8,0,>09              ; Left
+       byte >6f,>b8,0,>09              ; Right
+       byte >5f,>a8,spr_lft_top_2nd_norm_1,>09
+       byte >5f,>b8,spr_rgt_top_2nd_norm_1,>09
 sprite_attributes_body:
        byte >5f,>a8,spr_lft_top_norm_1,>02
        byte >5f,>b8,spr_rgt_top_norm_1,>02

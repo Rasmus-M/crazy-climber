@@ -62,13 +62,13 @@ spr_lft_bot_wide_2:
        equ  >78
 spr_rgt_bot_wide_2:
        equ  >7c
-spr_lft_bot_wide_3:
+spr_lft_bot_wide_5:
        equ  >80
-spr_rgt_bot_wide_3:
+spr_rgt_bot_wide_5:
        equ  >84
-spr_lft_bot_wide_4:
+spr_lft_bot_wide_3:
        equ  >88
-spr_rgt_bot_wide_4:
+spr_rgt_bot_wide_3:
        equ  >8c
 spr_plant_1:
        equ  >90
@@ -169,7 +169,7 @@ left_wide_2:
 left_wide_3:
        byte spr_lft_top_wide_4, spr_lft_bot_wide_2
 left_wide_4:
-       byte spr_lft_top_wide_5, spr_lft_bot_wide_4
+       byte spr_lft_top_wide_5, spr_lft_bot_wide_5
 
 right_norm_0:
        byte spr_rgt_top_norm_1, spr_rgt_bot_norm_1
@@ -191,7 +191,7 @@ right_wide_2:
 right_wide_3:
        byte spr_rgt_top_wide_4, spr_rgt_bot_wide_2
 right_wide_4:
-       byte spr_rgt_top_wide_5, spr_rgt_bot_wide_4
+       byte spr_rgt_top_wide_5, spr_rgt_bot_wide_5
 
 left_2nd_norm_0:
        byte spr_lft_top_2nd_norm_1, 0
