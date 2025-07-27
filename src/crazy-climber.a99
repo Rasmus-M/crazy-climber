@@ -161,7 +161,7 @@ main_loop:
        bl   @display_sprites
 *      Control climber
        bl   @check_grip
-       bl   @control_climber
+       bl   @control_climber_vert
        bl   @control_climber_horz
 *      Change scroll offset
        a    @scroll_dy,@scroll_y
@@ -405,7 +405,7 @@ create_windows_1:
        bl   @rand_max
        mov  r3,r1                      ; Y coord of bottom window row on screen
        ai   r1,-12                     ; Y coord of top window row on screen
-       bl   @window_map_addr               ; Window address in r2
+       bl   @window_map_addr           ; Window address in r2
        cb   *r2,@byte_open             ; Is there an open window?
        jne  update_windows_2           ; If not then skip
        li   r3,windows
@@ -457,107 +457,115 @@ check_grip_2:
 *
 * Control climber vertically
 *
-control_climber:
+control_climber_vert:
        .proc
        mov  @animation_count,r1        ; Is an animation count already taking place?
-       jeq  control_climber_1          ; Skip ahead if not
-       b    @control_climber_11        ; Branch to decrement counter
-control_climber_1:
+       jeq  control_climber_vert_1     ; Proceed if not
+       b    @control_climber_vert_10   ; Branch to decrement counter
+control_climber_vert_1:
        clr  @animation_changed
        clr  @scroll_dy
-*      Left
-       mov  @left_anim_ptr,r3          ; Get pointer for left side animation
-*      Left maybe check down
-       ci   r3,left_anim_last          ; Last frame?
-       jeq  control_climber_4
-*      Left, not last frame, check down
+       abs  @left_grip
+       jne  control_climber_vert_0
+       abs  @right_grip
+       jne  control_climber_vert_0
+*      No grip
+       mov  @two,@animation_count      ; Animation count = 2
+       mov  @two,@scroll_dy
+       seto @animation_changed
+       jmp  control_climber_vert_9
+*      Left side
+control_climber_vert_0:
+       mov  @left_anim_ptr,r3          ; Get animation pointer
+*      Check for left grip
+       abs  @left_grip                 ; Does hand have grip?
+       jeq  control_climber_vert_2     ; Skip ahead if not
+*      Left grip
+       ci   r3,left_anim_last          ; Is it the last animation frame?
+       jeq  control_climber_vert_2     ; Skip ahead if so
        li   r0,KEY_D                   ; Check down key
        bl   @check_key
-       jeq  control_climber_4          ; Move on if not pressed
-       ci   r3,left_anim               ; Is it the first frame
-       jne  control_climber_3          ; No - move on
-       seto @left_ascending            ; Yes - set ascending flag
-control_climber_3:
+       jeq  control_climber_vert_2     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@left_anim_ptr          ; Save new pointer
-       abs  @left_ascending            ; Ascending?
-       jeq  control_climber_5          ; No - move on
-       abs  @left_grip                 ; Left grip?
-       jeq  control_climber_3b         ; No - don't scroll
-       li   r0,-2                      ; Yes - scroll down 2 pixels
+       li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
-control_climber_3b:
-       ci   r3,left_anim_last          ; Is it now the last frame?
-       jne  control_climber_5          ; No - move on
-       clr  @left_ascending            ; Yes - clear ascending flag
-       jmp  control_climber_5
-control_climber_4:
-*      Left, last frame, maybe check up
-       ci   r3,left_anim               ; First frame?
-       jeq  control_climber_6
-       mov  @left_ascending,r0
-       jne  control_climber_6          ; Can't descend again while ascending
-*      Left, check up
+       jmp  control_climber_vert_4
+*      Check for right grip
+control_climber_vert_2:
+       abs  @right_grip                ; Does other hand have grip?
+       jeq  control_climber_vert_5     ; Skip ahead if not
+*      Right grip
+       ci   r3,left_anim               ; Is it the first animation frame?
+       jeq  control_climber_vert_3     ; Skip ahead if so
        li   r0,KEY_E                   ; Check up key
        bl   @check_key
-       jeq  control_climber_6          ; Move on if not pressed
+       jeq  control_climber_vert_3     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@left_anim_ptr          ; Save new pointer
-control_climber_5:
+       jmp  control_climber_vert_4
+control_climber_vert_3:
+       ci   r3,left_anim_last          ; Is it the last animation frame?
+       jeq  control_climber_vert_5     ; Skip ahead if so
+       li   r0,KEY_D                   ; Check down key
+       bl   @check_key
+       jeq  control_climber_vert_5     ; Move on if not pressed
+       ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@left_anim_ptr          ; Save new pointer
+control_climber_vert_4:
        bl   @update_climber_attrs_left
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
 *      Right
-control_climber_6:
-       mov  @right_anim_ptr,r3         ; Get pointer for right side animation
-*      Right, maybe check down
-       ci   r3,right_anim_last         ; Last frame?
-       jeq  control_climber_8
-*      Right, not last frame, check down
+control_climber_vert_5:
+       mov  @right_anim_ptr,r3          ; Get animation pointer
+*      Check for right grip
+       abs  @right_grip                ; Does hand have grip?
+       jeq  control_climber_vert_6     ; Skip ahead if not
+*      Right grip
+       ci   r3,right_anim_last         ; Is it the last animation frame?
+       jeq  control_climber_vert_6     ; Skip ahead if so
        li   r0,KEY_K                   ; Check down key
        bl   @check_key
-       jeq  control_climber_8          ; Move on if not pressed
-       ci   r3,right_anim              ; Is it the first frame
-       jne  control_climber_7          ; No - move on
-       seto @right_ascending           ; Yes - climber is ascending
-control_climber_7:
+       jeq  control_climber_vert_6     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@right_anim_ptr         ; Save new pointer
-       abs  @right_ascending           ; Ascending?
-       jeq  control_climber_9          ; No - move on
-       abs  @right_grip                ; Right grip?
-       jle  control_climber_7b         ; No - don't scroll
        li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
-control_climber_7b:
-       ci   r3,right_anim_last         ; Is it now the last frame?
-       jne  control_climber_9          ; No - move on
-       clr  @right_ascending           ; Yes - climber has stopped ascending
-       jmp  control_climber_9
-control_climber_8:
-*      Right, last frame, maybe check up
-       ci   r3,right_anim              ; First frame?
-       jeq  control_climber_10
-       mov  @right_ascending,r0
-       jne  control_climber_10         ; Can't descend again while ascending
-*      Right, check up
+       jmp  control_climber_vert_8
+*      Check for right grip
+control_climber_vert_6:
+       abs  @left_grip                 ; Does other hand have grip?
+       jeq  control_climber_vert_9     ; Skip ahead if not
+*      Left grip
+       ci   r3,right_anim              ; Is it the first animation frame?
+       jeq  control_climber_vert_7     ; Skip ahead if so
        li   r0,KEY_I                   ; Check up key
        bl   @check_key
-       jeq  control_climber_10         ; Move on if not pressed
+       jeq  control_climber_vert_7     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@right_anim_ptr         ; Save new pointer
-control_climber_9:
+       jmp  control_climber_vert_8
+control_climber_vert_7:
+       ci   r3,right_anim_last         ; Is it the last animation frame?
+       jeq  control_climber_vert_9     ; Skip ahead if so
+       li   r0,KEY_K                   ; Check down key
+       bl   @check_key
+       jeq  control_climber_vert_9     ; Move on if not pressed
+       ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@right_anim_ptr         ; Save new pointer
+control_climber_vert_8:
        bl   @update_climber_attrs_right
        mov  @two,@animation_count      ; Animation count = 2
        seto @animation_changed
-control_climber_10:
+control_climber_vert_9:
        abs  @animation_changed
-       jeq  control_climber_12
-control_climber_11:
+       jeq  control_climber_vert_11
+control_climber_vert_10:
        dec  @animation_count
-control_climber_12:
+control_climber_vert_11:
        .endproc
-*// control_climber
+*// control_climber_vert
 
 *********************************************************************
 *
