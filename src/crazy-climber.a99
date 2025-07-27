@@ -425,6 +425,8 @@ update_windows_2:
 *
 check_grip:
        .proc
+       mov  @animation_count,r1        ; Is an animation count already taking place?
+       jne  check_grip_4               ; Yes - return
        clr  @left_grip
        clr  @right_grip
        bl   @climber_map_addr          ; Map address in r2
@@ -450,6 +452,14 @@ check_grip_1:
 ;      TODO: Check if open window
        seto @right_grip
 check_grip_2:
+       abs  @left_grip
+       jne  check_grip_4
+       abs  @right_grip
+       jne  check_grip_4
+*      No grip
+       mov  @two,@animation_count      ; Animation count = 2
+       mov  @two,@scroll_dy
+check_grip_4:
        .endproc
 *// check_grip
 
@@ -465,17 +475,7 @@ control_climber_vert:
 control_climber_vert_1:
        clr  @animation_changed
        clr  @scroll_dy
-       abs  @left_grip
-       jne  control_climber_vert_0
-       abs  @right_grip
-       jne  control_climber_vert_0
-*      No grip
-       mov  @two,@animation_count      ; Animation count = 2
-       mov  @two,@scroll_dy
-       seto @animation_changed
-       jmp  control_climber_vert_9
 *      Left side
-control_climber_vert_0:
        mov  @left_anim_ptr,r3          ; Get animation pointer
 *      Check for left grip
        abs  @left_grip                 ; Does hand have grip?
@@ -494,23 +494,24 @@ control_climber_vert_0:
 *      Check for right grip
 control_climber_vert_2:
        abs  @right_grip                ; Does other hand have grip?
-       jeq  control_climber_vert_5     ; Skip ahead if not
+       jeq  control_climber_vert_3     ; Skip ahead if not
 *      Right grip
-       ci   r3,left_anim               ; Is it the first animation frame?
-       jeq  control_climber_vert_3     ; Skip ahead if so
-       li   r0,KEY_E                   ; Check up key
-       bl   @check_key
-       jeq  control_climber_vert_3     ; Move on if not pressed
-       ai   r3,-spr_anim_size          ; Previous frame
-       mov  r3,@left_anim_ptr          ; Save new pointer
-       jmp  control_climber_vert_4
-control_climber_vert_3:
        ci   r3,left_anim_last          ; Is it the last animation frame?
-       jeq  control_climber_vert_5     ; Skip ahead if so
+       jeq  control_climber_vert_3     ; Skip ahead if so
        li   r0,KEY_D                   ; Check down key
        bl   @check_key
-       jeq  control_climber_vert_5     ; Move on if not pressed
+       jeq  control_climber_vert_3     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@left_anim_ptr          ; Save new pointer
+       jmp  control_climber_vert_4
+*      Not right grip
+control_climber_vert_3:
+       ci   r3,left_anim               ; Is it the first animation frame?
+       jeq  control_climber_vert_5     ; Skip ahead if so
+       li   r0,KEY_E                   ; Check up key
+       bl   @check_key
+       jeq  control_climber_vert_5     ; Move on if not pressed
+       ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@left_anim_ptr          ; Save new pointer
 control_climber_vert_4:
        bl   @update_climber_attrs_left
@@ -536,23 +537,24 @@ control_climber_vert_5:
 *      Check for right grip
 control_climber_vert_6:
        abs  @left_grip                 ; Does other hand have grip?
-       jeq  control_climber_vert_9     ; Skip ahead if not
+       jeq  control_climber_vert_7     ; Skip ahead if not
 *      Left grip
-       ci   r3,right_anim              ; Is it the first animation frame?
-       jeq  control_climber_vert_7     ; Skip ahead if so
-       li   r0,KEY_I                   ; Check up key
-       bl   @check_key
-       jeq  control_climber_vert_7     ; Move on if not pressed
-       ai   r3,-spr_anim_size          ; Previous frame
-       mov  r3,@right_anim_ptr         ; Save new pointer
-       jmp  control_climber_vert_8
-control_climber_vert_7:
        ci   r3,right_anim_last         ; Is it the last animation frame?
-       jeq  control_climber_vert_9     ; Skip ahead if so
+       jeq  control_climber_vert_7     ; Skip ahead if so
        li   r0,KEY_K                   ; Check down key
        bl   @check_key
-       jeq  control_climber_vert_9     ; Move on if not pressed
+       jeq  control_climber_vert_7     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
+       mov  r3,@right_anim_ptr         ; Save new pointer
+       jmp  control_climber_vert_8
+*      Not left grip
+control_climber_vert_7:
+       ci   r3,right_anim              ; Is it the first animation frame?
+       jeq  control_climber_vert_9     ; Skip ahead if so
+       li   r0,KEY_I                   ; Check up key
+       bl   @check_key
+       jeq  control_climber_vert_9     ; Move on if not pressed
+       ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@right_anim_ptr         ; Save new pointer
 control_climber_vert_8:
        bl   @update_climber_attrs_right
