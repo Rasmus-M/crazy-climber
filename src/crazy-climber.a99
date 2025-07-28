@@ -49,11 +49,9 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      Constants
 map_width:
-       equ   22
+NOtp       equ  22
 n_windows:
-       equ  6
-top_window_row_y:
-       equ 128
+       equ  12
 
 **
 * Scratch pad
@@ -325,14 +323,17 @@ animate_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 8th frame
        andi r0,>0007
-       ci   r0,7
-       jne  animate_windows_5
-       li   r3,windows                 ; List of window animations (inclusing resident faces)
+       jne  animate_windows_6
+       li   r3,window_anims            ; List of window animations (including resident faces)
 animate_windows_1:
        mov  *r3+,r1                    ; Window y
-       jlt  animate_windows_5          ; Negative terminates
+       jlt  animate_windows_6          ; Negative terminates
+       jne  animate_windows_1a         ; Zero means unused
+       ai   r3,window_size-2
+       jmp  animate_windows_1
+animate_windows_1a:
        mov  *r3+,r0                    ; Window x (0 - 5)
-       bl   @window_map_addr               ; Map address in r2
+       bl   @window_map_addr           ; Map address in r2
        mov  *r3+,r5                    ; Get animation type
        mov  *r3,r4                     ; Get animation frame
        sla  r4,1                       ; To word offset
@@ -360,15 +361,18 @@ animate_windows_4:
 *      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
-       andi r4,>000f                   ; Wrap at 16
-       mov  r4,*r3+                    ; Write it back
+       andi r4,>000f                   ; End at 16
+       jne  animate_windows_5
+       clr  @-window_anim_frame(r3)    ; Clear y coord to mark as available
+animate_windows_5:
+       mov  r4,*r3+                    ; Write frame back
        ci   r4,>0007                   ; Is it frame 8?
        jne  animate_windows_1          ; No - next window
-       c    @window_anim-window_size(r3),@one ; Is it a face animation?
+       c    @window_anim_type-window_size(r3),@one ; Is it a face animation?
        jne  animate_windows_1          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
        jmp  animate_windows_1          ; Next window
-animate_windows_5:
+animate_windows_6:
        .endproc
 *// animate_windows
 
@@ -380,42 +384,58 @@ create_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 16th frame
        andi r0,>000f
-       ci   r0,15
-       jne  create_windows_2
-       mov  @scroll_y,r3
-       srl  r3,4                       ; Number of windows scrolled
-       ai   r3,12-8                    ; Y coord of bottom window row on screen
-       c    r3,@windows_last           ; Compare to y coord of last window in list
-       jhe  create_windows_2           ; Skip if window has not reached bottom of screen
-*      Shift windows list down
-       li   r0,windows_2nd_last
-       li   r1,windows_last
-       li   r2,n_windows-1             ; Number of windows
+       jne  create_windows_8
+*      Remove window animations that are scrolled out
+       mov  @scroll_y,r4
+       srl  r4,4                       ; Number of windows scrolled
+       ai   r4,12                      ; Y coord of bottom window row on screen
+       li   r3,window_anims
 create_windows_1:
-       mov  *r0+,*r1+
-       mov  *r0+,*r1+
-       mov  *r0+,*r1+
-       mov  *r0+,*r1+
-       ai   r0,-16
-       ai   r1,-16
-       dec  r2
-       jne  create_windows_1
+       mov  *r3,r1
+       jlt  create_windows_3
+       jeq  create_windows_2
+       c    r4,r1
+       jhe  create_windows_2
+       clr  *r3                        ; Mark as unused
+create_windows_2:
+       ai   r3,window_size
+       jmp  create_windows_1
+create_windows_3:
+*      Find an available slot to use
+       li   r3,window_anims
+create_windows_4:
+       mov  *r3,r1
+       jlt  create_windows_8
+       jeq  create_windows_5
+       ai   r3,window_size
+       jmp  create_windows_4
 *      Add new window
+create_windows_5:
+       ai   r4,-12                     ; Y coord of top window row on screen
+       li   r2,12                      ; Y coord between 0 and 11
+       bl   @rand_max
+       a    r4,r0                      ; Add y coord of top window row on screen
+       ci   r0,>00c6
+       jgt  create_windows_8
+       mov  r0,r5                      ; Save it
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max
-       mov  r3,r1                      ; Y coord of bottom window row on screen
-       ai   r1,-12                     ; Y coord of top window row on screen
+       mov  r5,r1                      ; Y coord
        bl   @window_map_addr           ; Window address in r2
-       cb   *r2,@byte_open             ; Is there an open window?
-       jne  create_windows_2           ; If not then skip
-       li   r3,windows
-       mov  r1,*r3+                    ; Write Y coord
+       bl   @is_open_window            ; Is there an open window?
+       jne  create_windows_8           ; If not then skip
+       mov  r5,*r3+                    ; Write Y coord
        mov  r0,*r3+                    ; Write X coord
+*      Set type
        bl   @rand
-       andi r0,1                       ; Set type
-       mov  r0,*r3+                    ; 0 = empty window, 1 = window with resident
+       andi r0,3                       ; 1/4 chance of resident
+       ci   r0,window_anim_type_resident
+       jeq  create_windows_7
+       clr  r0                         ; window_anim_type_window
+create_windows_7:
+       mov  r0,*r3+                    ; 0 = empty window, 1 = resident
        clr  *r3                        ; Clear frame
-create_windows_2:
+create_windows_8:
        .endproc
 *// create_windows
 
@@ -436,8 +456,6 @@ check_grip:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_1
        bl   @left_hand_map_addr
-;       li   r0,>2900
-;       movb r0,*r2
        bl   @is_open_window
        jne  check_grip_1
        seto @left_grip
@@ -451,8 +469,6 @@ check_grip_1:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_2
        bl   @right_hand_map_addr
-;       li   r0,>2900
-;       movb r0,*r2
        bl   @is_open_window
        jne  check_grip_2
        seto @right_grip
@@ -863,8 +879,8 @@ create_resident:
        jeq  create_resident_1
        li   r0,resident_handler
        mov  r0,*r4+                            ; Handler
-       mov  @window_row-window_size(r3),*r4+   ; y
-       mov  @window_col-window_size(r3),*r4+   ; x
+       mov  @window_anim_row-window_size(r3),*r4+   ; y
+       mov  @window_anim_col-window_size(r3),*r4+   ; x
        clr  *r4                                ; Counter
 create_resident_1:
        .endproc
@@ -1025,7 +1041,7 @@ window_map_addr:
        .push r1
        mpy  @MS0,r1                    ; Multiply by map width to r2
        sla  r2,1                       ; Two rows per window
-       ai   r2,top_window_row+2        ; Add address of top of building + offset for left wall
+       ai   r2,MD0-map_width+2         ; Add address of start of map + offset for left wall
        a    r0,r2                      ; Add x to address x 1
        a    r0,r2                      ; Add x to address x 2
        a    r0,r2                      ; Add x to address x 3
@@ -1049,7 +1065,6 @@ window_screen_coords:
        a    r2,r0                      ; column * 24
        ai   r0,>50                     ; Add offset from left
        sla  r1,4                       ; row * 16
-       ai   r1,top_window_row_y
        s    @scroll_y,r1               ; Minus scroll offsset
        rt
 *// window_screen_coords
@@ -1243,6 +1258,10 @@ one_time_init:
        li   r0,sprites
        li   r2,sprites_end-sprites
        bl   @clear
+*      Clear window animations table
+       li   r0,window_anims
+       li   r2,window_anims_end-window_anims
+       bl   @clear
        .endproc
 *// one_time_init
 
@@ -1404,27 +1423,27 @@ check_key:
        copy "map-animations.a99"
        copy "sprite-animations.a99"
 
-window_row:
+window_anim_row:
        equ  0
-window_col:
+window_anim_col:
        equ  2
-window_anim:
+window_anim_type:
        equ  4
-window_frame:
+window_anim_frame:
        equ  6
 window_size:
        equ  8
 
-windows:
-       data 177,4,0,14
-       data 179,3,1,1
-       data 180,3,0,7
-       data 183,5,0,0
-windows_2nd_last:
-       data 184,2,0,2
-windows_last:
-       data 186,0,0,0
+window_anim_type_window:
+       equ  0
+window_anim_type_resident:
+       equ  1
+
+window_anims:
+       bss  n_windows*window_size
+window_anims_end:
        data -1
+
 byte_closed:
        byte >00
 byte_open:
