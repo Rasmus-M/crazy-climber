@@ -49,7 +49,7 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      Constants
 map_width:
-NOtp       equ  22
+       equ  22
 n_windows:
        equ  12
 
@@ -322,7 +322,7 @@ update_name_table_4:
 animate_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 8th frame
-       andi r0,>0007
+       andi r0,>0003
        jne  animate_windows_6
        li   r3,window_anims            ; List of window animations (including resident faces)
 animate_windows_1:
@@ -361,12 +361,12 @@ animate_windows_4:
 *      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
-       andi r4,>000f                   ; End at 16
+       andi r4,>001f                   ; End at 32
        jne  animate_windows_5
        clr  @-window_anim_frame(r3)    ; Clear y coord to mark as available
 animate_windows_5:
        mov  r4,*r3+                    ; Write frame back
-       ci   r4,>0007                   ; Is it frame 8?
+       ci   r4,>0003                   ; Is it frame 3?
        jne  animate_windows_1          ; No - next window
        c    @window_anim_type-window_size(r3),@one ; Is it a face animation?
        jne  animate_windows_1          ; No - next window
@@ -405,8 +405,8 @@ create_windows_3:
        li   r3,window_anims
 create_windows_4:
        mov  *r3,r1
-       jlt  create_windows_8
-       jeq  create_windows_5
+       jlt  create_windows_8           ; Negative is the the
+       jeq  create_windows_5           ; Zero is unused
        ai   r3,window_size
        jmp  create_windows_4
 *      Add new window
@@ -415,8 +415,6 @@ create_windows_5:
        li   r2,12                      ; Y coord between 0 and 11
        bl   @rand_max
        a    r4,r0                      ; Add y coord of top window row on screen
-       ci   r0,>00c6
-       jgt  create_windows_8
        mov  r0,r5                      ; Save it
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max
@@ -803,7 +801,7 @@ resident_handler:
        .proc
        mov  @sprite_count(r3),r0       ; Init?
        jne  resident_handler_1         ; Jump if not
-       li   r0,48
+       li   r0,24
        mov  r0,@sprite_count(r3)
 resident_handler_1:
        mov  @sprite_x(r3),r0
@@ -822,9 +820,9 @@ resident_handler_1:
        movb r0,*r15
        c    @sprite_count(r3),@resident_handler_drop
        jne  resident_handler_2
-       bl   @rand
-       ci   r0,>c000
-       jl   resident_handler_2
+;       bl   @rand
+;       ci   r0,>c000
+;       jl   resident_handler_2
        bl   @create_plant
 resident_handler_2:
        dec  @sprite_count(r3)
@@ -833,7 +831,7 @@ resident_handler_2:
 resident_handler_3:
        .endproc
 resident_handler_drop:
-       data 32
+       data 16
 *// resident_handler
 
 *********************************************************************
@@ -857,7 +855,7 @@ plant_handler:
        movb r0,*r15
        mov  @sprite_y(r3),r0
        s    @scroll_dy,r0
-       inct r0
+       ai   r0,4
        mov  r0,@sprite_y(r3)
        ci   r0,194
        jl   plant_handler_1
@@ -1299,7 +1297,7 @@ vdp_registers:
        byte pattern_table/>800+>03     ; Pattern table x 3
        byte sprite_attr_table/>80      ; Sprite attribute table
        byte sprite_pattern_table/>800  ; Sprite pattern table
-       byte >07                        ; Backdrop color
+       byte >01                        ; Backdrop color
 *// graphics_mode
 
 *********************************************************************

@@ -1,7 +1,15 @@
 close_window_below_open:
        data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_2
+       data close_window_below_open_2
        data close_window_below_open_2
        data close_window_below_open_3
+       data close_window_below_open_3
+       data close_window_below_open_3
+       data close_window_below_open_4
+       data close_window_below_open_4
        data close_window_below_open_4
        data close_window_below_open_5
        data close_window_below_open_5
@@ -10,16 +18,31 @@ close_window_below_open:
        data close_window_below_open_5
        data close_window_below_open_5
        data close_window_below_open_5
+       data close_window_below_open_5
+       data close_window_below_open_4
+       data close_window_below_open_4
        data close_window_below_open_4
        data close_window_below_open_3
+       data close_window_below_open_3
+       data close_window_below_open_3
+       data close_window_below_open_2
        data close_window_below_open_2
        data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
        data close_window_below_open_0
-
 close_window_below_closed:
        data close_window_below_closed_1
+       data close_window_below_closed_1
+       data close_window_below_closed_1
+       data close_window_below_closed_2
+       data close_window_below_closed_2
        data close_window_below_closed_2
        data close_window_below_closed_3
+       data close_window_below_closed_3
+       data close_window_below_closed_3
+       data close_window_below_closed_4
+       data close_window_below_closed_4
        data close_window_below_closed_4
        data close_window_below_closed_5
        data close_window_below_closed_5
@@ -28,12 +51,19 @@ close_window_below_closed:
        data close_window_below_closed_5
        data close_window_below_closed_5
        data close_window_below_closed_5
+       data close_window_below_closed_5
+       data close_window_below_closed_4
+       data close_window_below_closed_4
        data close_window_below_closed_4
        data close_window_below_closed_3
+       data close_window_below_closed_3
+       data close_window_below_closed_3
+       data close_window_below_closed_2
        data close_window_below_closed_2
        data close_window_below_closed_1
+       data close_window_below_closed_1
+       data close_window_below_closed_1
        data close_window_below_closed_0
-
 face_appear:
        data face_1
        data face_2
@@ -51,3 +81,19 @@ face_appear:
        data face_2
        data face_1
        data face_0
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
+       data close_window_below_open_1
