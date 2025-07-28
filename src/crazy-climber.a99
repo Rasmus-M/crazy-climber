@@ -426,40 +426,45 @@ update_windows_2:
 check_grip:
        .proc
        mov  @animation_count,r1        ; Is an animation count already taking place?
-       jne  check_grip_4               ; Yes - return
+       jne  check_grip_3               ; Yes - return
+*      Left
        clr  @left_grip
-       clr  @right_grip
-       bl   @climber_map_addr          ; Map address in r2
+       bl   @left_hand_offset
        mov  @scroll_y,r0
        ai   r0,-8
-       mov  @left_anim_ptr,r1
-       ai   r1,-left_anim
-       srl  r1,3                       ; Animation frame
-       sla  r1,2                       ; Hand offset
        a    r0,r1
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_1
-;      TODO: Check if open window
+       bl   @left_hand_map_addr
+;       li   r0,>2900
+;       movb r0,*r2
+       bl   @is_open_window
+       jne  check_grip_1
        seto @left_grip
+*      Right
 check_grip_1:
-       mov  @right_anim_ptr,r1
-       ai   r1,-right_anim
-       srl  r1,3                       ; Animation frame
-       sla  r1,2                       ; Hand offset
+       clr  @right_grip
+       bl   @right_hand_offset
+       mov  @scroll_y,r0
+       ai   r0,-8
        a    r0,r1
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_2
-;      TODO: Check if open window
+       bl   @right_hand_map_addr
+;       li   r0,>2900
+;       movb r0,*r2
+       bl   @is_open_window
+       jne  check_grip_2
        seto @right_grip
+*      Check if no grip
 check_grip_2:
-       abs  @left_grip
-       jne  check_grip_4
-       abs  @right_grip
-       jne  check_grip_4
+       mov  @left_grip,r0
+       soc  @right_grip,r0
+       jne  check_grip_3
 *      No grip
        mov  @two,@animation_count      ; Animation count = 2
        mov  @two,@scroll_dy
-check_grip_4:
+check_grip_3:
        .endproc
 *// check_grip
 
@@ -904,26 +909,102 @@ allocate_sprite_2:
 
 *********************************************************************
 *
-* Position of climber in map
+* Position of climber's left hand in map
 *
 * On return r2 contains the address in the map
 *
-climber_map_addr:
+left_hand_map_addr:
+       .proc
        mov  @climber_pos,r0
-       mov  r0,r1
-       andi r0,>00ff
-       ai   r0,->50
-       srl  r0,3
+*      Y offset
+       bl   @left_hand_offset
+       inct r1
        swpb r1
-       andi r1,>00ff
+       ab   r1,r0
+*      X offset
+       abs  @left_wide
+       jne  left_hand_map_addr_1
+       ai   r0,>0008
+left_hand_map_addr_1:
+       bl   @sprite_map_addr
+       .endproc
+*// left_hand_map_addr
+
+*********************************************************************
+*
+* Y offset of climber's left hand
+*
+* On return r1 contains the offset
+*
+left_hand_offset:
+       mov  @left_anim_ptr,r1
+       ai   r1,-left_anim
+       srl  r1,3
+       sla  r1,2
+       rt
+*// left_hand_offset
+
+*********************************************************************
+*
+* Position of climber's right hand in map
+*
+* On return r2 contains the address in the map
+*
+right_hand_map_addr:
+       .proc
+       mov  @climber_pos,r0
+*      Y offset
+       bl   @right_hand_offset
+       inct r1
+       swpb r1
+       ab   r1,r0
+*      X offset
+       ai   r0,>0010
+       abs  @right_wide
+       jeq  right_hand_map_addr_1
+       ai   r0,>0008
+right_hand_map_addr_1:
+       bl   @sprite_map_addr
+       .endproc
+*// right_hand_map_addr
+
+*********************************************************************
+*
+* Y offset of climber's right hand
+*
+* On return r1 contains the offset
+*
+right_hand_offset:
+       mov  @right_anim_ptr,r1
+       ai   r1,-right_anim
+       srl  r1,3
+       sla  r1,2
+       rt
+*// left_hand_offset
+
+*********************************************************************
+*
+* Map address at given screen coordinates
+*
+* r0: Screen coordinates of sprite y/x
+*
+* On return r2 contains the address in the map
+*
+sprite_map_addr:
+       mov  r0,r1
+       andi r0,>00ff                   ; x
+       ai   r0,->0040                  ; Minus left position of building
+       srl  r0,3                       ; To characters
+       swpb r1
+       andi r1,>00ff                   ; y
        inc  r1
        a    @scroll_y,r1
-       srl  r1,3
-       mpy  @MS0,r1
-       a    r0,r2
-       ai   r2,MD1
+       srl  r1,3                       ; To character rows
+       mpy  @MS0,r1                    ; Multiply by map width
+       a    r0,r2                      ; Add x
+       ai   r2,MD0                     ; Add base
        rt
-*// climber_map_addr
+*// sprite_map_addr
 
 *********************************************************************
 *
@@ -971,12 +1052,13 @@ window_screen_coords:
 *
 * Checks whether r2 points to an open window in the map
 *
-* On return EQ means that window is open. r1 is modified.
+* On return EQ means that it's an open window. r1 is modified.
 *
 is_open_window:
+       clr  r1
        movb *r2,r1
-       srl  r1,8
-       sla  r1,2
+       swpb r1
+       sla  r1,1
        mov  @TCHARS(r1),r1
        cb   @b_window_open_bottom,r1
        jeq  is_open_window_1
