@@ -321,34 +321,34 @@ update_name_table_4:
 *
 animate_windows:
        .proc
-       mov  @frame,r0                  ; Only do this every 8th frame
+       mov  @frame,r0                  ; Only do this every 4th frame
        andi r0,>0003
-       jne  animate_windows_6
+       jne  animate_windows_8
        li   r3,window_anims            ; List of window animations (including resident faces)
 animate_windows_1:
        mov  *r3+,r1                    ; Window y
-       jlt  animate_windows_6          ; Negative terminates
-       jne  animate_windows_1a         ; Zero means unused
-       ai   r3,window_size-2
+       jlt  animate_windows_8          ; Negative terminates
+       jne  animate_windows_2         ; Zero means unused
+       ai   r3,window_anim_size-2
        jmp  animate_windows_1
-animate_windows_1a:
+animate_windows_2:
        mov  *r3+,r0                    ; Window x (0 - 5)
        bl   @window_map_addr           ; Map address in r2
        mov  *r3+,r5                    ; Get animation type
        mov  *r3,r4                     ; Get animation frame
        sla  r4,1                       ; To word offset
-       ci   r5,1                       ; Is it a face animation?
-       jne  animate_windows_2          ; No - move on
+       ci   r5,window_anim_type_resident ; Is it a face animation?
+       jne  animate_windows_3          ; No - move on
        ai   r4,face_appear             ; Yes - add base address of face animations
-       jmp  animate_windows_4
-animate_windows_2:
-       cb   @-22(r2),@byte_closed      ; Is window above closed?
-       jeq  animate_windows_3          ; No - move on
-       ai   r4,close_window_below_open ; Yes - add base address of closing windows below open animation
-       jmp  animate_windows_4
+       jmp  animate_windows_5
 animate_windows_3:
-       ai   r4,close_window_below_closed ; Add base address of closing windows below closed animation
+       cb   @-map_width(r2),@b_window_closed  ; Is window above closed?
+       jeq  animate_windows_4          ; No - move on
+       ai   r4,close_window_below_open ; Yes - add base address of closing windows below open animation
+       jmp  animate_windows_5
 animate_windows_4:
+       ai   r4,close_window_below_closed ; Add base address of closing windows below closed animation
+animate_windows_5:
        mov  *r4,r4                     ; Get address of animation bytes
        movb *r4+,*r2+                  ; Top row
        movb *r4+,*r2
@@ -361,18 +361,26 @@ animate_windows_4:
 *      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
-       andi r4,>001f                   ; End at 32
-       jne  animate_windows_5
-       clr  @-window_anim_frame(r3)    ; Clear y coord to mark as available
-animate_windows_5:
        mov  r4,*r3+                    ; Write frame back
-       ci   r4,>0003                   ; Is it frame 3?
-       jne  animate_windows_1          ; No - next window
-       c    @window_anim_type-window_size(r3),@one ; Is it a face animation?
+       ci   r5,window_anim_type_resident ; Is it a face animation?
+       jeq  animate_windows_6
+*      Window animation
+       ci   r4,32                      ; End at 32
+       jeq  animate_windows_7
+       jmp  animate_windows_1          ; Next window
+*      Face animation
+animate_windows_6:
+       ci   r4,16                      ; End at 16
+       jeq  animate_windows_7
+       ci   r4,4                       ; Is it frame 4?
        jne  animate_windows_1          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
        jmp  animate_windows_1          ; Next window
-animate_windows_6:
+*      Teminate animation
+animate_windows_7:
+       clr  @-window_anim_size(r3)     ; Clear y coord to mark as available
+       jmp  animate_windows_1          ; Next window
+animate_windows_8:
        .endproc
 *// animate_windows
 
@@ -398,7 +406,7 @@ create_windows_1:
        jhe  create_windows_2
        clr  *r3                        ; Mark as unused
 create_windows_2:
-       ai   r3,window_size
+       ai   r3,window_anim_size
        jmp  create_windows_1
 create_windows_3:
 *      Find an available slot to use
@@ -407,7 +415,7 @@ create_windows_4:
        mov  *r3,r1
        jlt  create_windows_8           ; Negative is the the
        jeq  create_windows_5           ; Zero is unused
-       ai   r3,window_size
+       ai   r3,window_anim_size
        jmp  create_windows_4
 *      Add new window
 create_windows_5:
@@ -877,8 +885,8 @@ create_resident:
        jeq  create_resident_1
        li   r0,resident_handler
        mov  r0,*r4+                            ; Handler
-       mov  @window_anim_row-window_size(r3),*r4+   ; y
-       mov  @window_anim_col-window_size(r3),*r4+   ; x
+       mov  @window_anim_row-window_anim_size(r3),*r4+   ; y
+       mov  @window_anim_col-window_anim_size(r3),*r4+   ; x
        clr  *r4                                ; Counter
 create_resident_1:
        .endproc
@@ -1085,8 +1093,6 @@ is_open_window:
        cb   @b_window_open_bottom,r1
 is_open_window_1:
        rt
-b_window_open_bottom:
-       byte >05,>05
 *// is_open_window
 
 *********************************************************************
@@ -1429,7 +1435,7 @@ window_anim_type:
        equ  4
 window_anim_frame:
        equ  6
-window_size:
+window_anim_size:
        equ  8
 
 window_anim_type_window:
@@ -1438,14 +1444,14 @@ window_anim_type_resident:
        equ  1
 
 window_anims:
-       bss  n_windows*window_size
+       bss  n_windows*window_anim_size
 window_anims_end:
        data -1
 
-byte_closed:
+b_window_closed:
        byte >00
-byte_open:
-       byte >36
+b_window_open_bottom:
+       byte >05
 
 sprite_attributes_head:
        byte >6d,>a8,0,>09              ; Left
