@@ -720,8 +720,10 @@ auto_move_1:
        jgt  control_climber_horz_8a    ; Right hand at left side of window - make left normal and move
        jlt  control_climber_horz_0a    ; Right hand at right side of window - make left wide
        abs  @left_wide
-       jne  control_climber_horz_5a    ; Right hand at wall, left wide - make right wide
-       jmp  control_climber_horz_7a    ; Right hand at wall, left normal - make right normal
+       jne  control_climber_horz_8a    ; Make left normal and move
+       abs  @right_wide
+       jeq  control_climber_horz_5a    ; Right hand at wall, right normal - make right wide
+       jmp  control_climber_horz_7a    ; Right hand at wall, right wide - make right normal
 auto_move_2:
 *      Left hand at right side of window
        mov  @right_hand_pos,r0
@@ -761,8 +763,10 @@ auto_move_5:
        jgt  control_climber_horz_5a      ; Left hand at left side of window - make right wide
        jlt  control_climber_horz_3a      ; Left hand at right side of window - make right normal and move
        abs  @right_wide
-       jne  control_climber_horz_0a      ; Left hand at wall, right wide - make left wide
-       jmp  control_climber_horz_2a      ; Left hand at wall, right normal - make left normal
+       jne  control_climber_horz_3a      ; Make right normal and move
+       abs  @left_wide
+       jeq  control_climber_horz_0a      ; Left hand at wall, left normal - make left wide
+       jmp  control_climber_horz_2a      ; Left hand at wall, left wide - make left normal
 control_climber_horz_0:
 *      Left
        abs  @right_grip                ; Can only move left arm if right hand has a grip
