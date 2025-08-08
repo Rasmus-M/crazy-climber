@@ -364,8 +364,8 @@ animate_windows_2:
        jmp  animate_windows_5
 animate_windows_3:
        cb   @-map_width(r2),@b_window_closed_tch  ; Is window above closed?
-       jeq  animate_windows_4          ; No - move on
-       ai   r4,close_window_below_open ; Yes - add base address of closing windows below open animation
+       jeq  animate_windows_4          ; Yes - move on
+       ai   r4,close_window_below_open ; No - add base address of closing windows below open animation
        jmp  animate_windows_5
 animate_windows_4:
        ai   r4,close_window_below_closed ; Add base address of closing windows below closed animation
@@ -453,6 +453,9 @@ create_windows_5:
        jne  create_windows_8           ; If not then skip
        ai   r2,-2*map_width            ; Move one window up
        bl   @is_open_window_bottom     ; Is there an open window above?
+       jne  create_windows_8           ; If not then skip
+       ai   r2,4*map_width             ; Move one window down
+       bl   @is_open_window            ; Is there an open window below?
        jne  create_windows_8           ; If not then skip
        mov  r5,*r3+                    ; Write Y coord
        mov  r0,*r3+                    ; Write X coord
@@ -1281,11 +1284,12 @@ is_open_window_bottom:
        swpb r1
        sla  r1,1
        mov  @TCHARS(r1),r1
-       cb   @b_window_open_bottom,r1
-       jeq  is_open_window_bottom_1
        swpb r1
        cb   @b_window_open_bottom,r1
-is_open_window_bottom_1:
+;       jeq  is_open_window_bottom_1
+;       swpb r1
+;       cb   @b_window_open_bottom,r1
+;is_open_window_bottom_1:
        rt
 *// is_open_window_bottom
 
