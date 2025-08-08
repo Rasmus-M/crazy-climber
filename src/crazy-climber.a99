@@ -126,8 +126,18 @@ animation_count:                       ; Number of frames to repeat last animati
        equ  right_wide+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
-vm8bw_pad:
+speech_detected:
        equ  animation_changed+2
+speech_status:
+       equ  speech_detected+2
+speech_addr:
+       equ  speech_status+2
+speech_counter:
+       equ  speech_addr+2
+speech_read_pad:
+       equ  speech_counter+2
+vm8bw_pad:
+       equ  speech_read_pad+14
 pad_max:                               ; Max scratchpad address used
        equ  vm8bw_pad+24
 
@@ -169,7 +179,7 @@ main_loop:
        a    @scroll_dy,@scroll_y
 *      Animate windows and faces
        bl   @animate_windows
-;       bl   @create_windows
+       bl   @create_windows
 *      Update patterns
        bl   @update_pattern_table
 *      Update name table buffer
@@ -1421,6 +1431,7 @@ one_time_init:
        li   r1,vm8bw_pad
        li   r2,vm8bw1_end-vm8bw1
        bl   @copy
+       bl   @copy_speech_read_to_pad
 *      Setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
