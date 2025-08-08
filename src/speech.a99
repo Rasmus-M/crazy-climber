@@ -11,7 +11,7 @@ speak:
        mov  @speech_counter,r2         ; Get counter
        jgt  speak_1                    ; Skip if already speaking
        sla  r0,2                       ; index * 4
-       ai   r0,>6000
+       ai   r0,speech_data
 ;       seto @speech_bank
        mov  *r0+,@speech_addr
        mov  *r0,@speech_counter

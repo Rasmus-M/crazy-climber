@@ -130,23 +130,29 @@ spr_rgt_bot_2nd_norm_5:
 spr_anim_size:
        equ  8
 
-climber_animations:
-       data left_anim
-       data right_anim
-
 left_anim:
        data left_norm_0,left_2nd_norm_0,left_wide_0,left_2nd_wide_0
+left_anim_1:
        data left_norm_1,left_2nd_norm_1,left_wide_1,left_2nd_wide_1
+left_anim_2:
        data left_norm_2,left_2nd_norm_2,left_wide_2,left_2nd_wide_2
+left_anim_3:
        data left_norm_3,left_2nd_norm_3,left_wide_3,left_2nd_wide_3
 left_anim_last:
+       equ  $
+left_anim_4:
        data left_norm_4,left_2nd_norm_4,left_wide_4,left_2nd_wide_4
 right_anim:
        data right_norm_0,right_2nd_norm_0,right_wide_0,right_2nd_wide_0
+right_anim_1:
        data right_norm_1,right_2nd_norm_1,right_wide_1,right_2nd_wide_1
+right_anim_2:
        data right_norm_2,right_2nd_norm_2,right_wide_2,right_2nd_wide_2
+right_anim_3:
        data right_norm_3,right_2nd_norm_3,right_wide_3,right_2nd_wide_3
 right_anim_last:
+       equ  $
+right_anim_4:
        data right_norm_4,right_2nd_norm_4,right_wide_4,right_2nd_wide_4
 
 left_norm_0:

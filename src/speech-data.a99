@@ -4,6 +4,7 @@
 *
 ;       aorg >6000
 
+speech_data:
        data 0
        data 1
 

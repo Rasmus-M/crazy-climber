@@ -145,25 +145,32 @@ pad_max:                               ; Max scratchpad address used
 *
 * Main program
 *
-       aorg >a000                      ; load into upper memory
+       aorg >2000
+
 start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
-*      Init variables
+*      Display initial screen
        li   r0,>0bf8                   ; start at the bottom of the map
        mov  r0,@scroll_y
-       clr  @scroll_dy
-       clr  @frame
+       bl   @initial_screen
+*      Intro climb
+       bl   @intro_climb
+*      Init variables for main loop
        li   r0,>5da8
        mov  r0,@climber_pos
        li   r0,left_anim
        mov  r0,@left_anim_ptr
+       clr  @left_wide
+       bl   @update_climber_attrs_left
        li   r0,right_anim
        mov  r0,@right_anim_ptr
-*      Display initial screen
-       bl   @initial_screen
-*      Scroll loop
+       clr  @right_wide
+       bl   @update_climber_attrs_right
+       clr  @scroll_dy
+       clr  @frame
+*      Main loop
 main_loop:
 *      Wait for vsync
        bl   @vsync
@@ -624,6 +631,7 @@ control_climber_vert_11:
 * Update left climber attributes
 *
 update_climber_attrs_left:
+*      Update patterns
        mov  @left_anim_ptr,r3
        mov  @left_wide,r0
        jeq  update_climber_attrs_left_1
@@ -635,7 +643,7 @@ update_climber_attrs_left_1:
        mov  *r3,r1                     ; Pointer to head/hands sprite pattern
        movb *r1+,@sprite_attributes_head+10
        movb *r1,@sprite_attributes_head+2
-*      Update x
+*      Update position
        mov  @climber_pos,r0
        mov  r0,@sprite_attributes_head+8
        mov  r0,@sprite_attributes_body
@@ -650,6 +658,7 @@ update_climber_attrs_left_1:
 * Update right climber attributes
 *
 update_climber_attrs_right:
+*      Update patterns
        mov  @right_anim_ptr,r3
        mov  @right_wide,r0
        jeq  update_climber_attrs_right_1
@@ -661,7 +670,7 @@ update_climber_attrs_right_1:
        mov  *r3,r1                     ; Pointer to head/hands sprite pattern
        movb *r1+,@sprite_attributes_head+14
        movb *r1,@sprite_attributes_head+6
-*      Update y/x
+*      Update position
        mov  @climber_pos,r0
        ai   r0,>0010
        mov  r0,@sprite_attributes_head+12
@@ -1324,13 +1333,6 @@ rand:
 * the second and third part of the pattern table as well (with the same 
 * patterns). The color table is always OK at >800 bytes. See GMODE.
 *
-* Note that the pattern frame that should be uploaded here depends on the 
-* initial direction of the scrolling. If you want to start at the bottom 
-* you should start at frame 7 or 15, to allow enouh frames for building 
-* the next name table. This means that the address PSTRIP+7 should be used
-* instead of PSTRIP, and @SCRLY should be initilized so that the 3 least 
-* significant bits are all ones, e.g. 511 - not 512.
-*
 initial_screen:
        .proc
 *      Upload patterns 1st part
@@ -1402,11 +1404,69 @@ inisc2:
        ai   r0,32
        dec  r7
        jne  inisc2
-*      Climber
-       bl   @update_climber_attrs_left
-       bl   @update_climber_attrs_right
        .endproc
 *// initial_screen
+
+*********************************************************************
+*
+* Climber climbs the first few floors up by himself
+*
+intro_climb:
+       .proc
+       li   r0,>9da8
+       mov  r0,@climber_pos
+       li   r8,4
+intro_climb_1:
+       li   r9,intro_climb_data
+intro_climb_2:
+       mov  *r9+,@left_anim_ptr
+       mov  *r9+,@left_wide
+       mov  *r9+,@right_anim_ptr
+       mov  *r9+,@right_wide
+       mov  *r9+,r7                    ; dy
+       sb   r7,@climber_pos
+       li   r6,4
+intro_climb_3:
+       bl   @vsync
+       bl   @update_climber_attrs_left
+       bl   @update_climber_attrs_right
+       bl   @display_sprites
+       dec  r6
+       jne  intro_climb_3
+       ci   r9,intro_climb_data_end
+       jne  intro_climb_2
+       dec  r8
+       jne  intro_climb_1
+*      Say go for it
+       li   r0,speech_go_for_it_idx
+       bl   @speak
+       li   r9,60
+intro_climb_4:
+       bl   @vsync
+       bl   @speech_player
+       dec  r9
+       jne  intro_climb_4
+       .endproc
+intro_climb_data:
+       data left_anim, 0, right_anim, 0, >0000
+       data left_anim_1, 0, right_anim_1, 0, >0400
+       data left_anim_2, 0, right_anim_2, 0, >0400
+       data left_anim_3, 0, right_anim_3, 0, >0400
+       data left_anim_4, 0, right_anim_4, 0, >0400
+       data left_anim_4, 0, right_anim_4, 1, >0000
+       data left_anim_4, 0, right_anim_3, 1, >0000
+       data left_anim_4, 0, right_anim_2, 1, >0000
+       data left_anim_4, 0, right_anim_1, 1, >0000
+       data left_anim_4, 0, right_anim, 1, >0000
+       data left_anim_4, 0, right_anim, 0, >0000
+       data left_anim_4, 1, right_anim, 0, >0000
+       data left_anim_3, 1, right_anim, 0, >0000
+       data left_anim_2, 1, right_anim, 0, >0000
+       data left_anim_1, 1, right_anim, 0, >0000
+       data left_anim, 1, right_anim, 0, >0000
+intro_climb_data_end:
+       equ  $
+*// intro_climb
 
 *********************************************************************
 *
@@ -1432,17 +1492,14 @@ one_time_init:
        li   r2,vm8bw1_end-vm8bw1
        bl   @copy
        bl   @copy_speech_read_to_pad
+*      Detect speech
+       bl   @speech_check
 *      Setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,SPR0
        li   r2,64*32
-       bl   @vmbw
-*      Sprite attributes
-       li   r0,sprite_attr_table
-       li   r1,sprite_attributes_body
-       li   r2,16
        bl   @vmbw
 *      Clear sprites table
        li   r0,sprites
@@ -1602,16 +1659,21 @@ check_key:
 *       Includes
 *
        copy "vdp.a99"
+       copy "speech.a99"
 
 *********************************************************************
 *
 *       Data
 *
+       aorg >A000
+
        copy "graphics.a99"
        copy "screen.a99"
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
        copy "sprite-animations.a99"
+       copy "speech-defs.a99"
+       copy "speech-data.a99"
 
 window_anim_row:
        equ  0
@@ -1650,15 +1712,15 @@ w_24:
        data 24
 
 sprite_attributes_head:
-       byte >6d,>a8,0,>09              ; Left
-       byte >6d,>b8,0,>09              ; Right
-       byte >5d,>a8,spr_lft_top_2nd_norm_1,>09
-       byte >5d,>b8,spr_rgt_top_2nd_norm_1,>09
+       byte >ad,>a8,0,>09              ; Left
+       byte >ad,>b8,0,>09              ; Right
+       byte >9d,>a8,spr_lft_top_2nd_norm_1,>09
+       byte >9d,>b8,spr_rgt_top_2nd_norm_1,>09
 sprite_attributes_body:
-       byte >5d,>a8,spr_lft_top_norm_1,>02
-       byte >5d,>b8,spr_rgt_top_norm_1,>02
-       byte >6d,>a8,spr_lft_bot_norm_1,>02
-       byte >6d,>b8,spr_rgt_bot_norm_1,>02
+       byte >9d,>a8,spr_lft_top_norm_1,>02
+       byte >9d,>b8,spr_rgt_top_norm_1,>02
+       byte >ad,>a8,spr_lft_bot_norm_1,>02
+       byte >ad,>b8,spr_rgt_bot_norm_1,>02
 
 sprite_handler:
        equ  0
