@@ -313,6 +313,7 @@ display_sprites:
 *
 update_pattern_table:
        .proc
+       bl   @check_int
 *      Calculate VDP RAM destination address
        mov  @frame,r0                  ; Read frame into register
        inv  r0
