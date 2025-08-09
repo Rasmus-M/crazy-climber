@@ -1,0 +1,46 @@
+*********************************************************************
+*
+* Mute sound
+*
+mute_sound:
+       li   r0,mute_table              ; Mute all
+       li   r2,4
+mute_sound_1:
+       movb *r0+,@sound
+       dec  r2
+       jne  mute_sound_1
+       clr  @snd_channel_1
+       clr  @snd_channel_2
+       clr  @snd_channel_3
+       clr  @snd_channel_4
+*      Return
+       rt
+mute_table:
+       byte >9f, >bf, >df, >ff
+*// mute_sound
+
+*********************************************************************
+*
+* Play left hand
+*
+play_left_hand:
+       .proc
+       li   r0,snd_climb_left
+       li   r1,snd_channel_1
+       li   r2,B4
+       bl   @play_snd
+       .endproc
+*// play_left_hand
+
+*********************************************************************
+*
+* Play right hand
+*
+play_right_hand:
+       .proc
+       li   r0,snd_climb_right
+       li   r1,snd_channel_1
+       li   r2,G♯4
+       bl   @play_snd
+       .endproc
+*// play_right_hand

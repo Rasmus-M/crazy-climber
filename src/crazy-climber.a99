@@ -9,6 +9,8 @@
        def   start
 
        copy "macros.a99"
+       copy "sound-defs.a99"
+       copy "speech-defs.a99"
 
 **
 * Memory mapped addresses
@@ -50,8 +52,12 @@ sprite_attr_table:                     ; Sprite attribute table
 *      Constants
 map_width:
        equ  22
+scroll_max:
+       equ  >0bf8
 n_windows:
        equ  12
+attenuation_during_speech:
+       equ  6
 
 **
 * Scratch pad
@@ -126,8 +132,24 @@ animation_count:                       ; Number of frames to repeat last animati
        equ  right_wide+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
-speech_detected:
+snd_channel_1:
        equ  animation_changed+2
+snd_channel_2:
+       equ  snd_channel_1+snd_channel_size
+snd_channel_3:
+       equ  snd_channel_2+snd_channel_size
+snd_channel_4:
+       equ  snd_channel_3+snd_channel_size
+snd_track_1:
+       equ  snd_channel_4+snd_channel_size
+snd_track_2:
+       equ  snd_track_1+snd_track_size
+snd_track_3:
+       equ  snd_track_2+snd_track_size
+module_speed:
+       equ  snd_track_3+snd_track_size
+speech_detected:
+       equ  module_speed+2
 speech_status:
        equ  speech_detected+2
 speech_addr:
@@ -152,7 +174,7 @@ start  limi 0                          ; disable interrupts
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
 *      Display initial screen
-       li   r0,>0bf8                   ; start at the bottom of the map
+       li   r0,scroll_max              ; start at the bottom of the map
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
@@ -176,6 +198,8 @@ main_loop:
        bl   @vsync
 *      Set name table
        bl   @set_name_table
+*      Music and speech
+       bl   @int_routine
 *      Display sprites
        bl   @display_sprites
 *      Control climber
@@ -183,7 +207,7 @@ main_loop:
        bl   @control_climber_vert
        bl   @control_climber_horz
 *      Change scroll offset
-       a    @scroll_dy,@scroll_y
+       bl   @change_scroll_offset
 *      Animate windows and faces
        bl   @animate_windows
        bl   @create_windows
@@ -200,10 +224,8 @@ main_loop:
 *
 * Wait for vsync
 *
-* Modifies R0
-*
 vsync:
-       movb @vdpsta,@vdp_status        ; clear flag if already set
+       movb @vdpsta,@vdp_status        ; Clear flag if already set
        clr  r12
 vsync1:
        tb   2
@@ -211,6 +233,37 @@ vsync1:
        socb @vdpsta,@vdp_status
        b    *r11
 *// vsync
+
+*********************************************************************
+*
+* Test for interrupt and execute interrupt routine if found
+*
+check_int:
+       clr  r12
+       tb   2
+       jeq  check_int_1
+       movb @vdpsta,@vdp_status
+       .proc
+       bl   @int_routine
+       .endproc
+check_int_1:
+       b    *r11
+*// check_int
+
+
+
+*********************************************************************
+*
+* Interrupt routine
+*
+int_routine:
+       lwpi wrksp2
+       mov  @wrksp+20,r10
+       bl   @module_player
+       bl   @speech_player
+       lwpi wrksp
+       rt
+*// int_routine
 
 *********************************************************************
 *
@@ -276,18 +329,21 @@ update_pattern_table:
 *      Copy patterns 1st part
        mov  @tchnum,r2                 ; number of patterns
        bl   @vm8bw8
+       bl   @check_int
 *      Copy patterns 2nd part
        mov   r4,r0
        ai    r0,>800
        mov   r5,r1
        mov   @tchnum,r2                ; number of patterns
        bl    @vm8bw8
+       bl   @check_int
 *      Copy patterns 3rd part
        mov   r4,r0
        ai    r0,>1000
        mov   r5,r1
        mov   @tchnum,r2                ; number of patterns
        bl    @vm8bw8
+       bl   @check_int
 *      Copy colors
        mov  r4,r0
        ai   r0,color_table
@@ -295,6 +351,7 @@ update_pattern_table:
        ai   r1,cstrip-pstrip           ; add offset betweem patterns and colors
        mov  @tchnum,r2                 ; number of patterns
        bl   @vm8bw8
+       bl   @check_int
        .endproc
 *// update_pattern_table
 
@@ -332,9 +389,25 @@ update_name_table_3:
        ai   r0,32
        dec  r4
        jne  update_name_table_3
+       bl   @check_int
 update_name_table_4:
        .endproc
 *// update_name_table
+
+*********************************************************************
+*
+* Change scroll offset
+*
+change_scroll_offset:
+       a    @scroll_dy,@scroll_y
+       mov  @scroll_y,r0
+       ci   r0,scroll_max
+       jle  change_scroll_offset_1
+       li   r0,scroll_max
+       mov  r0,@scroll_y
+change_scroll_offset_1:
+       rt
+*// change_scroll_offset
 
 *********************************************************************
 *
@@ -550,6 +623,7 @@ control_climber_vert_1:
        mov  r3,@left_anim_ptr          ; Save new pointer
        li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
+       bl   @play_left_climbing_sound
        jmp  control_climber_vert_4
 *      Check for right grip
 control_climber_vert_2:
@@ -593,6 +667,7 @@ control_climber_vert_5:
        mov  r3,@right_anim_ptr         ; Save new pointer
        li   r0,-2                      ; Scroll down 2 pixels
        mov  r0,@scroll_dy
+       bl   @play_right_climbing_sound
        jmp  control_climber_vert_8
 *      Check for right grip
 control_climber_vert_6:
@@ -631,7 +706,41 @@ control_climber_vert_11:
 
 *********************************************************************
 *
-* Update left climber attributes
+* Play left climbing sound
+*
+play_left_climbing_sound:
+       .proc
+       mov  @left_anim_ptr,r0
+       ci   r0,left_anim_1
+       jeq  play_left_climbing_sound_1
+       ci   r0,left_anim_3
+       jne  play_left_climbing_sound_2
+play_left_climbing_sound_1
+       bl   @play_left_hand
+play_left_climbing_sound_2
+       .endproc
+*// play_left_climbing_sound
+
+*********************************************************************
+*
+* Play right climbing sound
+*
+play_right_climbing_sound:
+       .proc
+       mov  @right_anim_ptr,r0
+       ci   r0,right_anim_1
+       jeq  play_right_climbing_sound_1
+       ci   r0,right_anim_3
+       jne  play_right_climbing_sound_2
+play_right_climbing_sound_1
+       bl   @play_right_hand
+play_right_climbing_sound_2
+       .endproc
+*// play_right_climbing_sound
+
+*********************************************************************
+*
+* Update right climber attributes
 *
 update_climber_attrs_left:
 *      Update patterns
@@ -1417,6 +1526,8 @@ inisc2:
 *
 intro_climb:
        .proc
+       li   r0,intro_module
+       bl   @play_module
        li   r0,>9da8
        mov  r0,@climber_pos
        li   r8,4
@@ -1435,6 +1546,7 @@ intro_climb_3:
        bl   @update_climber_attrs_left
        bl   @update_climber_attrs_right
        bl   @display_sprites
+       bl   @int_routine
        dec  r6
        jne  intro_climb_3
        ci   r9,intro_climb_data_end
@@ -1444,12 +1556,6 @@ intro_climb_3:
 *      Say go for it
        li   r0,speech_go_for_it_idx
        bl   @speak
-       li   r9,60
-intro_climb_4:
-       bl   @vsync
-       bl   @speech_player
-       dec  r9
-       jne  intro_climb_4
        .endproc
 intro_climb_data:
        data left_anim, 0, right_anim, 0, >0000
@@ -1663,7 +1769,13 @@ check_key:
 *       Includes
 *
        copy "vdp.a99"
+       copy "sound-player.a99"
+       copy "music-player.a99"
+       copy "sound-fx-routines.a99"
        copy "speech.a99"
+
+lower_memory_max:
+       equ  $
 
 *********************************************************************
 *
@@ -1676,7 +1788,8 @@ check_key:
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
        copy "sprite-animations.a99"
-       copy "speech-defs.a99"
+       copy "sound-fx.a99"
+       copy "intro-music.a99"
        copy "speech-data.a99"
 
 window_anim_row:
@@ -1741,6 +1854,9 @@ sprite_size:
 sprites:
        bss 16*sprite_size
 sprites_end:
+       equ  $
+
+upper_memory_max:
        equ  $
 
        end  start

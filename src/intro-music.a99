@@ -1,0 +1,125 @@
+intro_module:
+       data >0003
+       data intro_track_00
+       data intro_track_01
+       data >0000
+intro_track_00:
+       data snd_channel_1
+intro_track_00_rpt:
+       data intro_seq_0038
+       data intro_seq_0044
+;       data >00FF
+;       data intro_track_00_rpt
+       data >0000
+intro_track_01:
+       data snd_channel_2
+intro_track_01_rpt:
+       data intro_seq_004A
+       data intro_seq_0054
+;       data >00FF
+;       data intro_track_01_rpt
+       data >0000
+intro_seq_0038:
+       data intro_note_0060
+       data >0003
+       data intro_note_0063
+       data >0001
+       data intro_note_0066
+       data >0001
+       data intro_note_0069
+       data >0003
+       data intro_note_006C
+       data >0003
+       data intro_note_006F
+       data >0003
+       data intro_note_0072
+       data >0003
+       data intro_note_0075
+       data >0003
+       data intro_note_006C
+       data >0003
+       data >0000
+intro_seq_004A:
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data >0000
+intro_seq_005C:
+       data >0020
+       data >0000
+intro_seq_0044:
+       data intro_note_0078
+       data >000F
+       data intro_note_0069
+       data >000F
+       data >0000
+intro_seq_0054:
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data intro_note_007B
+       data >0003
+       data intro_note_007E
+       data >0003
+       data intro_note_007B
+       data >000F
+       data >0000
+intro_note_0060:
+       data intro_instr_00
+       data A2
+intro_note_0063:
+       data intro_instr_00
+       data C2
+intro_note_0066:
+       data intro_instr_00
+       data C♯2
+intro_note_0069:
+       data intro_instr_00
+       data E2
+intro_note_006C:
+       data intro_instr_00
+       data F♯2
+intro_note_006F:
+       data intro_instr_00
+       data C♯3
+intro_note_0072:
+       data intro_instr_00
+       data B3
+intro_note_0075:
+       data intro_instr_00
+       data A3
+intro_note_007B:
+       data intro_instr_01
+       data A1
+intro_note_007E:
+       data intro_instr_01
+       data E1
+intro_note_0078:
+       data intro_instr_00
+       data D♯2
+intro_instr_00:
+       byte T1
+       byte 127
+       byte 0
+       byte 2
+       data >0000
+intro_instr_01:
+       byte T2
+       byte 36
+       byte 0
+       byte 7
+       data >0000
