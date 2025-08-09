@@ -533,10 +533,14 @@ create_windows_5:
        mov  r5,*r3+                    ; Write Y coord
        mov  r0,*r3+                    ; Write X coord
 *      Set type
+       mov  @scroll_y,r0
+       ci   r0,>0a80
+       jh   create_windows_6           ; No residents at the bottom
        bl   @rand
        andi r0,3                       ; 1/4 chance of resident
        ci   r0,window_anim_type_resident
        jeq  create_windows_7
+create_windows_6:
        clr  r0                         ; window_anim_type_window
 create_windows_7:
        mov  r0,*r3+                    ; 0 = empty window, 1 = resident
