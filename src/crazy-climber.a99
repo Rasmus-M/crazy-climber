@@ -134,12 +134,12 @@ animation_count:                       ; Number of frames to repeat last animati
        equ  right_wide+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
-windows_head_ptr_1:                      ; Head of window animation list
+windows_head_ptr:                      ; Head of window animation list
        equ  animation_changed+2
-windows_tail_ptr_1:                      ; Head of window animation list
-       equ  windows_head_ptr_1+2
+windows_tail_ptr:                      ; Head of window animation list
+       equ  windows_head_ptr+2
 snd_channel_1:
-       equ  windows_tail_ptr_1+2
+       equ  windows_tail_ptr+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -212,10 +212,12 @@ main_loop:
        bl   @check_grip
        bl   @control_climber_vert
        bl   @control_climber_horz
+       bl   @check_int
 *      Change scroll offset
        bl   @change_scroll_offset
 *      Animate windows and faces
        bl   @animate_windows
+       bl   @check_int
        bl   @create_windows
 *      Update patterns
        bl   @update_pattern_table
@@ -459,7 +461,6 @@ animate_windows_5:
 *      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
-;       andi r4,31                      ; Disable removing
        mov  r4,*r3                     ; Write frame back
        ai   r3,-window_anim_frame      ; Back to base of record
        ci   r5,window_anim_type_resident ; Is it a face animation?
@@ -573,7 +574,7 @@ create_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 16th frame
        andi r0,>000f
-       jne  create_windows_8
+       jne  create_windows_9
 *      Remove window animations that are scrolled out
        mov  @scroll_y,r4
        srl  r4,4                       ; Number of windows scrolled
@@ -593,7 +594,7 @@ create_windows_3:
        li   r3,window_anims            ; Don't use linked list since we're looking for an empty slot
 create_windows_4:
        mov  *r3,r1                     ; Window y (window_anim_row)
-       jlt  create_windows_8           ; Negative is the end (no space)
+       jlt  create_windows_9           ; Negative is the end (no space)
        jeq  create_windows_5           ; Zero is unused
        ai   r3,window_anim_size
        jmp  create_windows_4
@@ -604,12 +605,11 @@ create_windows_5:
        bl   @rand_max
        a    r4,r0                      ; Add y coord of top window row on screen
        mov  r0,*r3                     ; Save it in new window anim (window_anim_row)
-*      Add new window to linked list sorted by y (row)
-       bl   @add_window_to_list
-*      Set properties of new window
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max                  ; X coord in r0
+       mov  r0,@window_anim_col(r3)    ; Write X coord
        mov  *r3,r1                     ; Y coord (window_anim_row)
+*      Check map position
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window?
        jne  create_windows_8           ; If not then skip
@@ -619,7 +619,6 @@ create_windows_5:
        ai   r2,4*map_width             ; Move one window down
        bl   @is_open_window            ; Is there an open window below?
        jne  create_windows_8           ; If not then skip
-       mov  r0,@window_anim_col(r3)    ; Write X coord
 *      Set type
        mov  @scroll_y,r0
        ci   r0,>0a80
@@ -633,7 +632,13 @@ create_windows_6:
 create_windows_7:
        mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
        clr  @window_anim_frame(r3)     ; Clear frame
+*      Add new window to linked list sorted by y (row)
+       bl   @add_window_to_list
+       jmp  create_windows_9
 create_windows_8:
+*      Cancel adding window
+       clr  *r3                        ; Make available again
+create_windows_9:
        .endproc
 *// create_windows
 
@@ -1904,10 +1909,10 @@ window_anim_type_window:
 window_anim_type_resident:
        equ  1
 
-windows_head_ptr:
-       data 0
-windows_tail_ptr:
-       data 0
+;windows_head_ptr:
+;       data 0
+;windows_tail_ptr:
+;       data 0
 window_anims:
        bss  n_windows*window_anim_size
 window_anims_end:
