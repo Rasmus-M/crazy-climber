@@ -9,5 +9,5 @@ rem    + bin\banks.bin ^
 
 rem java -jar tools/CopyHeader.jar crazy-climber8.bin 60
 
-rem jar -cvf crazy-climber.rpk crazy-climber8.bin layout.xml > make.log
+jar -cvf crazy-climber.rpk crazy-climber8.bin layout.xml > make.log
 
