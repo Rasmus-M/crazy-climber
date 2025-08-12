@@ -56,6 +56,8 @@ scroll_max:
        equ  >0bf8
 n_windows:
        equ  12
+n_sprites:
+       equ  16
 attenuation_during_speech:
        equ  6
 
@@ -132,8 +134,12 @@ animation_count:                       ; Number of frames to repeat last animati
        equ  right_wide+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  animation_count+2
-snd_channel_1:
+windows_head_ptr_1:                      ; Head of window animation list
        equ  animation_changed+2
+windows_tail_ptr_1:                      ; Head of window animation list
+       equ  windows_head_ptr_1+2
+snd_channel_1:
+       equ  windows_tail_ptr_1+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -419,14 +425,11 @@ animate_windows:
        mov  @frame,r0                  ; Only do this every 4th frame
        andi r0,>0003
        jne  animate_windows_8
-       li   r3,window_anims            ; List of window animations (including resident faces)
+       mov  @windows_head_ptr,r3       ; List of window animations (including resident faces)
 animate_windows_1:
-       mov  *r3+,r1                    ; Window y
-       jlt  animate_windows_8          ; Negative terminates
-       jne  animate_windows_2         ; Zero means unused
-       ai   r3,window_anim_size-2
-       jmp  animate_windows_1
-animate_windows_2:
+       mov  r3,r3
+       jeq  animate_windows_8          ; zero terminates
+       mov  *r3+,r1                    ; Window y (row)
        mov  *r3+,r0                    ; Window x (0 - 5)
        bl   @window_map_addr           ; Map address in r2
        mov  *r3+,r5                    ; Get animation type
@@ -456,28 +459,111 @@ animate_windows_5:
 *      Update animation frame
        mov  *r3,r4                     ; Get animation frame
        inc  r4                         ; Increment animation frame
-       mov  r4,*r3+                    ; Write frame back
+;       andi r4,31                      ; Disable removing
+       mov  r4,*r3                     ; Write frame back
+       ai   r3,-window_anim_frame      ; Back to base of record
        ci   r5,window_anim_type_resident ; Is it a face animation?
        jeq  animate_windows_6
 *      Window animation
        ci   r4,32                      ; End at 32
        jeq  animate_windows_7
-       jmp  animate_windows_1          ; Next window
+       jmp  animate_windows_2          ; Next window
 *      Face animation
 animate_windows_6:
        ci   r4,16                      ; End at 16
        jeq  animate_windows_7
        ci   r4,4                       ; Is it frame 4?
-       jne  animate_windows_1          ; No - next window
+       jne  animate_windows_2          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
-       jmp  animate_windows_1          ; Next window
+       jmp  animate_windows_2          ; Next window
 *      Teminate animation
 animate_windows_7:
-       clr  @-window_anim_size(r3)     ; Clear y coord to mark as available
-       jmp  animate_windows_1          ; Next window
+       bl   @remove_window_from_list
+*      Next
+animate_windows_2:
+       mov  @window_anim_next(r3),r3   ; Next window
+       jmp  animate_windows_1
 animate_windows_8:
        .endproc
 *// animate_windows
+
+*********************************************************************
+*
+* Remove window animation in r3 from list
+*
+* Modifies r1,r2
+*
+remove_window_from_list:
+       clr  @window_anim_row(r3)       ; Clear y coord to mark as available
+       mov  @window_anim_prev(r3),r1   ; Get previous
+       mov  @window_anim_next(r3),r2   ; Get next
+       jne  remove_window_from_list_1  ; Removing last? No - skip ahead
+*      Removing last
+       mov  r1,@windows_tail_ptr       ; tail = previous
+       jeq  remove_window_from_list_2  ; Skip ahead if also first
+       clr  @window_anim_next(r1)      ; previous.next = null
+       jmp  remove_window_from_list_3  ; Return
+remove_window_from_list_1:
+*      Not last
+       mov  r1,@window_anim_prev(r2)   ; next.previous = previous
+       jeq  remove_window_from_list_2  ; Jump if first
+*      Not first or last
+       mov  r2,@window_anim_next(r1)   ; previous.next = next
+       jmp  remove_window_from_list_3  ; Return
+*      Removing first
+remove_window_from_list_2:
+       mov  r2,@windows_head_ptr       ; head = next
+       jeq  remove_window_from_list_3  ; Return if last
+       clr  @window_anim_prev(r2)      ; next.previous = null
+remove_window_from_list_3:
+       rt
+*// remove_window_from_list
+
+*********************************************************************
+*
+* Add window animation in r3 to list
+*
+* Modifies r1,r2
+*
+add_window_to_list:
+       mov  @windows_head_ptr,r2       ; current = head
+       jne  add_window_to_list_2
+*      Add to empty list
+       mov  r3,@windows_tail_ptr       ; tail = new
+       clr  @window_anim_next(r3)      ; new.next = null
+add_window_to_list_1:
+*      Add first
+       mov  r3,@windows_head_ptr       ; head = new
+       clr  @window_anim_prev(r3)      ; new.previous = null
+       jmp  add_window_to_list_5       ; Done
+*      Not empty list
+add_window_to_list_2:
+       mov  r2,r2                      ; End of list?
+       jeq  add_window_to_list_4       ; Yes - add at end
+       c    *r3,*r2                    ; Compare y (window_anim_row) values
+       jh   add_window_to_list_3       ; Still higher - proceed to next
+*      Add in the middle or first      ; current.y >= new.y
+       mov  r2,@window_anim_next(r3)   ; new.next = current
+       mov  @window_anim_prev(r2),r1   ; previous = current.previous
+       mov  r3,@window_anim_prev(r2)   ; current.previous = new
+       mov  r1,r1                      ; previous == null?
+       jeq  add_window_to_list_1       ; If null then adding first
+       mov  r3,@window_anim_next(r1)   ; previous.next = new
+       mov  r1,@window_anim_prev(r3)   ; new.previous = previous
+       jmp  add_window_to_list_5       ; Done
+add_window_to_list_3:
+       mov  @window_anim_next(r2),r2   ; Next window
+       jmp  add_window_to_list_2       ; Loop
+*      Add at end
+add_window_to_list_4:
+       mov  @windows_tail_ptr,r2       ; tail
+       mov  r3,@window_anim_next(r2)   ; tail.next = new
+       mov  r2,@window_anim_prev(r3)   ; new.previous = tail
+       clr  @window_anim_next(r3)      ; new.next = null
+       mov  r3,@windows_tail_ptr       ; tail = new
+add_window_to_list_5:
+       rt
+*// add_window_to_list
 
 *********************************************************************
 *
@@ -492,23 +578,22 @@ create_windows:
        mov  @scroll_y,r4
        srl  r4,4                       ; Number of windows scrolled
        ai   r4,12                      ; Y coord of bottom window row on screen
-       li   r3,window_anims
+       mov  @windows_head_ptr,r3
 create_windows_1:
-       mov  *r3,r1
-       jlt  create_windows_3
-       jeq  create_windows_2
-       c    r4,r1
-       jhe  create_windows_2
-       clr  *r3                        ; Mark as unused
+       mov  r3,r3                      ; Reached the end?
+       jeq  create_windows_3           ; Yes, move on
+       c    r4,*r3                     ; Compare bottom row to window_anim_row
+       jhe  create_windows_2           ; Skip ahead if bottom row is higher or equal
+       bl   @remove_window_from_list   ; Bottom row is lower - remove window
 create_windows_2:
-       ai   r3,window_anim_size
+       mov  @window_anim_next(r3),r3   ; Next window
        jmp  create_windows_1
 create_windows_3:
 *      Find an available slot to use
-       li   r3,window_anims
+       li   r3,window_anims            ; Don't use linked list since we're looking for an empty slot
 create_windows_4:
-       mov  *r3,r1
-       jlt  create_windows_8           ; Negative is the the
+       mov  *r3,r1                     ; Window y (window_anim_row)
+       jlt  create_windows_8           ; Negative is the end (no space)
        jeq  create_windows_5           ; Zero is unused
        ai   r3,window_anim_size
        jmp  create_windows_4
@@ -518,10 +603,13 @@ create_windows_5:
        li   r2,12                      ; Y coord between 0 and 11
        bl   @rand_max
        a    r4,r0                      ; Add y coord of top window row on screen
-       mov  r0,r5                      ; Save it
+       mov  r0,*r3                     ; Save it in new window anim (window_anim_row)
+*      Add new window to linked list sorted by y (row)
+       bl   @add_window_to_list
+*      Set properties of new window
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max                  ; X coord in r0
-       mov  r5,r1                      ; Y coord
+       mov  *r3,r1                     ; Y coord (window_anim_row)
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window?
        jne  create_windows_8           ; If not then skip
@@ -531,8 +619,7 @@ create_windows_5:
        ai   r2,4*map_width             ; Move one window down
        bl   @is_open_window            ; Is there an open window below?
        jne  create_windows_8           ; If not then skip
-       mov  r5,*r3+                    ; Write Y coord
-       mov  r0,*r3+                    ; Write X coord
+       mov  r0,@window_anim_col(r3)    ; Write X coord
 *      Set type
        mov  @scroll_y,r0
        ci   r0,>0a80
@@ -544,8 +631,8 @@ create_windows_5:
 create_windows_6:
        clr  r0                         ; window_anim_type_window
 create_windows_7:
-       mov  r0,*r3+                    ; 0 = empty window, 1 = resident
-       clr  *r3                        ; Clear frame
+       mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
+       clr  @window_anim_frame(r3)     ; Clear frame
 create_windows_8:
        .endproc
 *// create_windows
@@ -1600,7 +1687,7 @@ one_time_init:
        li   r2,pad_max-padvar
        bl   @clear
 *      Randomize
-       mov  r1,@rand_no
+;       mov  r1,@rand_no
 *      Copy code to scratchpad
        li   r0,vm8bw1
        li   r1,vm8bw_pad
@@ -1805,14 +1892,22 @@ window_anim_type:
        equ  4
 window_anim_frame:
        equ  6
-window_anim_size:
+window_anim_next:
        equ  8
+window_anim_prev:
+       equ  10
+window_anim_size:
+       equ  12
 
 window_anim_type_window:
        equ  0
 window_anim_type_resident:
        equ  1
 
+windows_head_ptr:
+       data 0
+windows_tail_ptr:
+       data 0
 window_anims:
        bss  n_windows*window_anim_size
 window_anims_end:
@@ -1857,7 +1952,7 @@ sprite_size:
 
        even
 sprites:
-       bss 16*sprite_size
+       bss  n_sprites*sprite_size
 sprites_end:
        equ  $
 
