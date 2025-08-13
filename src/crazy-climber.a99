@@ -1128,7 +1128,7 @@ handle_other_sprites:
        .proc
        li   r3,sprites
 handle_other_sprites_1:
-       mov  *r3,r0
+       mov  *r3,r0                     ; sprite_handler
        jeq  handle_other_sprites_2
        bl   *r0
 handle_other_sprites_2:
@@ -1167,14 +1167,11 @@ resident_handler_1:
        movb r0,*r15
        c    @sprite_count(r3),@resident_handler_drop
        jne  resident_handler_2
-;       bl   @rand
-;       ci   r0,>c000
-;       jl   resident_handler_2
        bl   @create_plant
 resident_handler_2:
        dec  @sprite_count(r3)
        jne  resident_handler_3
-       clr  *r3                        ; Handler done
+       clr  @sprite_handler(r3)        ; Handler done
 resident_handler_3:
        .endproc
 resident_handler_drop:
@@ -1215,7 +1212,7 @@ plant_handler_1:
 *
 * Create resident
 *
-* r3 points to window structure of next window (must be preserved)
+* r3 points to window structure (must be preserved)
 *
 create_resident:
        .proc
@@ -1223,10 +1220,10 @@ create_resident:
        mov  r4,r4
        jeq  create_resident_1
        li   r0,resident_handler
-       mov  r0,*r4+                            ; Handler
-       mov  @window_anim_row-window_anim_size(r3),*r4+   ; y
-       mov  @window_anim_col-window_anim_size(r3),*r4+   ; x
-       clr  *r4                                ; Counter
+       mov  r0,@sprite_handler(r4)     ; sprite_handler
+       mov  @window_anim_row(r3),@sprite_y(r4)   ; sprite_y
+       mov  @window_anim_col(r3),@sprite_x(r4)   ; sprite_x
+       clr  @sprite_count(r4)          ; sprite_count
 create_resident_1:
        .endproc
 *// create_resident
@@ -1243,14 +1240,14 @@ create_plant:
        mov  r4,r4
        jeq  create_plant_1
        li   r0,plant_handler
-       mov  r0,*r4+                    ; Handler
+       mov  r0,@sprite_handler(r4)     ; sprite_handler
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        bl   @window_screen_coords
        ai   r1,16
-       mov  r1,*r4+                    ; y
-       mov  r0,*r4+                    ; x
-       clr  *r4                        ; Counter
+       mov  r1,@sprite_y(r4)           ; sprite_y
+       mov  r0,@sprite_x(r4)           ; sprite_x
+       clr  @sprite_count(r4)          ; sprite_count
 create_plant_1:
        .endproc
 *// create_plant
@@ -1952,8 +1949,16 @@ sprite_x:
        equ  4
 sprite_count:
        equ  6
-sprite_size:
+sprite_vy:
        equ  8
+sprite_vx:
+       equ  10
+sprite_ay:
+       equ  12
+sprite_ax:
+       equ  14
+sprite_size:
+       equ  16
 
        even
 sprites:

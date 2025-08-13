@@ -27,7 +27,7 @@ play_left_hand:
        .proc
        li   r0,snd_climb_left
        li   r1,snd_channel_1
-       li   r2,B4
+       li   r2,B3
        bl   @play_snd
        .endproc
 *// play_left_hand
@@ -39,8 +39,8 @@ play_left_hand:
 play_right_hand:
        .proc
        li   r0,snd_climb_right
-       li   r1,snd_channel_1
-       li   r2,G♯4
+       li   r1,snd_channel_2
+       li   r2,G♯3
        bl   @play_snd
        .endproc
 *// play_right_hand
