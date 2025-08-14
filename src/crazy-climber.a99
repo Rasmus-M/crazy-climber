@@ -132,8 +132,10 @@ right_wide:                            ; Flag: wide on right side?
        equ  left_wide+2
 animation_count:                       ; Number of frames to repeat last animation frame
        equ  right_wide+2
-animation_changed:                     ; Flag: did animation frame (left or right) change?
+inactivity_count:
        equ  animation_count+2
+animation_changed:                     ; Flag: did animation frame (left or right) change?
+       equ  inactivity_count+2
 windows_head_ptr:                      ; Head of window animation list
        equ  animation_changed+2
 windows_tail_ptr:                      ; Head of window animation list
@@ -186,7 +188,7 @@ start  limi 0                          ; disable interrupts
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
-       li   r0,>5da8
+       li   r0,>6da8
        mov  r0,@climber_pos
        li   r0,left_anim
        mov  r0,@left_anim_ptr
@@ -211,6 +213,7 @@ main_loop:
 *      Control climber
        bl   @check_grip
        bl   @control_climber_vert
+       bl   @check_int
        bl   @control_climber_horz
        bl   @check_int
 *      Change scroll offset
@@ -219,11 +222,21 @@ main_loop:
        bl   @animate_windows
        bl   @check_int
        bl   @create_windows
+       bl   @check_int
 *      Update patterns
        bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
+*      Check for inactivity
+       inc  @inactivity_count
+       mov  @inactivity_count,r0
+       ci   r0,120
+       jlt  main_loop_1
+       li   r0,speech_go_for_it_idx
+       bl   @speak
+       clr  @inactivity_count
 *      Loop forever
+main_loop_1:
        inc  @frame
        jmp  main_loop
 *// main_loop
@@ -321,7 +334,6 @@ display_sprites:
 *
 update_pattern_table:
        .proc
-       bl   @check_int
 *      Calculate VDP RAM destination address
        mov  @frame,r0                  ; Read frame into register
        inv  r0
@@ -388,6 +400,7 @@ update_name_table:
 update_name_table_1:
        bl   @copy_row                  ; low character set
        ai   r0,32
+       bl   @check_int
        dec  r4
        jne  update_name_table_1
        jmp  update_name_table_4
@@ -396,9 +409,9 @@ update_name_table_2:
 update_name_table_3:
        bl   @copy_row_hi
        ai   r0,32
+       bl   @check_int
        dec  r4
        jne  update_name_table_3
-       bl   @check_int
 update_name_table_4:
        .endproc
 *// update_name_table
@@ -796,6 +809,7 @@ control_climber_vert_8:
 control_climber_vert_9:
        abs  @animation_changed
        jeq  control_climber_vert_11
+       clr  @inactivity_count
 control_climber_vert_10:
        dec  @animation_count
 control_climber_vert_11:
@@ -1080,6 +1094,7 @@ control_climber_horz_9:
        bl   @update_climber_attrs_left
 control_climber_horz_10:
        bl   @update_climber_attrs_right
+       clr  @inactivity_count
 control_climber_horz_11:
        .endproc
 *// control_climber_horz
@@ -1287,7 +1302,7 @@ create_plant:
        clr  @sprite_vx(r4)
        clr  @sprite_vy(r4)
        clr  @sprite_ax(r4)
-       li   r0,>0002
+       li   r0,>0003
        mov  r0,@sprite_ay(r4)
        clr  @sprite_count(r4)          ; sprite_count
 create_plant_1:
@@ -1666,7 +1681,7 @@ intro_climb:
        bl   @play_module
        li   r0,>9da8
        mov  r0,@climber_pos
-       li   r8,4
+       li   r8,3
 intro_climb_1:
        li   r9,intro_climb_data
 intro_climb_2:
