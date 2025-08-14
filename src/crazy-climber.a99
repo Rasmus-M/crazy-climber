@@ -1197,11 +1197,36 @@ plant_handler:
        srl  r0,4
        swpb r0
        movb r0,*r15
-       li   r0,spr_plant_1*256
-       movb r0,*r15
-       li   r0,>0c00                   ; Green
-       movb r0,*r15
+       li   r2,spr_plant_1*256
+       movb r2,*r15
+       li   r2,>0c00                   ; Green
+       movb r2,*r15
+*      Check for collision with climber
+       mov  @climber_pos,r2
+       sb   r1,r2                      ; Climber y - plant y
+       jlt  plant_handler_1
+       cb   r2,@b_12
+       jgt  plant_handler_1
+       swpb r2
+       abs  @left_wide
+       jeq  plant_handler_0
+       ai   r2,>0800
+plant_handler_0:
+       sb   r0,r2                      ; Climber x - plant x
+       abs  r2
+       cb   r2,@b_8
+       jgt  plant_handler_1
+*      Hit
+       li   r2,>0008
+       mov  r2,@sprite_vx(r3)
+       mov  @sprite_vy(r3),r2
+       neg  r2
+       sra  r2,1
+       mov  r2,@sprite_vy(r3)
+       mov  @two,@animation_count      ; Animation count = 2
+       mov  @two,@scroll_dy
 *      Update sprite
+plant_handler_1:
        a    @sprite_ax(r3),@sprite_vx(r3)
        a    @sprite_ay(r3),@sprite_vy(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
@@ -1210,9 +1235,9 @@ plant_handler:
        sla  r0,4
        s    r0,@sprite_y(r3)
        c    @sprite_y(r3),@plant_bottom_screen
-       jl   plant_handler_1
+       jl   plant_handler_2
        clr  @sprite_handler(r3)
-plant_handler_1:
+plant_handler_2:
        .endproc
 plant_bottom_screen:
        data 194 * 16;
@@ -1942,8 +1967,12 @@ b_building_left:
        byte >40
 b_building_right:
        byte >c8
-b_unused:
-       byte >00
+b_16:
+       byte 16
+b_12:
+       byte 12
+b_8:
+       byte 8
 w_24:
        data 24
 
