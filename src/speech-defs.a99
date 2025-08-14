@@ -1,2 +1,5 @@
-speech_go_for_it_idx:
+speech_ouch_idx:
        equ  1
+
+speech_go_for_it_idx:
+       equ  2

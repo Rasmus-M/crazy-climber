@@ -1240,6 +1240,8 @@ plant_handler_0:
        mov  r2,@sprite_vy(r3)
        mov  @two,@animation_count      ; Animation count = 2
        mov  @two,@scroll_dy
+       li   r0,speech_ouch_idx
+       bl   @speak
 *      Update sprite
 plant_handler_1:
        a    @sprite_ax(r3),@sprite_vx(r3)

@@ -8,9 +8,32 @@ speech_data:
        data 0
        data 1
 
+       data speech_ouch
+       data speech_ouch_end-speech_ouch
+
        data speech_go_for_it
        data speech_go_for_it_end-speech_go_for_it
 
+speech_ouch:
+       BYTE >45,>F3,>A5,>2E,>AC,>7E,>14,>DD
+       BYTE >EE,>7A,>B3,>DA,>B5,>F4,>30,>EB
+       BYTE >C3,>33,>7B,>D3,>42,>99,>6D,>B6
+       BYTE >63,>4B,>F1,>63,>3A,>A8,>6A,>15
+       BYTE >C9,>E5,>6F,>11,>1F,>97,>44,>D5
+       BYTE >D7,>45,>33,>B6,>53,>44,>FE,>46
+       BYTE >C9,>A8,>46,>A2,>F3,>44,>73,>C2
+       BYTE >12,>8E,>9F,>40,>CB,>8A,>8A,>18
+       BYTE >3D,>C4,>C9,>93,>1E,>20,>A2,>9F
+       BYTE >4C,>11,>11,>C5,>C8,>F5,>77,>52
+       BYTE >DC,>B1,>C1,>F6,>EB,>9B,>28,>FB
+       BYTE >8E,>9D,>73,>FE,>EE,>94,>05,>6C
+       BYTE >CC,>DB,>EE,>01,>1E,>D8,>B9,>3E
+       BYTE >7B,>C8,>BD,>23,>C6,>BA,>AB,>0D
+       BYTE >68,>0C,>98,>F3,>97,>00,>E5,>E6
+       BYTE >13,>BE,>F5,>99,>2E,>D1,>8C,>F0
+       BYTE >BC,>7A,>9C,>C9,>16,>00,>00,>00
+speech_ouch_end:
+       equ  $
 
 speech_go_for_it:
        BYTE >02,>4B,>3F,>3D,>CC,>E5,>38,>3C
