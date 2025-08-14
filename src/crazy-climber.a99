@@ -426,6 +426,7 @@ animate_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 4th frame
        andi r0,>0003
+       ci   r0,>0001
        jne  animate_windows_8
        mov  @windows_head_ptr,r3       ; List of window animations (including resident faces)
 animate_windows_1:
@@ -1186,26 +1187,35 @@ resident_handler_drop:
 *
 plant_handler:
        .proc
+*      Display sprite
        mov  @sprite_y(r3),r1
+       srl  r1,4
        dec  r1
        swpb r1
        movb r1,*r15
        mov  @sprite_x(r3),r0
+       srl  r0,4
        swpb r0
        movb r0,*r15
        li   r0,spr_plant_1*256
        movb r0,*r15
        li   r0,>0c00                   ; Green
        movb r0,*r15
-       mov  @sprite_y(r3),r0
-       s    @scroll_dy,r0
-       ai   r0,4
-       mov  r0,@sprite_y(r3)
-       ci   r0,194
+*      Update sprite
+       a    @sprite_ax(r3),@sprite_vx(r3)
+       a    @sprite_ay(r3),@sprite_vy(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       mov  @scroll_dy,r0
+       sla  r0,4
+       s    r0,@sprite_y(r3)
+       c    @sprite_y(r3),@plant_bottom_screen
        jl   plant_handler_1
        clr  @sprite_handler(r3)
 plant_handler_1:
        .endproc
+plant_bottom_screen:
+       data 194 * 16;
 *// plant_handler
 
 *********************************************************************
@@ -1244,9 +1254,16 @@ create_plant:
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        bl   @window_screen_coords
-       ai   r1,16
-       mov  r1,@sprite_y(r4)           ; sprite_y
+       sla  r0,4
        mov  r0,@sprite_x(r4)           ; sprite_x
+;      ai   r1,16
+       sla  r1,4
+       mov  r1,@sprite_y(r4)           ; sprite_y
+       clr  @sprite_vx(r4)
+       clr  @sprite_vy(r4)
+       clr  @sprite_ax(r4)
+       li   r0,>0002
+       mov  r0,@sprite_ay(r4)
        clr  @sprite_count(r4)          ; sprite_count
 create_plant_1:
        .endproc
