@@ -348,30 +348,46 @@ update_pattern_table:
        mov  r0,r4
        mov  r1,r5
 *      Copy patterns 1st part
-       mov  @tchnum,r2                 ; number of patterns
+       li   r2,32                      ; number of patterns
        bl   @vm8bw8
+       bl   @check_int
+       mov  @tchnum,r2
+       ai   r2,-32                     ; remaining patterns
+       bl   @vm8bw_pad
        bl   @check_int
 *      Copy patterns 2nd part
        mov   r4,r0
        ai    r0,>800
        mov   r5,r1
-       mov   @tchnum,r2                ; number of patterns
-       bl    @vm8bw8
+       li   r2,32                      ; number of patterns
+       bl   @vm8bw8
+       bl   @check_int
+       mov  @tchnum,r2
+       ai   r2,-32                     ; remaining patterns
+       bl   @vm8bw_pad
        bl   @check_int
 *      Copy patterns 3rd part
        mov   r4,r0
        ai    r0,>1000
        mov   r5,r1
-       mov   @tchnum,r2                ; number of patterns
-       bl    @vm8bw8
+       li   r2,32                      ; number of patterns
+       bl   @vm8bw8
+       bl   @check_int
+       mov  @tchnum,r2
+       ai   r2,-32                     ; remaining patterns
+       bl   @vm8bw_pad
        bl   @check_int
 *      Copy colors
        mov  r4,r0
        ai   r0,color_table
        mov  r5,r1
        ai   r1,cstrip-pstrip           ; add offset betweem patterns and colors
-       mov  @tchnum,r2                 ; number of patterns
+       li   r2,32                      ; number of patterns
        bl   @vm8bw8
+       bl   @check_int
+       mov  @tchnum,r2
+       ai   r2,-32                     ; remaining patterns
+       bl   @vm8bw_pad
        bl   @check_int
        .endproc
 *// update_pattern_table
