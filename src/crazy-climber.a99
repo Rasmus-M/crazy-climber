@@ -59,7 +59,7 @@ n_windows:
 n_sprites:
        equ  16
 attenuation_during_speech:
-       equ  6
+       equ  2
 
 **
 * Scratch pad
@@ -1228,20 +1228,28 @@ plant_handler:
        ai   r2,>0800
 plant_handler_0:
        sb   r0,r2                      ; Climber x - plant x
+       mov  r2,r1
        abs  r2
        cb   r2,@b_8
        jgt  plant_handler_1
 *      Hit
-       li   r2,>0008
-       mov  r2,@sprite_vx(r3)
+       mov  r1,r1
+       jlt  !
+       li   r2,->0008
+       jmp  !!
+!      li   r2,>0008
+!      mov  r2,@sprite_vx(r3)
        mov  @sprite_vy(r3),r2
        neg  r2
        sra  r2,1
        mov  r2,@sprite_vy(r3)
        mov  @two,@animation_count      ; Animation count = 2
        mov  @two,@scroll_dy
-       li   r0,speech_ouch_idx
-       bl   @speak
+       li   r0,8
+       mov  r0,@sprite_count(r3)
+       .push r3
+       bl   @play_boing
+       .pop  r3
 *      Update sprite
 plant_handler_1:
        a    @sprite_ax(r3),@sprite_vx(r3)
@@ -1255,6 +1263,11 @@ plant_handler_1:
        jl   plant_handler_2
        clr  @sprite_handler(r3)
 plant_handler_2:
+       dec  @sprite_count(r3)
+       jne  plant_handler_3
+       li   r0,speech_ouch_idx
+       bl   @speak
+plant_handler_3:
        .endproc
 plant_bottom_screen:
        data 194 * 16;
@@ -1366,7 +1379,6 @@ left_hand_y_offset:
        sla  r1,2
        rt
 *// left_hand_offset
-
 
 *********************************************************************
 *

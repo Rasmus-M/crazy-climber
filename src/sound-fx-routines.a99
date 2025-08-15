@@ -44,3 +44,17 @@ play_right_hand:
        bl   @play_snd
        .endproc
 *// play_right_hand
+
+*********************************************************************
+*
+* Play boing
+*
+play_boing:
+       .proc
+       li   r0,snd_boing
+       li   r1,snd_channel_3
+       li   r2,A♯1
+       bl   @play_snd
+       .endproc
+*// play_boing
+
