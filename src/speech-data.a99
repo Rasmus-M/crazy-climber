@@ -14,6 +14,9 @@ speech_data:
        data speech_go_for_it
        data speech_go_for_it_end-speech_go_for_it
 
+       data speech_oh_no
+       data speech_oh_no_end-speech_oh_no
+
 speech_ouch:
        BYTE >45,>F3,>A5,>2E,>AC,>7E,>14,>DD
        BYTE >EE,>7A,>B3,>DA,>B5,>F4,>30,>EB
@@ -53,6 +56,25 @@ speech_go_for_it:
        BYTE >E4,>AC,>AA,>80,>14,>41,>09,>53
        BYTE >82,>7A,>7D,>C1,>7E
 speech_go_for_it_end:
+       equ  $
+
+speech_oh_no:
+       BYTE >89,>75,>B1,>DF,>84,>FE,>37,>DE
+       BYTE >DA,>7A,>56,>79,>D6,>54,>67,>EA
+       BYTE >DD,>B0,>79,>53,>6D,>EB,>25,>86
+       BYTE >F5,>41,>F5,>37,>86,>01,>0E,>07
+       BYTE >CE,>26,>75,>AA,>52,>3A,>D8,>38
+       BYTE >A2,>20,>B4,>D2,>62,>C3,>8E,>E0
+       BYTE >8C,>D2,>8B,>0D,>B9,>52,>AD,>A3
+       BYTE >0F,>CE,>B5,>69,>D5,>28,>1F,>70
+       BYTE >D7,>FE,>40,>F2,>B9,>42,>6C,>B9
+       BYTE >67,>82,>E1,>81,>B7,>E1,>1F,>45
+       BYTE >2E,>39,>45,>A4,>3B,>D2,>F8,>65
+       BYTE >24,>3A,>B6,>C9,>F4,>9C,>93,>79
+       BYTE >BA,>02,>FF,>27,>8C,>64,>75,>0B
+       BYTE >D5,>12,>33,>54,>D9,>29,>0A,>52
+       BYTE >25,>00,>A7,>22,>00
+speech_oh_no_end:
        equ  $
 
 ;       bss >8000-speech_go_for_it_end-2

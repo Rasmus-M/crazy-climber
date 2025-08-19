@@ -3,3 +3,6 @@ speech_ouch_idx:
 
 speech_go_for_it_idx:
        equ  2
+
+speech_oh_no_idx:
+       equ  3
