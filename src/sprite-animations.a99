@@ -244,6 +244,9 @@ right_2nd_wide_4:
        byte spr_rgt_top_2nd_norm_5, spr_rgt_bot_2nd_wide_5
 
 
+chopper_left:
+       data chopper_left_0
+       data chopper_left_1
 chopper_left_0:
        data 8
        byte >00, >00, >a0, >01         ; Top rotor
@@ -254,3 +257,38 @@ chopper_left_0:
        byte ->08, >10, >bc, >01        ; Tail rotor
        byte >18, ->30, >c0, >0c        ; Landing gear
        byte >00, >10, >c4, >0c
+chopper_left_1:
+       data 8
+       byte >00, >00, >e0, >01         ; Top rotor
+       byte >00, >10, >e4, >01
+       byte >10, ->10, >b0, >04        ; Body
+       byte >00, >10, >b4, >04
+       byte >00, >10, >b8, >04
+       byte ->08, >10, >a8, >01        ; Tail rotor
+       byte >18, ->30, >c0, >0c        ; Landing gear
+       byte >00, >10, >c4, >0c
+
+chopper_right:
+       data chopper_right_0
+       data chopper_right_1
+chopper_right_0:
+       data 8
+       byte >00, >20, >a0, >01         ; Top rotor
+       byte >00, >10, >a4, >01
+       byte >10, ->20, >d4, >04        ; Body
+       byte >00, >10, >d8, >04
+       byte >00, >10, >dc, >04
+       byte ->08, ->30, >d0, >01       ; Tail rotor
+       byte >18, >20, >e8, >0c         ; Landing gear
+       byte >00, >10, >ec, >0c
+chopper_right_1:
+       data 8
+       byte >00, >20, >e0, >01         ; Top rotor
+       byte >00, >10, >e4, >01
+       byte >10, ->20, >d4, >04        ; Body
+       byte >00, >10, >d8, >04
+       byte >00, >10, >dc, >04
+       byte ->08, ->30, >ac, >01       ; Tail rotor
+       byte >18, >20, >e8, >0c         ; Landing gear
+       byte >00, >10, >ec, >0c
+

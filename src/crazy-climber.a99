@@ -142,16 +142,16 @@ windows_tail_ptr:                      ; Head of window animation list
        equ  windows_head_ptr+2
 next_stage_ptr:
        equ  windows_tail_ptr+2
-current_stage_handler:
-       equ  next_stage_ptr+2
 max_residents:
-       equ  current_stage_handler+2
+       equ  next_stage_ptr+2
 current_residents:
        equ  max_residents+2
 secondary_sprite_patterns:             ; Secondary sprite patterns loaded (0 = head and hands)
        equ  current_residents+2
-snd_channel_1:
+status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished)
        equ  secondary_sprite_patterns+2
+snd_channel_1:
+       equ  status+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -191,6 +191,8 @@ start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
+new_game:
+       bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
        li   r0,40                      ; For testing
@@ -199,20 +201,7 @@ start  limi 0                          ; disable interrupts
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
-       li   r0,chopper_stage
-       mov  r0,@next_stage_ptr
-       li   r0,>6da8
-       mov  r0,@climber_pos
-       li   r0,left_anim
-       mov  r0,@left_anim_ptr
-       clr  @left_wide
-       bl   @update_climber_attrs_left
-       li   r0,right_anim
-       mov  r0,@right_anim_ptr
-       clr  @right_wide
-       bl   @update_climber_attrs_right
-       clr  @scroll_dy
-       clr  @frame
+       bl   @restart_init
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -243,17 +232,21 @@ main_loop:
 *      Update stage
        bl   @update_stage
 *      Check for inactivity
-       inc  @inactivity_count
-       mov  @inactivity_count,r0
-       ci   r0,120
-       jlt  main_loop_1
-       li   r0,speech_go_for_it_idx
-       bl   @speak
-       clr  @inactivity_count
-*      Loop forever
-main_loop_1:
+       bl   @check_for_inactivity
+*      Check status
+       mov  @status,r0
+       jgt  finished
+       jlt  died
+*      Loop
        inc  @frame
        jmp  main_loop
+*      Main loop terminated
+finished:
+       jlt  died
+       bl   @chopper_pickup
+       b    @new_game
+died:
+       b    @new_game
 *// main_loop
 
 *********************************************************************
@@ -330,10 +323,6 @@ display_sprites:
        li   r0,sprite_attr_table
        bl   @vwad
        bl   @display_climber_sprites
-       mov  @current_stage_handler,r0
-       jeq  display_sprites_1
-       bl   *r0                        ; Execute stage handler
-display_sprites_1:
        bl   @handle_other_sprites
        li   r1,>d000                   ; Write end marker
        movb r1,*r15
@@ -429,7 +418,6 @@ update_stage:
        bl   *r1                        ; Execute init routine
        .pop r0
 update_stage_1:
-       mov  *r0+,@current_stage_handler
        ci   r0,stages_end
        jne  update_stage_2
        clr  r0
@@ -438,6 +426,23 @@ update_stage_2:
 update_stage_3:
        .endproc
 *// update_stage
+
+*********************************************************************
+*
+* Check for inactivity
+*
+check_for_inactivity:
+       .proc
+       inc  @inactivity_count
+       mov  @inactivity_count,r0
+       ci   r0,120
+       jlt  check_for_inactivity_1
+       li   r0,speech_go_for_it_idx
+       bl   @speak
+       clr  @inactivity_count
+check_for_inactivity_1:
+       .endproc
+*// check_for_inactivity
 
 *********************************************************************
 *
@@ -1437,21 +1442,92 @@ chopper_stage_init:
        .proc
        li   r1,1
        bl   @upload_2nd_sprite_patterns
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  chopper_stage_init_1
+       li   r0,chopper_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_count(r4)
+       mov  *r0+,@sprite_vx(r4)
+       mov  *r0+,@sprite_vy(r4)
+chopper_stage_init_1:
        .endproc
+chopper_init_data:
+       data chopper_handler, >40, >00, >00, >01, >02
 *// chopper_stage_init
 
 *********************************************************************
 *
-* Chopper stage handler
+* Chopper handler
 *
-chopper_stage_handler:
+chopper_handler:
        .proc
-       li   r0,>0080
-       li   r1,>0010
-       li   r3,chopper_left_0
-       bl   @draw_big_sprite
+       mov  @sprite_x(r3),r0           ; Position of middle of landing gear
+       mov  @sprite_y(r3),r1
+       mov  @sprite_count(r3),r4
+       andi r4,1
+       sla  r4,1
+       mov  @sprite_vx(r3),r2
+       jlt  !
+       mov  @chopper_right(r4),r4
+       ai   r0,->30
+       jmp  !!
+!      mov  @chopper_left(r4),r4
+       ai   r0,->10
+!      bl   @draw_big_sprite
+*      Move
+       inc  @sprite_count(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       mov  @sprite_x(r3),r0
+       ci   r0,>40
+       jl   !
+       ci   r0,>d8
+       jh   !
+       jmp  chopper_handler_1
+!      neg  @sprite_vx(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+chopper_handler_1:
+       mov  @sprite_y(r3),r0
+       jlt  !
+       ci   r0,>54
+       jh   !
+       jmp  chopper_handler_2
+!      neg  @sprite_vy(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+chopper_handler_2:
+*      Check for collision with climber
+       mov  @status,r0
+       jne  chopper_handler_3
+       c    @scroll_y,@w_8
+       jne  chopper_handler_3
+       mov  @sprite_y(r3),r0
+       ci   r0,>50
+       jlt  chopper_handler_3
+       mov  @left_anim_ptr,r0
+       ci   r0,left_anim
+       jeq  chopper_handler_2a
+       mov  @right_anim_ptr,r0
+       ci   r0,right_anim
+       jne  chopper_handler_3
+chopper_handler_2a:
+       mov  @sprite_x(r3),r0
+       mov  @climber_pos,r1           ; TODO: Improve location of hand
+       andi r1,>00ff
+       ai   r1,>10
+       s    r1,r0
+       abs  r0
+       ci   r0,>10
+       jgt  chopper_handler_3
+*      Pickup
+       clr  @sprite_vx(r3)
+       seto @sprite_vy(r3)
+       inc  @status
+chopper_handler_3:
        .endproc
-*// chopper_stage_handler
+*// chopper_handler
 
 *********************************************************************
 *
@@ -1477,20 +1553,21 @@ allocate_sprite_2:
 * Draw big sprite
 *
 * r0: x coordinate
-* r1: y coordinate
-* r3: Pointer to big sprite structure
+* r1: y coordinate in world coordinates
+* r4: Pointer to big sprite structure
 *
 draw_big_sprite:
-       mov  *r3+,r2                    ; Number of small sprites
+       mov  *r4+,r2                    ; Number of small sprites
        swpb r0                         ; Move x to MSB
+       s    @scroll_y,r1               ; To screen coordinates
        swpb r1                         ; Move y to MSB
 draw_big_sprite_1:
-       ab   *r3+,r1                    ; Add y offset to oy
+       ab   *r4+,r1                    ; Add y offset to oy
        movb r1,*r15
-       ab   *r3+,r0                    ; Add x offset to x
+       ab   *r4+,r0                    ; Add x offset to x
        movb r0,*r15
-       movb *r3+,*r15                  ; Pattern
-       movb *r3+,*r15                  ; Color
+       movb *r4+,*r15                  ; Pattern
+       movb *r4+,*r15                  ; Color
        dec  r2
        jne  draw_big_sprite_1
        rt
@@ -1840,7 +1917,7 @@ inisc2:
 
 *********************************************************************
 *
-* Climber climbs the first few floors up by himself
+* Climber climbs the first few floors by himself
 *
 intro_climb:
        .proc
@@ -1898,6 +1975,27 @@ intro_climb_data_end:
 
 *********************************************************************
 *
+* Climber is picked up by chopper
+*
+chopper_pickup:
+       .proc
+       li   r8,>50
+chopper_pickup_1:
+       bl   @vsync
+       bl   @vsync
+       bl   @vsync
+       bl   @update_climber_attrs_left
+       bl   @update_climber_attrs_right
+       bl   @display_sprites
+       bl   @int_routine
+       sb   @one+1,@climber_pos
+       dec  r8
+       jne  chopper_pickup_1
+       .endproc
+*// chopper_pickup
+
+*********************************************************************
+*
 * One time initializations
 *
 one_time_init:
@@ -1913,7 +2011,7 @@ one_time_init:
        li   r2,pad_max-padvar
        bl   @clear
 *      Randomize
-;       mov  r1,@rand_no
+       mov  r1,@rand_no
 *      Copy code to scratchpad
        li   r0,vm8bw1
        li   r1,vm8bw_pad
@@ -1929,6 +2027,15 @@ one_time_init:
        li   r1,SPR0
        li   r2,64*32
        bl   @vmbw
+       .endproc
+*// one_time_init
+
+*********************************************************************
+*
+* Game initializations
+*
+game_init:
+       .proc
 *      Clear sprites table
        li   r0,sprites
        li   r2,sprites_end-sprites
@@ -1938,7 +2045,31 @@ one_time_init:
        li   r2,window_anims_end-window_anims
        bl   @clear
        .endproc
-*// one_time_init
+*// game_init
+
+*********************************************************************
+*
+* Restart initializations
+*
+restart_init:
+       .proc
+       clr  @status
+       li   r0,chopper_stage
+       mov  r0,@next_stage_ptr
+       li   r0,>6da8
+       mov  r0,@climber_pos
+       li   r0,left_anim
+       mov  r0,@left_anim_ptr
+       clr  @left_wide
+       bl   @update_climber_attrs_left
+       li   r0,right_anim
+       mov  r0,@right_anim_ptr
+       clr  @right_wide
+       bl   @update_climber_attrs_right
+       clr  @scroll_dy
+       clr  @frame
+       .endproc
+*// restart_init
 
 *********************************************************************
 *
@@ -2139,27 +2270,21 @@ stages:
 one_resident_stage:
        data >0a80                      ; scroll y
        data one_resident_stage_init    ; init
-       data >0000                      ; handler
 bird_stage:
-       data >0900
+       data >0900                      ; scroll y
        data >0000                      ; init
-       data >0000
 two_residents_stage:
-       data >0700
+       data >0700                      ; scroll y
        data two_residents_stage_init   ; init
-       data >0000
 kong_stage:
-       data >0500
+       data >0500                      ; scroll y
        data >0000                      ; init
-       data >0000
 three_residents_stage:
-       data >0300
+       data >0300                      ; scroll y
        data three_residents_stage_init ; init
-       data >0000
 chopper_stage:
-       data >0100
+       data >0100                      ; scroll y
        data chopper_stage_init         ; init
-       data chopper_stage_handler
 stages_end:
        equ   $
 
@@ -2204,6 +2329,8 @@ b_12:
        byte 12
 b_8:
        byte 8
+w_8:
+       data 8
 w_24:
        data 24
 
