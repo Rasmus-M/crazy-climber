@@ -140,8 +140,18 @@ windows_head_ptr:                      ; Head of window animation list
        equ  animation_changed+2
 windows_tail_ptr:                      ; Head of window animation list
        equ  windows_head_ptr+2
-snd_channel_1:
+next_stage_ptr:
        equ  windows_tail_ptr+2
+current_stage_handler:
+       equ  next_stage_ptr+2
+max_residents:
+       equ  current_stage_handler+2
+current_residents:
+       equ  max_residents+2
+secondary_sprite_patterns:             ; Secondary sprite patterns loaded (0 = head and hands)
+       equ  current_residents+2
+snd_channel_1:
+       equ  secondary_sprite_patterns+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -183,11 +193,14 @@ start  limi 0                          ; disable interrupts
        bl   @one_time_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
+       li   r0,40                      ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
+       li   r0,chopper_stage
+       mov  r0,@next_stage_ptr
        li   r0,>6da8
        mov  r0,@climber_pos
        li   r0,left_anim
@@ -227,6 +240,8 @@ main_loop:
        bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
+*      Update stage
+       bl   @update_stage
 *      Check for inactivity
        inc  @inactivity_count
        mov  @inactivity_count,r0
@@ -315,6 +330,10 @@ display_sprites:
        li   r0,sprite_attr_table
        bl   @vwad
        bl   @display_climber_sprites
+       mov  @current_stage_handler,r0
+       jeq  display_sprites_1
+       bl   *r0                        ; Execute stage handler
+display_sprites_1:
        bl   @handle_other_sprites
        li   r1,>d000                   ; Write end marker
        movb r1,*r15
@@ -391,6 +410,34 @@ update_pattern_table:
        bl   @check_int
        .endproc
 *// update_pattern_table
+
+*********************************************************************
+*
+* Update stage according to scroll position
+*
+update_stage:
+       .proc
+       mov  @next_stage_ptr,r0
+       jeq  update_stage_3
+       mov  *r0+,r1                    ; Scroll y
+       c    r1,@scroll_y
+       jl   update_stage_3
+*      Next stage
+       mov  *r0+,r1                    ; Init routine
+       jeq  update_stage_1
+       .push r0
+       bl   *r1                        ; Execute init routine
+       .pop r0
+update_stage_1:
+       mov  *r0+,@current_stage_handler
+       ci   r0,stages_end
+       jne  update_stage_2
+       clr  r0
+update_stage_2:
+       mov  r0,@next_stage_ptr
+update_stage_3:
+       .endproc
+*// update_stage
 
 *********************************************************************
 *
@@ -1123,9 +1170,12 @@ control_climber_horz_11:
 *
 display_climber_sprites:
        .proc
+       mov  @secondary_sprite_patterns,r0
+       jne  display_climber_sprites_0
        mov  @vdp_status,r0
        andi r0,>4000                   ; Test 5th sprite flag
        jeq  display_climber_sprites_1
+display_climber_sprites_0:
        li   r1,sprite_attributes_body
        li   r2,2
        jmp  display_climber_sprites_4
@@ -1331,7 +1381,6 @@ create_plant:
        bl   @window_screen_coords
        sla  r0,4
        mov  r0,@sprite_x(r4)           ; sprite_x
-;      ai   r1,16
        sla  r1,4
        mov  r1,@sprite_y(r4)           ; sprite_y
        clr  @sprite_vx(r4)
@@ -1343,6 +1392,66 @@ create_plant:
 create_plant_1:
        .endproc
 *// create_plant
+
+*********************************************************************
+*
+* One resident stage init
+*
+one_resident_stage_init:
+       li   r0,1
+       mov  r0,@max_residents
+       rt
+*// one_resident_stage_init
+
+*********************************************************************
+*
+* Two residents stage init
+*
+two_residents_stage_init:
+       .proc
+       li   r0,2
+       mov  r0,@max_residents
+       clr  r1
+       bl   @upload_2nd_sprite_patterns
+       .endproc
+*// two_residents_stage_init
+
+*********************************************************************
+*
+* Three residents stage init
+*
+three_residents_stage_init:
+       .proc
+       li   r0,3
+       mov  r0,@max_residents
+       clr  r1
+       bl   @upload_2nd_sprite_patterns
+       .endproc
+*// three_residents_stage_init
+
+*********************************************************************
+*
+* Chopper stage init
+*
+chopper_stage_init:
+       .proc
+       li   r1,1
+       bl   @upload_2nd_sprite_patterns
+       .endproc
+*// chopper_stage_init
+
+*********************************************************************
+*
+* Chopper stage handler
+*
+chopper_stage_handler:
+       .proc
+       li   r0,>0080
+       li   r1,>0010
+       li   r3,chopper_left_0
+       bl   @draw_big_sprite
+       .endproc
+*// chopper_stage_handler
 
 *********************************************************************
 *
@@ -1362,6 +1471,30 @@ allocate_sprite_1:
 allocate_sprite_2:
        rt
 *// allocate_sprite
+
+*********************************************************************
+*
+* Draw big sprite
+*
+* r0: x coordinate
+* r1: y coordinate
+* r3: Pointer to big sprite structure
+*
+draw_big_sprite:
+       mov  *r3+,r2                    ; Number of small sprites
+       swpb r0                         ; Move x to MSB
+       swpb r1                         ; Move y to MSB
+draw_big_sprite_1:
+       ab   *r3+,r1                    ; Add y offset to oy
+       movb r1,*r15
+       ab   *r3+,r0                    ; Add x offset to x
+       movb r0,*r15
+       movb *r3+,*r15                  ; Pattern
+       movb *r3+,*r15                  ; Color
+       dec  r2
+       jne  draw_big_sprite_1
+       rt
+*// draw_big_sprite
 
 *********************************************************************
 *
@@ -1809,6 +1942,30 @@ one_time_init:
 
 *********************************************************************
 *
+* Upload secondary sprite patterns to VDP
+*
+* r1: Set to load
+*
+upload_2nd_sprite_patterns:
+       .proc
+       li   r0,sprite_pattern_table + (40 * 32)
+       bl   @vwad
+       mov  r1,@secondary_sprite_patterns
+       sla  r1,1
+       mov  @sprite_pattern_sets(r1),r1
+       li   r2,24*32/8
+       bl   @vdp_copy
+       .endproc
+sprite_pattern_sets:
+       data SPR40                      ; Head and hands
+       data SPR64                      ; Chopper
+       data SPR84                      ; Bird
+       data SPR108                     ; Kong
+;      data SPR124                     ; Balloon
+*// upload_2nd_sprite_patterns
+
+*********************************************************************
+*
 * Set graphics mode
 *
 graphics_mode:
@@ -1977,6 +2134,35 @@ lower_memory_max:
        copy "intro-music.a99"
        copy "speech-data.a99"
 
+stages:
+       equ  $
+one_resident_stage:
+       data >0a80                      ; scroll y
+       data one_resident_stage_init    ; init
+       data >0000                      ; handler
+bird_stage:
+       data >0900
+       data >0000                      ; init
+       data >0000
+two_residents_stage:
+       data >0700
+       data two_residents_stage_init   ; init
+       data >0000
+kong_stage:
+       data >0500
+       data >0000                      ; init
+       data >0000
+three_residents_stage:
+       data >0300
+       data three_residents_stage_init ; init
+       data >0000
+chopper_stage:
+       data >0100
+       data chopper_stage_init         ; init
+       data chopper_stage_handler
+stages_end:
+       equ   $
+
 window_anim_row:
        equ  0
 window_anim_col:
@@ -1997,10 +2183,6 @@ window_anim_type_window:
 window_anim_type_resident:
        equ  1
 
-;windows_head_ptr:
-;       data 0
-;windows_tail_ptr:
-;       data 0
 window_anims:
        bss  n_windows*window_anim_size
 window_anims_end:
@@ -2060,6 +2242,18 @@ sprites:
        bss  n_sprites*sprite_size
 sprites_end:
        equ  $
+
+big_sprite_n_sprites:
+       equ  0
+* Followed by n times little sprites
+big_sprite_dy:
+       equ  0                          ; Y offset from last little sprite
+big_sprite_dx:
+       equ  1                          ; Y offset from last little sprite
+big_sprite_pattern:
+       equ  2
+big_sprite_color:
+       equ  3
 
 upper_memory_max:
        equ  $

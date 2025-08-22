@@ -242,3 +242,15 @@ right_2nd_wide_3:
        byte spr_rgt_top_2nd_wide_4, 0
 right_2nd_wide_4:
        byte spr_rgt_top_2nd_norm_5, spr_rgt_bot_2nd_wide_5
+
+
+chopper_left_0:
+       data 8
+       byte >00, >00, >a0, >01         ; Top rotor
+       byte >00, >10, >a4, >01
+       byte >10, ->10, >b0, >04        ; Body
+       byte >00, >10, >b4, >04
+       byte >00, >10, >b8, >04
+       byte ->08, >10, >bc, >01        ; Tail rotor
+       byte >18, ->30, >c0, >0c        ; Landing gear
+       byte >00, >10, >c4, >0c
