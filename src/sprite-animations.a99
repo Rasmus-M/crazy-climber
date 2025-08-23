@@ -292,3 +292,33 @@ chopper_right_1:
        byte >18, >20, >e8, >0c         ; Landing gear
        byte >00, >10, >ec, >0c
 
+kong:
+       data 7
+       byte >08, >08, >d8, >0f         ; Eyes
+       byte ->08, ->08, >a0, >09       ; Head
+       byte >00, >10, >a4, >09
+       byte >10, ->10, >a8, >09        ; Middle
+       byte >00, >10, >ac, >09
+       byte >10, ->10, >b0, >06        ; Feet
+       byte >00, >10, >b4, >06
+kong_arms:
+       data kong_arms_0
+       data kong_arms_1
+       data kong_arms_2
+       data kong_arms_3
+kong_arms_0:
+       data 2
+       byte >18,->08,>b8,>06
+       byte >00,>20,>bc,>06
+kong_arms_1:
+       data 2
+       byte >18,->08,>c0,>06
+       byte >00,>20,>c4,>06
+kong_arms_2:
+       data 2
+       byte >18,->08,>b8,>06
+       byte >00,>20,>c4,>06
+kong_arms_3:
+       data 2
+       byte >18,->08,>c0,>06
+       byte >00,>20,>bc,>06

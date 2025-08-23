@@ -195,7 +195,7 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,40                      ; For testing
+       li   r0,>400                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
@@ -1416,7 +1416,7 @@ two_residents_stage_init:
        .proc
        li   r0,2
        mov  r0,@max_residents
-       clr  r1
+       li   r1,head_and_hands_patterns
        bl   @upload_2nd_sprite_patterns
        .endproc
 *// two_residents_stage_init
@@ -1429,10 +1429,73 @@ three_residents_stage_init:
        .proc
        li   r0,3
        mov  r0,@max_residents
-       clr  r1
+       li   r1,head_and_hands_patterns
        bl   @upload_2nd_sprite_patterns
        .endproc
 *// three_residents_stage_init
+
+*********************************************************************
+*
+* Kong stage init
+*
+kong_stage_init:
+       .proc
+       li   r1,kong_patterns
+       bl   @upload_2nd_sprite_patterns
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  kong_stage_init_1
+       li   r0,kong_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_count(r4)
+       mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
+kong_stage_init_1:
+       .endproc
+kong_init_data:
+       data kong_handler, >0058, >03d8, >0000, >0000
+*// kong_stage_init
+
+*********************************************************************
+*
+* Kong handler
+*
+kong_handler:
+       .proc
+       mov  @scroll_y,r0
+       ci   r0,>0318
+       jgt  kong_handler_0
+       clr  @sprite_handler(r3)
+       jmp  kong_handler_1
+kong_handler_0:
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       li   r4,kong
+       bl   @draw_big_sprite
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       mov  @sprite_ax(r3),r4          ; Arms
+       sla  r4,1
+       mov  @kong_arms(r4),r4
+       bl   @draw_big_sprite
+*      Animate
+       inc  @sprite_count(r3)
+       mov  @sprite_count(r3),r0
+       andi r0,>000f
+       jne  kong_handler_1
+       li   r2,4
+       bl   @rand_max
+       mov  r0,@sprite_ax(r3)
+       mov  @sprite_count(r3),r1
+       andi r1,>0040
+       srl  r1,5
+       mov  @kong_x(r1),@sprite_x(r3)
+kong_handler_1:
+       .endproc
+kong_x:
+       data >0058, >00b0
+*// kong_handler
 
 *********************************************************************
 *
@@ -1440,7 +1503,7 @@ three_residents_stage_init:
 *
 chopper_stage_init:
        .proc
-       li   r1,1
+       li   r1,chopper_patterns
        bl   @upload_2nd_sprite_patterns
        bl   @allocate_sprite
        mov  r4,r4
@@ -1455,7 +1518,7 @@ chopper_stage_init:
 chopper_stage_init_1:
        .endproc
 chopper_init_data:
-       data chopper_handler, >40, >00, >00, >01, >02
+       data chopper_handler, >0040, >0000, >0000, >0001, >0002
 *// chopper_stage_init
 
 *********************************************************************
@@ -1560,6 +1623,8 @@ draw_big_sprite:
        mov  *r4+,r2                    ; Number of small sprites
        swpb r0                         ; Move x to MSB
        s    @scroll_y,r1               ; To screen coordinates
+       ci   r1,-47
+       jlt  draw_big_sprite_2
        swpb r1                         ; Move y to MSB
 draw_big_sprite_1:
        ab   *r4+,r1                    ; Add y offset to oy
@@ -1570,6 +1635,7 @@ draw_big_sprite_1:
        movb *r4+,*r15                  ; Color
        dec  r2
        jne  draw_big_sprite_1
+draw_big_sprite_2:
        rt
 *// draw_big_sprite
 
@@ -1803,7 +1869,7 @@ is_open_window_bottom:
 *
 * R2: Maximum number (0 - 255) exclusive
 *
-* On return R0 contains the number [0; R1[
+* On return R0 contains the number [0; R2[
 *
 rand_max:
        .proc
@@ -2054,7 +2120,7 @@ game_init:
 restart_init:
        .proc
        clr  @status
-       li   r0,chopper_stage
+       li   r0,two_residents_stage
        mov  r0,@next_stage_ptr
        li   r0,>6da8
        mov  r0,@climber_pos
@@ -2088,10 +2154,21 @@ upload_2nd_sprite_patterns:
        bl   @vdp_copy
        .endproc
 sprite_pattern_sets:
+       equ  $
+head_and_hands_patterns:
+       equ  0
        data SPR40                      ; Head and hands
+chopper_patterns:
+       equ  1
        data SPR64                      ; Chopper
+bird_patterns:
+       equ  2
        data SPR84                      ; Bird
+kong_patterns:
+       equ  3
        data SPR108                     ; Kong
+balloon_patterns:
+       equ  4
 ;      data SPR124                     ; Balloon
 *// upload_2nd_sprite_patterns
 
@@ -2274,16 +2351,16 @@ bird_stage:
        data >0900                      ; scroll y
        data >0000                      ; init
 two_residents_stage:
-       data >0700                      ; scroll y
+       data >0600                      ; scroll y
        data two_residents_stage_init   ; init
 kong_stage:
-       data >0500                      ; scroll y
-       data >0000                      ; init
+       data >0400                      ; scroll y
+       data kong_stage_init            ; init
 three_residents_stage:
-       data >0300                      ; scroll y
+       data >0318                      ; scroll y
        data three_residents_stage_init ; init
 chopper_stage:
-       data >0100                      ; scroll y
+       data >0080                      ; scroll y
        data chopper_stage_init         ; init
 stages_end:
        equ   $
