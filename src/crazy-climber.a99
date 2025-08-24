@@ -164,8 +164,10 @@ snd_track_2:
        equ  snd_track_1+snd_track_size
 snd_track_3:
        equ  snd_track_2+snd_track_size
-module_speed:
+snd_track_4:
        equ  snd_track_3+snd_track_size
+module_speed:
+       equ  snd_track_4+snd_track_size
 speech_detected:
        equ  module_speed+2
 speech_status:
@@ -195,13 +197,15 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,>400                    ; For testing
+;       li   r0,>40                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
+;       li   r0,chopper_stage           ; For testing
+;       mov  r0,@next_stage_ptr
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -1544,6 +1548,8 @@ chopper_handler:
        inc  @sprite_count(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
+       mov  @status,r0
+       jne  chopper_handler_3
        mov  @sprite_x(r3),r0
        ci   r0,>40
        jl   !
@@ -1562,8 +1568,6 @@ chopper_handler_1:
        a    @sprite_vy(r3),@sprite_y(r3)
 chopper_handler_2:
 *      Check for collision with climber
-       mov  @status,r0
-       jne  chopper_handler_3
        c    @scroll_y,@w_8
        jne  chopper_handler_3
        mov  @sprite_y(r3),r0
@@ -2045,15 +2049,19 @@ intro_climb_data_end:
 *
 chopper_pickup:
        .proc
-       li   r8,>50
+       li   r0,completed_module
+       bl   @play_module
+       li   r8,>70
 chopper_pickup_1:
+       li   r9,3
+chopper_pickup_2:
        bl   @vsync
-       bl   @vsync
-       bl   @vsync
+       bl   @int_routine
+       dec  r9
+       jne  chopper_pickup_2
        bl   @update_climber_attrs_left
        bl   @update_climber_attrs_right
        bl   @display_sprites
-       bl   @int_routine
        sb   @one+1,@climber_pos
        dec  r8
        jne  chopper_pickup_1
@@ -2106,10 +2114,12 @@ game_init:
        li   r0,sprites
        li   r2,sprites_end-sprites
        bl   @clear
-*      Clear window animations table
+*      Clear window animations table and pointers
        li   r0,window_anims
        li   r2,window_anims_end-window_anims
        bl   @clear
+       clr  @windows_head_ptr
+       clr  @windows_tail_ptr
        .endproc
 *// game_init
 
@@ -2120,7 +2130,7 @@ game_init:
 restart_init:
        .proc
        clr  @status
-       li   r0,two_residents_stage
+       li   r0,one_resident_stage
        mov  r0,@next_stage_ptr
        li   r0,>6da8
        mov  r0,@climber_pos
@@ -2340,6 +2350,7 @@ lower_memory_max:
        copy "sprite-animations.a99"
        copy "sound-fx.a99"
        copy "intro-music.a99"
+       copy "completed-music.a99"
        copy "speech-data.a99"
 
 stages:

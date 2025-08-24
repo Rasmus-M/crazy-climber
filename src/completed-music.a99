@@ -1,0 +1,252 @@
+completed_module:
+       data >0003
+       data completed_track_00
+       data completed_track_01
+       data completed_track_02
+       data completed_track_03
+       data >0000
+completed_track_00:
+       data snd_channel_1
+completed_track_00_rpt:
+       data completed_seq_0068
+       data completed_seq_0074
+       data completed_seq_0080
+       data completed_seq_008D
+;       data >00FF
+;       data completed_track_00_rpt
+       data >0000
+completed_track_01:
+       data snd_channel_2
+completed_track_01_rpt:
+       data completed_seq_0092
+       data completed_seq_0092
+       data completed_seq_009C
+       data completed_seq_00A6
+;       data >00FF
+;       data completed_track_01_rpt
+       data >0000
+completed_track_02:
+       data snd_channel_3
+completed_track_02_rpt:
+       data completed_seq_00AB
+       data completed_seq_00B5
+       data completed_seq_00B5
+       data completed_seq_00BF
+;       data >00FF
+;       data completed_track_02_rpt
+       data >0000
+completed_track_03:
+       data snd_channel_4
+completed_track_03_rpt:
+       data completed_seq_00C3
+       data completed_seq_00C3
+       data completed_seq_00C3
+       data completed_seq_00CD
+;       data >00FF
+;       data completed_track_03_rpt
+       data >0000
+completed_seq_0068:
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D5
+       data >0001
+       data completed_note_00D8
+       data >0001
+       data completed_note_00D2
+       data >0003
+       data completed_note_00DB
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data >0000
+completed_seq_0092:
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data >0000
+completed_seq_00AB:
+       data >0004
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0003
+       data >0000
+completed_seq_00C3:
+       data completed_note_00F3
+       data >0007
+       data completed_note_00F3
+       data >0007
+       data completed_note_00F3
+       data >0007
+       data completed_note_00F3
+       data >0007
+       data >0000
+completed_seq_0074:
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data completed_note_00D5
+       data >0001
+       data completed_note_00D8
+       data >0001
+       data completed_note_00D2
+       data >0003
+       data completed_note_00DB
+       data >0003
+       data completed_note_00D2
+       data >0003
+       data >0000
+completed_seq_00B5:
+       data >0004
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0007
+       data completed_note_00F0
+       data >0003
+       data >0000
+completed_seq_0080:
+       data completed_note_00D2
+       data >0001
+       data completed_note_00DB
+       data >0001
+       data completed_note_00DE
+       data >0003
+       data completed_note_00E1
+       data >0003
+       data completed_note_00E4
+       data >0003
+       data completed_note_00D2
+       data >0001
+       data completed_note_00DB
+       data >0001
+       data completed_note_00DE
+       data >0003
+       data completed_note_00E1
+       data >0003
+       data completed_note_00E4
+       data >0003
+       data >0000
+completed_seq_009C:
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data completed_note_00EA
+       data >0003
+       data completed_note_00ED
+       data >0003
+       data >0000
+completed_seq_008D:
+       data completed_note_00E7
+       data >001F
+       data >0000
+completed_seq_00A6:
+       data completed_note_00EA
+       data >001F
+       data >0000
+completed_seq_00BF:
+       data >0020
+       data >0000
+completed_seq_00CD:
+       data completed_note_00F3
+       data >001F
+       data >0000
+completed_note_00D2:
+       data completed_instr_00
+       data D2
+completed_note_00D5:
+       data completed_instr_00
+       data C2
+completed_note_00D8:
+       data completed_instr_00
+       data C♯2
+completed_note_00DB:
+       data completed_instr_00
+       data D♯2
+completed_note_00EA:
+       data completed_instr_03
+       data A♯1
+completed_note_00ED:
+       data completed_instr_03
+       data A♯2
+completed_note_00F0:
+       data completed_instr_02
+       data A♯4
+completed_note_00F3:
+       data completed_instr_01
+       data W0
+completed_note_00DE:
+       data completed_instr_00
+       data E2
+completed_note_00E1:
+       data completed_instr_00
+       data G2
+completed_note_00E4:
+       data completed_instr_00
+       data F2
+completed_note_00E7:
+       data completed_instr_00
+       data A♯3
+completed_instr_00:
+       byte T1
+       byte 36
+       byte 0
+       byte 7
+       data >0000
+completed_instr_01:
+       byte W0
+       byte 5
+       byte 0
+       byte 51
+       data >0000
+completed_instr_02:
+       byte T3
+       byte 8
+       byte 0
+       byte 31
+       data >0001
+completed_instr_03:
+       byte T2
+       byte 25
+       byte 0
+       byte 10
+       data >0000
