@@ -316,27 +316,27 @@ kong_arms_right:
        data kong_arms_6
 kong_arms_0:
        data 2
-       byte >18,->08,>b8,>06
-       byte >00,>20,>bc,>06
+       byte >18,->08,>b8,>08
+       byte >00,>20,>bc,>08
 kong_arms_1:
        data 2
-       byte >18,->0b,>c0,>06
-       byte >00,>26,>c4,>06
+       byte >18,->0b,>c0,>08
+       byte >00,>26,>c4,>08
 kong_arms_2:
        data 2
-       byte >18,->08,>b8,>06
-       byte >00,>23,>c4,>06
+       byte >18,->08,>b8,>08
+       byte >00,>23,>c4,>08
 kong_arms_3:
        data 2
-       byte >18,->0b,>c0,>06
-       byte >00,>23,>bc,>06
+       byte >18,->0b,>c0,>08
+       byte >00,>23,>bc,>08
 kong_arms_5:
        data 3
-       byte >18,->08,>b8,>06
-       byte >00,>20,>d0,>06
-       byte >00,>10,>d4,>06
+       byte >18,->08,>b8,>08
+       byte >00,>20,>d0,>08
+       byte >00,>10,>d4,>09
 kong_arms_6:
        data 3
-       byte >18,->18,>c8,>06
-       byte >00,>10,>cc,>06
-       byte >00,>20,>bc,>06
+       byte >18,->18,>c8,>09
+       byte >00,>10,>cc,>08
+       byte >00,>20,>bc,>08

@@ -1722,6 +1722,7 @@ draw_big_sprite:
        mov  *r4+,r2                    ; Number of small sprites
        swpb r0                         ; Move x to MSB
        s    @scroll_y,r1               ; To screen coordinates
+       dec  r1
        ci   r1,-47
        jlt  draw_big_sprite_2
        swpb r1                         ; Move y to MSB
