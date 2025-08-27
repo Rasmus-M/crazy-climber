@@ -1484,13 +1484,14 @@ kong_stage_init:
        mov  *r0+,@sprite_y(r4)
        mov  *r0+,@sprite_count(r4)
        mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
+       mov  *r0+,@sprite_ay(r4)        ; Used to store current side (left = 0, right <> 0)
        li   r0,kong_map
        li   r1,MD0+(>7a*map_width)+3
        bl   @copy_kong_to_map
 kong_stage_init_1:
        .endproc
 kong_init_data:
-       data kong_handler, >0058, >03d8, >0000, >0000
+       data kong_handler, >0058, >03d8, >0000, >0000, >0000
 *// kong_stage_init
 
 *********************************************************************
@@ -1511,10 +1512,15 @@ kong_handler_0:
        bl   @draw_big_sprite
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
-       mov  @sprite_ax(r3),r4          ; Arms
-       sla  r4,1
+
+       mov  @sprite_ay(r3),r4          ; Arms
        mov  @kong_arms(r4),r4
+       mov  @sprite_ax(r3),r5
+       sla  r5,1
+       a    r5,r4
+       mov  *r4,r4
        bl   @draw_big_sprite
+
 *      Animate
        inc  @sprite_count(r3)
        mov  @sprite_count(r3),r0
@@ -1530,7 +1536,7 @@ kong_handler_0:
        andi r1,>0040
        srl  r1,5
        mov  @kong_x(r1),@sprite_x(r3)
-       mov  r1,r1
+       mov  r1,@sprite_ay(r3)
        jne  kong_handler_2
 *      Remove right kong, draw left kong
        li   r0,kong_map_undraw

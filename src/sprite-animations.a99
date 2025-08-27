@@ -302,23 +302,41 @@ kong:
        byte >10, ->10, >b0, >06        ; Feet
        byte >00, >10, >b4, >06
 kong_arms:
+       data kong_arms_left
+       data kong_arms_right
+kong_arms_left:
        data kong_arms_0
        data kong_arms_1
        data kong_arms_2
+       data kong_arms_5
+kong_arms_right:
+       data kong_arms_0
+       data kong_arms_1
        data kong_arms_3
+       data kong_arms_6
 kong_arms_0:
        data 2
        byte >18,->08,>b8,>06
        byte >00,>20,>bc,>06
 kong_arms_1:
        data 2
-       byte >18,->08,>c0,>06
-       byte >00,>20,>c4,>06
+       byte >18,->0b,>c0,>06
+       byte >00,>26,>c4,>06
 kong_arms_2:
        data 2
        byte >18,->08,>b8,>06
-       byte >00,>20,>c4,>06
+       byte >00,>23,>c4,>06
 kong_arms_3:
        data 2
-       byte >18,->08,>c0,>06
+       byte >18,->0b,>c0,>06
+       byte >00,>23,>bc,>06
+kong_arms_5:
+       data 3
+       byte >18,->08,>b8,>06
+       byte >00,>20,>d0,>06
+       byte >00,>10,>d4,>06
+kong_arms_6:
+       data 3
+       byte >18,->18,>c8,>06
+       byte >00,>10,>cc,>06
        byte >00,>20,>bc,>06
