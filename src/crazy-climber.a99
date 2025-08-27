@@ -197,15 +197,15 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-;       li   r0,>40                    ; For testing
+       li   r0,>440                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-;       li   r0,chopper_stage           ; For testing
-;       mov  r0,@next_stage_ptr
+       li   r0,kong_stage              ; For testing
+       mov  r0,@next_stage_ptr
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -353,53 +353,64 @@ update_pattern_table:
        sla  r0,10                      ; 0 or >400
        ai   r0,pattern_table
 *      Calculate cpu ram source address
-       mov  @scroll_y,r1               ; scroll offset
-       andi r1,>0007                   ; mod 8
-       ai   r1,pstrip                  ; add base address of pattern strips
+       mov  @scroll_y,r1               ; Scroll offset
+       andi r1,>0007                   ; Mod 8
+       ai   r1,pstrip                  ; Add base address of pattern strips
 *      Save calculated values
        mov  r0,r4
        mov  r1,r5
 *      Copy patterns 1st part
-       li   r2,32                      ; number of patterns
+       mov  @base_scroll_chars,r2      ; Base patterns
        bl   @vm8bw8
        bl   @check_int
-       mov  @tchnum,r2
-       ai   r2,-32                     ; remaining patterns
-       bl   @vm8bw_pad
+       mov  r4,r0                      ; Extra patterns
+       a    @vdp_base_of_extra_scroll_chars,r0
+       a    @cpu_offset_to_extra_scroll_chars,r1
+       mov  @extra_scroll_chars,r2
+       bl   @vm8bw0
        bl   @check_int
 *      Copy patterns 2nd part
-       mov   r4,r0
-       ai    r0,>800
-       mov   r5,r1
-       li   r2,32                      ; number of patterns
+       mov  r4,r0                      ; Base patterns
+       ai   r0,>800
+       mov  r5,r1
+       mov  @base_scroll_chars,r2      ; Number of patterns
        bl   @vm8bw8
        bl   @check_int
-       mov  @tchnum,r2
-       ai   r2,-32                     ; remaining patterns
-       bl   @vm8bw_pad
+       mov  r4,r0                      ; Extra patterns
+       ai   r0,>800
+       a    @vdp_base_of_extra_scroll_chars,r0
+       a    @cpu_offset_to_extra_scroll_chars,r1
+       mov  @extra_scroll_chars,r2
+       bl   @vm8bw0
        bl   @check_int
 *      Copy patterns 3rd part
-       mov   r4,r0
+       mov   r4,r0                     ; Base patterns
        ai    r0,>1000
        mov   r5,r1
-       li   r2,32                      ; number of patterns
+       mov  @base_scroll_chars,r2      ; Number of patterns
        bl   @vm8bw8
        bl   @check_int
-       mov  @tchnum,r2
-       ai   r2,-32                     ; remaining patterns
-       bl   @vm8bw_pad
+       mov  r4,r0                      ; Extra patterns
+       ai   r0,>1000
+       a    @vdp_base_of_extra_scroll_chars,r0
+       a    @cpu_offset_to_extra_scroll_chars,r1
+       mov  @extra_scroll_chars,r2
+       bl   @vm8bw0
        bl   @check_int
 *      Copy colors
-       mov  r4,r0
+       mov  r4,r0                      ; Base patterns
        ai   r0,color_table
        mov  r5,r1
-       ai   r1,cstrip-pstrip           ; add offset betweem patterns and colors
-       li   r2,32                      ; number of patterns
+       ai   r1,cstrip-pstrip           ; Add offset betweem patterns and colors
+       mov  @base_scroll_chars,r2      ; Number of patterns
        bl   @vm8bw8
        bl   @check_int
-       mov  @tchnum,r2
-       ai   r2,-32                     ; remaining patterns
-       bl   @vm8bw_pad
+       mov  r4,r0                      ; Extra patterns
+       ai   r0,color_table
+       a    @vdp_base_of_extra_scroll_chars,r0
+       a    @cpu_offset_to_extra_scroll_chars,r1
+       mov  @extra_scroll_chars,r2
+       bl   @vm8bw0
        bl   @check_int
        .endproc
 *// update_pattern_table
@@ -558,7 +569,10 @@ animate_windows_5:
 *      Face animation
 animate_windows_6:
        ci   r4,16                      ; End at 16
-       jeq  animate_windows_7
+       jne  animate_windows_6a
+       dec  @current_residents
+       jmp  animate_windows_7
+animate_windows_6a:
        ci   r4,4                       ; Is it frame 4?
        jne  animate_windows_2          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
@@ -706,15 +720,17 @@ create_windows_5:
        bl   @is_open_window            ; Is there an open window below?
        jne  create_windows_8           ; If not then skip
 *      Set type
-       mov  @scroll_y,r0
-       ci   r0,>0a80
-       jh   create_windows_6           ; No residents at the bottom
+       c    @current_residents,@max_residents
+       jhe  create_windows_6           ; Jump if resident now allowed
        bl   @rand
        andi r0,3                       ; 1/4 chance of resident
        ci   r0,window_anim_type_resident
-       jeq  create_windows_7
+       jne  create_windows_6
+       inc  @current_residents
+       jmp  create_windows_7
+*      Create window
 create_windows_6:
-       clr  r0                         ; window_anim_type_window
+       li  r0,window_anim_type_window
 create_windows_7:
        mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
        clr  @window_anim_frame(r3)     ; Clear frame
@@ -1404,6 +1420,20 @@ create_plant_1:
 
 *********************************************************************
 *
+* Base stage init
+*
+base_stage_init:
+       .proc
+       li   r1,head_and_hands_patterns
+       bl   @upload_2nd_sprite_patterns
+       li   r1,character_set_residents
+       bl   @set_character_set
+       clr  @max_residents
+       .endproc
+*// base_stage_init
+
+*********************************************************************
+*
 * One resident stage init
 *
 one_resident_stage_init:
@@ -1411,6 +1441,15 @@ one_resident_stage_init:
        mov  r0,@max_residents
        rt
 *// one_resident_stage_init
+
+*********************************************************************
+*
+* Bird stage init
+*
+bird_stage_init:
+       clr  @max_residents
+       rt
+*// bird_stage_init
 
 *********************************************************************
 *
@@ -1427,25 +1466,15 @@ two_residents_stage_init:
 
 *********************************************************************
 *
-* Three residents stage init
-*
-three_residents_stage_init:
-       .proc
-       li   r0,3
-       mov  r0,@max_residents
-       li   r1,head_and_hands_patterns
-       bl   @upload_2nd_sprite_patterns
-       .endproc
-*// three_residents_stage_init
-
-*********************************************************************
-*
 * Kong stage init
 *
 kong_stage_init:
        .proc
        li   r1,kong_patterns
        bl   @upload_2nd_sprite_patterns
+       clr  @max_residents
+       li   r1,character_set_kong
+       bl   @set_character_set
        bl   @allocate_sprite
        mov  r4,r4
        jeq  kong_stage_init_1
@@ -1455,6 +1484,9 @@ kong_stage_init:
        mov  *r0+,@sprite_y(r4)
        mov  *r0+,@sprite_count(r4)
        mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
+       li   r0,kong_map
+       li   r1,MD0+(>7a*map_width)+3
+       bl   @copy_kong_to_map
 kong_stage_init_1:
        .endproc
 kong_init_data:
@@ -1492,14 +1524,70 @@ kong_handler_0:
        bl   @rand_max
        mov  r0,@sprite_ax(r3)
        mov  @sprite_count(r3),r1
+       andi r1,>003f
+       jne  kong_handler_1
+       mov  @sprite_count(r3),r1
        andi r1,>0040
        srl  r1,5
        mov  @kong_x(r1),@sprite_x(r3)
+       mov  r1,r1
+       jne  kong_handler_2
+*      Remove right kong, draw left kong
+       li   r0,kong_map_undraw
+       li   r1,MD0+(>7a*map_width)+14
+       bl   @copy_kong_to_map
+       li   r0,kong_map
+       li   r1,MD0+(>7a*map_width)+3
+       bl   @copy_kong_to_map
+       jmp  kong_handler_1
+kong_handler_2:
+*      Remove left kong, draw right kong
+       li   r0,kong_map_undraw
+       li   r1,MD0+(>7a*map_width)+3
+       bl   @copy_kong_to_map
+       li   r0,kong_map
+       li   r1,MD0+(>7a*map_width)+14
+       bl   @copy_kong_to_map
 kong_handler_1:
        .endproc
 kong_x:
        data >0058, >00b0
 *// kong_handler
+
+*********************************************************************
+*
+* Copy Kong to map
+*
+* r0: Source address
+* r1: Destination address in map
+*
+copy_kong_to_map:
+       li   r2,7                       ; Number of rows to copy
+copy_kong_to_map_1:
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       ai   r1,map_width-4
+       dec  r2
+       jne  copy_kong_to_map_1
+       rt
+*// copy_kong_to_map
+
+*********************************************************************
+*
+* Three residents stage init
+*
+three_residents_stage_init:
+       .proc
+       li   r1,character_set_residents
+       bl   @set_character_set
+       li   r0,3
+       mov  r0,@max_residents
+       li   r1,head_and_hands_patterns
+       bl   @upload_2nd_sprite_patterns
+       .endproc
+*// three_residents_stage_init
 
 *********************************************************************
 *
@@ -1509,6 +1597,7 @@ chopper_stage_init:
        .proc
        li   r1,chopper_patterns
        bl   @upload_2nd_sprite_patterns
+       clr  @max_residents
        bl   @allocate_sprite
        mov  r4,r4
        jeq  chopper_stage_init_1
@@ -1914,40 +2003,40 @@ rand:
 initial_screen:
        .proc
 *      Upload patterns 1st part
-       li   r0,65*8+pattern_table      ; Non-scrolling characters
-       li   r1,PAT65
-       li   r2,55*8
+       li   r0,96*8+pattern_table      ; Non-scrolling characters
+       li   r1,PAT96
+       li   r2,32*8
        bl   @vmbw
        li   r0,pattern_table           ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @tchnum,r2                 ; number of patterns of 8 bytes
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload patterns 2nd part
-       li   r0,65*8+pattern_table_1    ; Non-scrolling characters
-       li   r1,PAT65
-       li   r2,55*8
+       li   r0,96*8+pattern_table_1    ; Non-scrolling characters
+       li   r1,PAT96
+       li   r2,32*8
        bl   @vmbw
        li   r0,pattern_table_1         ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @tchnum,r2                 ; number of patterns of 8 bytes
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload patterns 3rd part
-       li   r0,65*8+pattern_table_2    ; Non-scrolling characters
-       li   r1,PAT65
-       li   r2,55*8
+       li   r0,96*8+pattern_table_2    ; Non-scrolling characters
+       li   r1,PAT96
+       li   r2,32*8
        bl   @vmbw
        li   r0,pattern_table_2         ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @tchnum,r2                 ; number of patterns of 8 bytes
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Upload colors
-       li   r0,65*8+color_table        ; Non-scrolling colors
-       li   r1,COL65
-       li   r2,55*8
+       li   r0,96*8+color_table        ; Non-scrolling colors
+       li   r1,COL96
+       li   r2,32*8
        bl   @vmbw
        LI   r0,color_table             ; Destination address in VDP RAM
        li   r1,CSTRIP                  ; address of first scrolled color frame
-       mov  @tchnum,r2                 ; number of pattern colors of 8 bytes
+       mov  @TCHNUM,r2                 ; number of pattern colors of 8 bytes
        bl   @vm8bw8                    ; call copying routine
 *      Init name tables
        mov  @scroll_y,r4               ; get initial scroll offset in pixels
@@ -1956,7 +2045,7 @@ initial_screen:
        mpy  @MS0,r5                    ; convert to map offset in r6
 *      Table 0
        li   r0,name_table_0
-       li   r1,MD2
+       li   r1,MD1
        li   r2,>300
        bl   @vmbw
        li   r0,name_table_0+8          ; destination address in vdp ram
@@ -1970,7 +2059,7 @@ inisc1:
        jne  inisc1
 *      Table 1
        li   r0,name_table_1
-       li   r1,MD2
+       li   r1,MD1
        li   r2,>300
        bl   @vmbw
        li   r0,name_table_1+8          ; destination address in vdp ram
@@ -2130,6 +2219,7 @@ game_init:
 restart_init:
        .proc
        clr  @status
+       bl   @base_stage_init
        li   r0,one_resident_stage
        mov  r0,@next_stage_ptr
        li   r0,>6da8
@@ -2181,6 +2271,20 @@ balloon_patterns:
        equ  4
 ;      data SPR124                     ; Balloon
 *// upload_2nd_sprite_patterns
+
+*********************************************************************
+*
+* Set scroll character set
+*
+* r1: Set to load
+*
+set_character_set:
+       mov  *r1+,@base_scroll_chars
+       mov  *r1+,@extra_scroll_chars
+       mov  *r1+,@vdp_base_of_extra_scroll_chars
+       mov  *r1+,@cpu_offset_to_extra_scroll_chars
+       rt
+*// set_character_set
 
 *********************************************************************
 *
@@ -2360,15 +2464,15 @@ one_resident_stage:
        data one_resident_stage_init    ; init
 bird_stage:
        data >0900                      ; scroll y
-       data >0000                      ; init
+       data bird_stage_init            ; init
 two_residents_stage:
        data >0600                      ; scroll y
        data two_residents_stage_init   ; init
 kong_stage:
-       data >0400                      ; scroll y
+       data >0420                      ; scroll y
        data kong_stage_init            ; init
 three_residents_stage:
-       data >0318                      ; scroll y
+       data >0310                      ; scroll y
        data three_residents_stage_init ; init
 chopper_stage:
        data >0080                      ; scroll y
@@ -2402,7 +2506,7 @@ window_anims_end:
        data -1
 
 b_window_closed_tch:                   ; Window left bottom closed -> Window left closed 5
-       byte >00
+       byte >23
 b_window_open_top:                     ; Original window open top char
        byte >04
 b_window_open_bottom:                  ; Original window open bottom char
@@ -2421,6 +2525,27 @@ w_8:
        data 8
 w_24:
        data 24
+
+base_scroll_chars:
+       data 49
+extra_scroll_chars:
+       data 16
+vdp_base_of_extra_scroll_chars:        ; index of first extra char * 8
+       data 49*8
+cpu_offset_to_extra_scroll_chars:      ; gap from last base char * 16
+       data 0
+
+character_set_residents:
+       data 49                         ; base_scroll_chars
+       data 16                         ; extra_scroll_chars
+       data 49*8                       ; vdp_base_of_extra_scroll_chars
+       data 0                          ; cpu_offset_to_extra_scroll_chars
+
+character_set_kong:
+       data 49                         ; base_scroll_chars
+       data 28                         ; extra_scroll_chars
+       data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
+       data 16*16                      ; cpu_offset_to_extra_scroll_chars
 
 sprite_attributes_head:
        byte >ad,>a8,0,>09              ; Left

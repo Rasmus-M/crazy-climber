@@ -293,7 +293,7 @@ chopper_right_1:
        byte >00, >10, >ec, >0c
 
 kong:
-       data 7
+       data 1
        byte >08, >08, >d8, >0f         ; Eyes
        byte ->08, ->08, >a0, >09       ; Head
        byte >00, >10, >a4, >09

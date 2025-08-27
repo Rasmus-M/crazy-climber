@@ -27,8 +27,32 @@ PAT22  DATA >0000,>0000,>0F1B,>333E    ; #16 Face left 3 (1/2)
 PAT23  DATA >0000,>0000,>E0B0,>98F8    ; #17 Face right 3
 PAT24  DATA >0000,>0000,>0000,>0F1B    ; #18 Face left 4 (1/4)
 PAT25  DATA >0000,>0000,>0000,>E0B0    ; #19 Face right 4
+PAT26  DATA >0000,>0000,>0000,>0101    ; #1A
+PAT27  DATA >030F,>1F3F,>77FB,>FDFD    ; #1B
+PAT28  DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #1C
+PAT29  DATA >0000,>0000,>0000,>8080    ; #1D
+PAT30  DATA >8EAF,>AC98,>C87C,>6707    ; #1E
+PAT31  DATA >5922,>3C7E,>7F3F,>1E20    ; #1F
+PAT32  DATA >B244,>3C7E,>FEFC,>7804    ; #20
+PAT33  DATA >71F5,>3519,>133E,>E6E0    ; #21
+PAT34  DATA >0F0F,>0F0F,>0707,>0703    ; #22
+PAT35  DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #23
+PAT36  DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #24
+PAT37  DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #25
+PAT38  DATA >0303,>0707,>2F87,>A773    ; #26
+PAT39  DATA >60F8,>FC86,>7B7D,>7E66    ; #27
+PAT40  DATA >061F,>3F61,>DEBE,>7E4E    ; #28
+PAT41  DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #29
+PAT42  DATA >0305,>0E0F,>0F0F,>0F07    ; #2A
+PAT43  DATA >4078,>8E63,>90CC,>8300    ; #2B
+PAT44  DATA >021E,>71C6,>0933,>C100    ; #2C
+PAT45  DATA >C0A0,>70F0,>F0F0,>F0E0    ; #2D
+PAT46  DATA >0100,>1F3F,>3E07,>100F    ; #2E
+PAT47  DATA >83E7,>FFFF,>07C1,>60F0    ; #2F
+PAT48  DATA >C1E7,>FFFF,>E083,>060F    ; #30
+PAT49  DATA >8000,>F8FC,>7CE0,>08F0    ; #31
 ****************************************
-* Original Character Colors             
+* Original Character Colors
 ****************************************
 COL0   DATA >7171,>7171,>7171,>7171    ; #00 Sky/glass
 COL1   DATA >BBBA,>BABA,>BBBA,>BABA    ; #01 Wall
@@ -56,1505 +80,1595 @@ COL22  DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #16 Face left 3 (1/2)
 COL23  DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #17 Face right 3
 COL24  DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #18 Face left 4 (1/4)
 COL25  DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #19 Face right 4
+COL26  DATA >7777,>7777,>7777,>8787    ; #1A
+COL27  DATA >8787,>8787,>8A8A,>8A8A    ; #1B
+COL28  DATA >8787,>8787,>8A8A,>8A8A    ; #1C
+COL29  DATA >7777,>7777,>7777,>8787    ; #1D
+COL30  DATA >8A8A,>8A8A,>8A8A,>8787    ; #1E
+COL31  DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #1F
+COL32  DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #20
+COL33  DATA >8A8A,>8A8A,>8A8A,>8787    ; #21
+COL34  DATA >A7A7,>A7A7,>A7A7,>A787    ; #22
+COL35  DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #23
+COL36  DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #24
+COL37  DATA >A7A7,>A7A7,>A7A7,>A787    ; #25
+COL38  DATA >8787,>A7A7,>A7A8,>A8A8    ; #26
+COL39  DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #27
+COL40  DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #28
+COL41  DATA >87A7,>A7A7,>A7A8,>A8A8    ; #29
+COL42  DATA >8787,>8787,>8787,>8787    ; #2A
+COL43  DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #2B
+COL44  DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #2C
+COL45  DATA >8787,>8787,>8787,>8787    ; #2D
+COL46  DATA >8777,>8787,>8787,>8787    ; #2E
+COL47  DATA >8A8A,>8787,>8787,>8787    ; #2F
+COL48  DATA >8A8A,>8787,>8787,>8787    ; #30
+COL49  DATA >8777,>8787,>8787,>8787    ; #31
 ****************************************
-* Transition Character Pairs (from, to) 
+* Transition Character Pairs (from, to)
 ****************************************
-TCHNUM DATA 65                         ;
-TCHARS BYTE >10,>0E                    ; #00 Window left bottom closed -> Window left closed 5
-       BYTE >06,>10                    ; #01 Window left closed 1 -> Window left bottom closed
-       BYTE >0A,>05                    ; #02 Window left closed 3 -> Window open bottom
-       BYTE >01,>00                    ; #03 Wall -> Sky/glass
-       BYTE >01,>01                    ; #04 Wall -> Wall
-       BYTE >03,>00                    ; #05 Glass reflection -> Sky/glass
-       BYTE >01,>04                    ; #06 Wall -> Window open top
-       BYTE >12,>05                    ; #07 Face left 1 (full) -> Window open bottom
-       BYTE >0C,>10                    ; #08 Window left closed 4 -> Window left bottom closed
-       BYTE >01,>05                    ; #09 Wall -> Window open bottom
-       BYTE >05,>04                    ; #0A Window open bottom -> Window open top
-       BYTE >0E,>05                    ; #0B Window left closed 5 -> Window open bottom
-       BYTE >05,>06                    ; #0C Window open bottom -> Window left closed 1
-       BYTE >0C,>05                    ; #0D Window left closed 4 -> Window open bottom
-       BYTE >07,>05                    ; #0E Window right closed 1 -> Window open bottom
-       BYTE >05,>07                    ; #0F Window open bottom -> Window right closed 1
-       BYTE >05,>08                    ; #10 Window open bottom -> Window left closed 2
-       BYTE >05,>0B                    ; #11 Window open bottom -> Window right closed 3
-       BYTE >09,>11                    ; #12 Window right closed 2 -> Window right bottom closed
-       BYTE >09,>05                    ; #13 Window right closed 2 -> Window open bottom
-       BYTE >05,>09                    ; #14 Window open bottom -> Window right closed 2
-       BYTE >05,>0C                    ; #15 Window open bottom -> Window left closed 4
-       BYTE >05,>0D                    ; #16 Window open bottom -> Window right closed 4
-       BYTE >0F,>11                    ; #17 Window right closed 5 -> Window right bottom closed
-       BYTE >05,>12                    ; #18 Window open bottom -> Face left 1 (full)
-       BYTE >05,>0A                    ; #19 Window open bottom -> Window left closed 3
-       BYTE >15,>05                    ; #1A Face right 2 -> Window open bottom
-       BYTE >0B,>11                    ; #1B Window right closed 3 -> Window right bottom closed
-       BYTE >19,>05                    ; #1C Face right 4 -> Window open bottom
-       BYTE >17,>05                    ; #1D Face right 3 -> Window open bottom
-       BYTE >05,>16                    ; #1E Window open bottom -> Face left 3 (1/2)
-       BYTE >08,>10                    ; #1F Window left closed 2 -> Window left bottom closed
-       BYTE >05,>17                    ; #20 Window open bottom -> Face right 3
-       BYTE >05,>18                    ; #21 Window open bottom -> Face left 4 (1/4)
-       BYTE >05,>19                    ; #22 Window open bottom -> Face right 4
-       BYTE >0E,>10                    ; #23 Window left closed 5 -> Window left bottom closed
-       BYTE >04,>10                    ; #24 Window open top -> Window left bottom closed
-       BYTE >13,>05                    ; #25 Face right 1 -> Window open bottom
+TCHNUM DATA 93                         ;
+TCHARS BYTE >00,>00                    ; #00 Sky/glass -> Sky/glass
+       BYTE >04,>00                    ; #01 Window open top -> Sky/glass
+       BYTE >01,>04                    ; #02 Wall -> Window open top
+       BYTE >02,>04                    ; #03 Wall 2 -> Window open top
+       BYTE >05,>04                    ; #04 Window open bottom -> Window open top
+       BYTE >01,>01                    ; #05 Wall -> Wall
+       BYTE >02,>02                    ; #06 Wall 2 -> Wall 2
+       BYTE >04,>05                    ; #07 Window open top -> Window open bottom
+       BYTE >00,>05                    ; #08 Sky/glass -> Window open bottom
+       BYTE >00,>02                    ; #09 Sky/glass -> Wall 2
+       BYTE >01,>00                    ; #0A Wall -> Sky/glass
+       BYTE >04,>01                    ; #0B Window open top -> Wall
+       BYTE >02,>01                    ; #0C Wall 2 -> Wall
+       BYTE >01,>05                    ; #0D Wall -> Window open bottom
+       BYTE >00,>01                    ; #0E Sky/glass -> Wall
+       BYTE >03,>00                    ; #0F Glass reflection -> Sky/glass
+       BYTE >00,>03                    ; #10 Sky/glass -> Glass reflection
+       BYTE >06,>05                    ; #11 Window left closed 1 -> Window open bottom
+       BYTE >07,>05                    ; #12 Window right closed 1 -> Window open bottom
+       BYTE >05,>06                    ; #13 Window open bottom -> Window left closed 1
+       BYTE >05,>07                    ; #14 Window open bottom -> Window right closed 1
+       BYTE >08,>05                    ; #15 Window left closed 2 -> Window open bottom
+       BYTE >09,>05                    ; #16 Window right closed 2 -> Window open bottom
+       BYTE >0A,>05                    ; #17 Window left closed 3 -> Window open bottom
+       BYTE >0B,>05                    ; #18 Window right closed 3 -> Window open bottom
+       BYTE >0C,>05                    ; #19 Window left closed 4 -> Window open bottom
+       BYTE >0D,>05                    ; #1A Window right closed 4 -> Window open bottom
+       BYTE >0E,>05                    ; #1B Window left closed 5 -> Window open bottom
+       BYTE >0F,>05                    ; #1C Window right closed 5 -> Window open bottom
+       BYTE >05,>08                    ; #1D Window open bottom -> Window left closed 2
+       BYTE >05,>09                    ; #1E Window open bottom -> Window right closed 2
+       BYTE >05,>0A                    ; #1F Window open bottom -> Window left closed 3
+       BYTE >05,>0B                    ; #20 Window open bottom -> Window right closed 3
+       BYTE >05,>0C                    ; #21 Window open bottom -> Window left closed 4
+       BYTE >05,>0D                    ; #22 Window open bottom -> Window right closed 4
+       BYTE >10,>0E                    ; #23 Window left bottom closed -> Window left closed 5
+       BYTE >11,>0F                    ; #24 Window right bottom closed -> Window right closed 5
+       BYTE >04,>10                    ; #25 Window open top -> Window left bottom closed
        BYTE >04,>11                    ; #26 Window open top -> Window right bottom closed
-       BYTE >05,>14                    ; #27 Window open bottom -> Face left 2 (3/4)
-       BYTE >05,>15                    ; #28 Window open bottom -> Face right 2
-       BYTE >00,>00                    ; #29 Sky/glass -> Sky/glass
-       BYTE >00,>01                    ; #2A Sky/glass -> Wall
-       BYTE >00,>02                    ; #2B Sky/glass -> Wall 2
-       BYTE >02,>00                    ; #2C Wall 2 -> Sky/glass
-       BYTE >00,>03                    ; #2D Sky/glass -> Glass reflection
-       BYTE >04,>00                    ; #2E Window open top -> Sky/glass
-       BYTE >02,>02                    ; #2F Wall 2 -> Wall 2
-       BYTE >00,>05                    ; #30 Sky/glass -> Window open bottom
-       BYTE >04,>01                    ; #31 Window open top -> Wall
-       BYTE >05,>13                    ; #32 Window open bottom -> Face right 1
-       BYTE >02,>04                    ; #33 Wall 2 -> Window open top
-       BYTE >0A,>10                    ; #34 Window left closed 3 -> Window left bottom closed
-       BYTE >0F,>05                    ; #35 Window right closed 5 -> Window open bottom
-       BYTE >04,>05                    ; #36 Window open top -> Window open bottom
-       BYTE >0D,>05                    ; #37 Window right closed 4 -> Window open bottom
-       BYTE >06,>05                    ; #38 Window left closed 1 -> Window open bottom
-       BYTE >0B,>05                    ; #39 Window right closed 3 -> Window open bottom
-       BYTE >08,>05                    ; #3A Window left closed 2 -> Window open bottom
-       BYTE >07,>11                    ; #3B Window right closed 1 -> Window right bottom closed
-       BYTE >11,>0F                    ; #3C Window right bottom closed -> Window right closed 5
-       BYTE >14,>05                    ; #3D Face left 2 (3/4) -> Window open bottom
-       BYTE >0D,>11                    ; #3E Window right closed 4 -> Window right bottom closed
-       BYTE >18,>05                    ; #3F Face left 4 (1/4) -> Window open bottom
-       BYTE >16,>05                    ; #40 Face left 3 (1/2) -> Window open bottom
+       BYTE >06,>10                    ; #27 Window left closed 1 -> Window left bottom closed
+       BYTE >07,>11                    ; #28 Window right closed 1 -> Window right bottom closed
+       BYTE >08,>10                    ; #29 Window left closed 2 -> Window left bottom closed
+       BYTE >09,>11                    ; #2A Window right closed 2 -> Window right bottom closed
+       BYTE >0A,>10                    ; #2B Window left closed 3 -> Window left bottom closed
+       BYTE >0B,>11                    ; #2C Window right closed 3 -> Window right bottom closed
+       BYTE >0C,>10                    ; #2D Window left closed 4 -> Window left bottom closed
+       BYTE >0D,>11                    ; #2E Window right closed 4 -> Window right bottom closed
+       BYTE >0E,>10                    ; #2F Window left closed 5 -> Window left bottom closed
+       BYTE >0F,>11                    ; #30 Window right closed 5 -> Window right bottom closed
+       BYTE >12,>05                    ; #31 Face left 1 (full) -> Window open bottom
+       BYTE >13,>05                    ; #32 Face right 1 -> Window open bottom
+       BYTE >05,>12                    ; #33 Window open bottom -> Face left 1 (full)
+       BYTE >05,>13                    ; #34 Window open bottom -> Face right 1
+       BYTE >14,>05                    ; #35 Face left 2 (3/4) -> Window open bottom
+       BYTE >15,>05                    ; #36 Face right 2 -> Window open bottom
+       BYTE >05,>14                    ; #37 Window open bottom -> Face left 2 (3/4)
+       BYTE >05,>15                    ; #38 Window open bottom -> Face right 2
+       BYTE >16,>05                    ; #39 Face left 3 (1/2) -> Window open bottom
+       BYTE >17,>05                    ; #3A Face right 3 -> Window open bottom
+       BYTE >05,>16                    ; #3B Window open bottom -> Face left 3 (1/2)
+       BYTE >05,>17                    ; #3C Window open bottom -> Face right 3
+       BYTE >18,>05                    ; #3D Face left 4 (1/4) -> Window open bottom
+       BYTE >19,>05                    ; #3E Face right 4 -> Window open bottom
+       BYTE >05,>18                    ; #3F Window open bottom -> Face left 4 (1/4)
+       BYTE >05,>19                    ; #40 Window open bottom -> Face right 4
+       BYTE >1A,>00                    ; #41
+       BYTE >1B,>00                    ; #42
+       BYTE >1C,>00                    ; #43
+       BYTE >1D,>00                    ; #44
+       BYTE >26,>1A                    ; #45
+       BYTE >27,>1B                    ; #46
+       BYTE >28,>1C                    ; #47
+       BYTE >29,>1D                    ; #48
+       BYTE >1E,>26                    ; #49
+       BYTE >1F,>27                    ; #4A
+       BYTE >20,>28                    ; #4B
+       BYTE >21,>29                    ; #4C
+       BYTE >2A,>1E                    ; #4D
+       BYTE >2B,>1F                    ; #4E
+       BYTE >2C,>20                    ; #4F
+       BYTE >2D,>21                    ; #50
+       BYTE >22,>2A                    ; #51
+       BYTE >23,>2B                    ; #52
+       BYTE >24,>2C                    ; #53
+       BYTE >25,>2D                    ; #54
+       BYTE >2E,>22                    ; #55
+       BYTE >2F,>23                    ; #56
+       BYTE >30,>24                    ; #57
+       BYTE >31,>25                    ; #58
+       BYTE >01,>2E                    ; #59
+       BYTE >01,>2F                    ; #5A
+       BYTE >01,>30                    ; #5B
+       BYTE >01,>31                    ; #5C
 ****************************************
-* Transition Map Data                   
+* Transition Map Data
 ****************************************
-* == Map #0 ==                          
+* == Map #0 ==
 MC0    DATA 0                          ;
-MS0    DATA >0016,>0197,>22FA          ; Width, Height, Size
-MD0
-* -- Map Row -2 --
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row -1 --
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
+MS0    DATA >0016,>0199,>2326          ; Width, Height, Size
 * -- Map Row 0 --
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 1 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 2 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 3 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 4 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 5 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 6 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 7 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 8 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 9 --                       
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 10 --                      
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 11 --                      
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 12 --                      
-       BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 13 --                      
-       BYTE >2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>29
-* -- Map Row 14 --                      
-       BYTE >06,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>06,>29
-* -- Map Row 15 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 16 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 17 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 18 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 19 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 20 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 21 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 22 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 23 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 24 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 25 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 26 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 27 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 28 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 29 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 30 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 31 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 32 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 33 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 34 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 35 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 36 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 37 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 38 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 39 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 40 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 41 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 42 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 43 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 44 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 45 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 46 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 47 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2B,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 48 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 49 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 50 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 51 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 52 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 53 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 54 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 55 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 56 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 57 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 58 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 59 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 60 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 61 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>03,>03,>2C,>03,>03,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 62 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>04,>2F,>04,>04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 63 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 64 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 65 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 66 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 67 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 68 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 69 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 70 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 71 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 72 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 73 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 74 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 75 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 76 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 77 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 78 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 79 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 80 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 81 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 82 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 83 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 84 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 85 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 86 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 87 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 88 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 89 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 90 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 91 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 92 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 93 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 94 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 95 --                      
-       BYTE >04,>2F,>09,>09,>2F,>09,>09,>2F,>36,>36,>2F,>36,>36,>2F,>09,>09,>2F,>09,>09,>2F,>04,>29
-* -- Map Row 96 --                      
-       BYTE >04,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>04,>29
-* -- Map Row 97 --                      
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 98 --                      
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 99 --                      
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 100 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 101 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 102 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 103 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 104 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 105 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 106 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 107 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 108 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 109 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 110 --                     
-       BYTE >04,>2F,>03,>03,>2C,>03,>03,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>03,>03,>2C,>03,>03,>2F,>04,>29
-* -- Map Row 111 --                     
-       BYTE >04,>2F,>04,>04,>2F,>04,>04,>2F,>36,>36,>2F,>36,>36,>2F,>04,>04,>2F,>04,>04,>2F,>04,>29
-* -- Map Row 112 --                     
-       BYTE >04,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>04,>29
-* -- Map Row 113 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 114 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 115 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 116 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 117 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 118 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 119 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 120 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 121 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 122 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 123 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 124 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 125 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 126 --                     
-       BYTE >04,>2F,>03,>03,>2C,>03,>03,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>03,>03,>2C,>03,>03,>2F,>04,>29
-* -- Map Row 127 --                     
-       BYTE >04,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>04,>29
-* -- Map Row 128 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 129 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 130 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 131 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 132 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 133 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 134 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 135 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 136 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 137 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 138 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 139 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 140 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 141 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 142 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 143 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 144 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 145 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 146 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 147 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 148 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 149 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 150 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 151 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 152 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 153 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 154 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 155 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 156 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 157 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 158 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 159 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 160 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 161 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 162 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 163 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 164 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 165 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 166 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 167 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 168 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 169 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 170 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 171 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 172 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 173 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 174 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 175 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2B,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 176 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 177 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 178 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 179 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 180 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 181 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 182 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 183 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 184 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 185 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 186 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 187 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 188 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 189 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>03,>03,>2C,>03,>03,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 190 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>04,>2F,>04,>04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 191 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 192 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 193 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 194 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 195 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 196 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 197 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 198 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 199 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 200 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 201 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 202 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 203 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 204 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 205 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 206 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 207 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 208 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 209 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 210 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 211 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 212 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 213 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 214 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 215 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 216 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 217 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 218 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 219 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 220 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 221 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 222 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 223 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 224 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 225 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 226 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 227 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 228 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 229 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 230 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 231 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 232 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 233 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 234 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 235 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 236 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 237 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 238 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 239 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2B,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 240 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 241 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 242 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 243 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 244 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 245 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 246 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 247 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 248 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 249 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 250 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 251 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 252 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 253 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>03,>03,>2C,>03,>03,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 254 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>04,>2F,>04,>04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 255 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 256 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 257 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 258 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 259 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 260 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 261 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 262 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 263 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 264 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 265 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 266 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 267 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 268 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 269 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 270 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 271 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 272 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 273 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 274 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 275 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 276 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 277 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 278 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 279 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 280 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 281 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 282 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 283 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 284 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 285 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 286 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 287 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 288 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 289 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 290 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 291 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 292 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 293 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 294 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 295 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 296 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 297 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 298 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 299 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 300 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 301 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 302 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 303 --                     
-       BYTE >04,>2F,>09,>09,>2F,>09,>09,>2F,>36,>36,>2F,>36,>36,>2F,>09,>09,>2F,>09,>09,>2F,>04,>29
-* -- Map Row 304 --                     
-       BYTE >04,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>04,>29
-* -- Map Row 305 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 306 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 307 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 308 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 309 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 310 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 311 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 312 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 313 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 314 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 315 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 316 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 317 --                     
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>04,>29
-* -- Map Row 318 --                     
-       BYTE >04,>2F,>03,>03,>2C,>03,>03,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>03,>03,>2C,>03,>03,>2F,>04,>29
-* -- Map Row 319 --                     
-       BYTE >04,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>04,>29
-* -- Map Row 320 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 321 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 322 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 323 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 324 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 325 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 326 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 327 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 328 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 329 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 330 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 331 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 332 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 333 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 334 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 335 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 336 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 337 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 338 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 339 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 340 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 341 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 342 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 343 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 344 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 345 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 346 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 347 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 348 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 349 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 350 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 351 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2B,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 352 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 353 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 354 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 355 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 356 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 357 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 358 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 359 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 360 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 361 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 362 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 363 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 364 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 365 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>03,>03,>2C,>03,>03,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 366 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>04,>2F,>04,>04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 367 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 368 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 369 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 370 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 371 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 372 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 373 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 374 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 375 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 376 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 377 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 378 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 379 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 380 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 381 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 382 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 383 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 384 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 385 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 386 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 387 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 388 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 389 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 390 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 391 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 392 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 393 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 394 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 395 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 396 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 397 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 398 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 399 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 400 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 401 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2F,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 402 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>05,>29,>2F,>05,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 403 --                     
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>2D,>05,>2F,>2D,>05,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 404 --                     
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>2D,>2F,>29,>2D,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 405 --                     
-       BYTE >04,>2F,>09,>09,>2F,>09,>09,>2F,>29,>29,>2F,>29,>29,>2F,>09,>09,>2F,>09,>09,>2F,>04,>29
-* -- Map Row 406 --                     
-       BYTE >2A,>2B,>2A,>2A,>2B,>2A,>2A,>2B,>29,>29,>2B,>29,>29,>2B,>2A,>2A,>2B,>2A,>2A,>2B,>2A,>29
-* == Map #1 ==                          
-MC1    DATA 0                          ;
-MS1    DATA >0016,>0035,>048E          ; Width, Height, Size
-* -- Map Row 0 --                       
-MD1    BYTE >29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29,>29
-* -- Map Row 1 --                       
-       BYTE >2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>2E,>29
-* -- Map Row 2 --                       
-       BYTE >06,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>0A,>0A,>33,>06,>29
-* -- Map Row 3 --                       
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 4 --                       
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 5 --                       
-       BYTE >04,>2F,>09,>09,>2F,>09,>09,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 6 --                       
-       BYTE >04,>2F,>2A,>2A,>2B,>2A,>2A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 7 --                       
-       BYTE >04,>2F,>29,>29,>29,>29,>29,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 8 --                       
-       BYTE >04,>2F,>03,>03,>2C,>03,>03,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>06,>06,>2F,>04,>29
-* -- Map Row 9 --                       
-       BYTE >04,>2F,>31,>31,>2F,>31,>31,>2F,>36,>36,>2F,>36,>36,>2F,>07,>25,>2F,>31,>31,>2F,>04,>29
-* -- Map Row 10 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>18,>32,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 11 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2B,>30,>30,>2F,>3D,>1A,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 12 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>29,>29,>29,>29,>2F,>27,>28,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 13 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>03,>03,>2C,>03,>03,>2F,>40,>1D,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 14 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>04,>2F,>04,>04,>2F,>1E,>20,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 15 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>31,>31,>2F,>31,>31,>2F,>3F,>1C,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 16 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>21,>22,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 17 --                      
-       BYTE >04,>2F,>38,>0E,>2F,>38,>0E,>2F,>38,>0E,>2F,>38,>0E,>2F,>38,>0E,>2F,>38,>0E,>2F,>04,>29
-* -- Map Row 18 --                      
-       BYTE >04,>2F,>0C,>0F,>2F,>0C,>0F,>2F,>0C,>0F,>2F,>0C,>0F,>2F,>0C,>0F,>2F,>0C,>0F,>2F,>04,>29
-* -- Map Row 19 --                      
-       BYTE >04,>2F,>36,>36,>2F,>38,>0E,>2F,>3A,>13,>2F,>02,>39,>2F,>0D,>37,>2F,>0B,>35,>2F,>04,>29
-* -- Map Row 20 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0C,>0F,>2F,>10,>14,>2F,>19,>11,>2F,>15,>16,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 21 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>24,>26,>2F,>04,>29
-* -- Map Row 22 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 23 --                      
-       BYTE >04,>2F,>3A,>13,>2F,>3A,>13,>2F,>3A,>13,>2F,>3A,>13,>2F,>3A,>13,>2F,>3A,>13,>2F,>04,>29
-* -- Map Row 24 --                      
-       BYTE >04,>2F,>10,>14,>2F,>10,>14,>2F,>10,>14,>2F,>10,>14,>2F,>10,>14,>2F,>10,>14,>2F,>04,>29
-* -- Map Row 25 --                      
-       BYTE >04,>2F,>36,>36,>2F,>38,>0E,>2F,>3A,>13,>2F,>02,>39,>2F,>0D,>37,>2F,>0B,>35,>2F,>04,>29
-* -- Map Row 26 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0C,>0F,>2F,>10,>14,>2F,>19,>11,>2F,>15,>16,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 27 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>24,>26,>2F,>04,>29
-* -- Map Row 28 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 29 --                      
-       BYTE >04,>2F,>02,>39,>2F,>02,>39,>2F,>02,>39,>2F,>02,>39,>2F,>02,>39,>2F,>02,>39,>2F,>04,>29
-* -- Map Row 30 --                      
-       BYTE >04,>2F,>19,>11,>2F,>19,>11,>2F,>19,>11,>2F,>19,>11,>2F,>19,>11,>2F,>19,>11,>2F,>04,>29
-* -- Map Row 31 --                      
-       BYTE >04,>2F,>36,>36,>2F,>38,>0E,>2F,>3A,>13,>2F,>02,>39,>2F,>0D,>37,>2F,>0B,>35,>2F,>04,>29
-* -- Map Row 32 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0C,>0F,>2F,>10,>14,>2F,>19,>11,>2F,>15,>16,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 33 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>24,>26,>2F,>04,>29
-* -- Map Row 34 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 35 --                      
-       BYTE >04,>2F,>0D,>37,>2F,>0D,>37,>2F,>0D,>37,>2F,>0D,>37,>2F,>0D,>37,>2F,>0D,>37,>2F,>04,>29
-* -- Map Row 36 --                      
-       BYTE >04,>2F,>15,>16,>2F,>15,>16,>2F,>15,>16,>2F,>15,>16,>2F,>15,>16,>2F,>15,>16,>2F,>04,>29
-* -- Map Row 37 --                      
-       BYTE >04,>2F,>36,>36,>2F,>38,>0E,>2F,>3A,>13,>2F,>02,>39,>2F,>0D,>37,>2F,>0B,>35,>2F,>04,>29
-* -- Map Row 38 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0C,>0F,>2F,>10,>14,>2F,>19,>11,>2F,>15,>16,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 39 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>24,>26,>2F,>04,>29
-* -- Map Row 40 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 41 --                      
-       BYTE >04,>2F,>0B,>35,>2F,>0B,>35,>2F,>0B,>35,>2F,>0B,>35,>2F,>0B,>35,>2F,>0B,>35,>2F,>04,>29
-* -- Map Row 42 --                      
-       BYTE >04,>2F,>00,>3C,>2F,>00,>3C,>2F,>00,>3C,>2F,>00,>3C,>2F,>00,>3C,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 43 --                      
-       BYTE >04,>2F,>24,>26,>2F,>01,>3B,>2F,>1F,>12,>2F,>34,>1B,>2F,>08,>3E,>2F,>23,>17,>2F,>04,>29
-* -- Map Row 44 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0C,>0F,>2F,>10,>14,>2F,>19,>11,>2F,>15,>16,>2F,>00,>3C,>2F,>04,>29
-* -- Map Row 45 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>36,>36,>2F,>24,>26,>2F,>04,>29
-* -- Map Row 46 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 47 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>30,>30,>2F,>30,>30,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 48 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>05,>29,>2F,>05,>29,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 49 --                      
-       BYTE >04,>2F,>36,>36,>2F,>36,>36,>2F,>2D,>05,>2F,>2D,>05,>2F,>36,>36,>2F,>36,>36,>2F,>04,>29
-* -- Map Row 50 --                      
-       BYTE >04,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>29,>2D,>2F,>29,>2D,>2F,>0A,>0A,>2F,>0A,>0A,>2F,>04,>29
-* -- Map Row 51 --                      
-       BYTE >04,>2F,>09,>09,>2F,>09,>09,>2F,>29,>29,>2F,>29,>29,>2F,>09,>09,>2F,>09,>09,>2F,>04,>29
-* -- Map Row 52 --                      
-       BYTE >2A,>2B,>2A,>2A,>2B,>2A,>2A,>2B,>29,>29,>2B,>29,>29,>2B,>2A,>2A,>2B,>2A,>2A,>2B,>2A,>29
-
+MD0    BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 1 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 2 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 3 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 4 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 5 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 6 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 7 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 8 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 9 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 10 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 11 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 12 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 13 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 14 --
+       BYTE >00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00,>00
+* -- Map Row 15 --
+       BYTE >01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>01,>00
+* -- Map Row 16 --
+       BYTE >02,>03,>04,>04,>03,>04,>04,>03,>04,>04,>03,>04,>04,>03,>04,>04,>03,>04,>04,>03,>02,>00
+* -- Map Row 17 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 18 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 19 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 20 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 21 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 22 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 23 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 24 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 25 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 26 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 27 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 28 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 29 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 30 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 31 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 32 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 33 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 34 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 35 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 36 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 37 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 38 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 39 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 40 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 41 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 42 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 43 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 44 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 45 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 46 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 47 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 48 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 49 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>08,>08,>09,>08,>08,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 50 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 51 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 52 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 53 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 54 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 55 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 56 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 57 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 58 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 59 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 60 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 61 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 62 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 63 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0A,>0A,>0A,>0A,>0A,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 64 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>05,>05,>05,>05,>05,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 65 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 66 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 67 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 68 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 69 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 70 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 71 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 72 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 73 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 74 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 75 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 76 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 77 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 78 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 79 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 80 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 81 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 82 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 83 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 84 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 85 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 86 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 87 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 88 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 89 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 90 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 91 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 92 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 93 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 94 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 95 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 96 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 97 --
+       BYTE >05,>06,>0D,>0D,>06,>0D,>0D,>06,>07,>07,>06,>07,>07,>06,>0D,>0D,>06,>0D,>0D,>06,>05,>00
+* -- Map Row 98 --
+       BYTE >05,>06,>0E,>0E,>09,>0E,>0E,>06,>04,>04,>06,>04,>04,>06,>0E,>0E,>09,>0E,>0E,>06,>05,>00
+* -- Map Row 99 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 100 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 101 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 102 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 103 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 104 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 105 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 106 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 107 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 108 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 109 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 110 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 111 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 112 --
+       BYTE >05,>06,>0A,>0A,>0A,>0A,>0A,>06,>04,>04,>06,>04,>04,>06,>0A,>0A,>0A,>0A,>0A,>06,>05,>00
+* -- Map Row 113 --
+       BYTE >05,>06,>05,>05,>05,>05,>05,>06,>07,>07,>06,>07,>07,>06,>05,>05,>05,>05,>05,>06,>05,>00
+* -- Map Row 114 --
+       BYTE >05,>06,>0E,>0E,>0E,>0E,>0E,>06,>04,>04,>06,>04,>04,>06,>0E,>0E,>0E,>0E,>0E,>06,>05,>00
+* -- Map Row 115 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 116 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 117 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 118 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 119 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 120 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 121 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 122 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 123 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 124 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 125 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 126 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 127 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 128 --
+       BYTE >05,>06,>0A,>0A,>0A,>0A,>0A,>06,>04,>04,>06,>04,>04,>06,>0A,>0A,>0A,>0A,>0A,>06,>05,>00
+* -- Map Row 129 --
+       BYTE >05,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>05,>00
+* -- Map Row 130 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 131 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 132 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 133 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 134 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 135 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 136 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 137 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 138 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 139 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 140 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 141 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 142 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 143 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 144 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 145 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 146 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 147 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 148 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 149 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 150 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 151 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 152 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 153 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 154 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 155 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 156 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 157 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 158 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 159 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 160 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 161 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 162 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 163 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 164 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 165 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 166 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 167 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 168 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 169 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 170 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 171 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 172 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 173 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 174 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 175 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 176 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 177 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>08,>08,>09,>08,>08,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 178 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 179 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 180 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 181 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 182 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 183 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 184 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 185 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 186 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 187 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 188 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 189 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 190 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 191 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0A,>0A,>0A,>0A,>0A,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 192 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>05,>05,>05,>05,>05,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 193 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 194 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 195 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 196 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 197 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 198 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 199 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 200 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 201 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 202 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 203 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 204 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 205 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 206 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 207 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 208 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 209 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 210 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 211 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 212 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 213 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 214 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 215 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 216 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 217 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 218 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 219 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 220 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 221 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 222 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 223 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 224 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 225 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 226 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 227 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 228 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 229 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 230 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 231 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 232 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 233 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 234 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 235 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 236 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 237 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 238 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 239 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 240 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 241 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>08,>08,>09,>08,>08,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 242 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 243 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 244 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 245 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 246 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 247 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 248 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 249 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 250 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 251 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 252 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 253 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 254 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 255 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0A,>0A,>0A,>0A,>0A,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 256 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>05,>05,>05,>05,>05,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 257 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 258 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 259 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 260 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 261 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 262 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 263 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 264 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 265 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 266 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 267 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 268 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 269 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 270 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 271 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 272 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 273 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 274 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 275 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 276 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 277 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 278 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 279 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 280 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 281 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 282 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 283 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 284 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 285 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 286 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 287 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 288 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 289 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 290 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 291 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 292 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 293 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 294 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 295 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 296 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 297 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 298 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 299 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 300 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 301 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 302 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 303 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 304 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 305 --
+       BYTE >05,>06,>0D,>0D,>06,>0D,>0D,>06,>07,>07,>06,>07,>07,>06,>0D,>0D,>06,>0D,>0D,>06,>05,>00
+* -- Map Row 306 --
+       BYTE >05,>06,>0E,>0E,>09,>0E,>0E,>06,>04,>04,>06,>04,>04,>06,>0E,>0E,>09,>0E,>0E,>06,>05,>00
+* -- Map Row 307 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 308 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 309 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 310 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 311 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 312 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 313 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 314 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 315 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 316 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 317 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 318 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 319 --
+       BYTE >05,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>05,>00
+* -- Map Row 320 --
+       BYTE >05,>06,>0A,>0A,>0A,>0A,>0A,>06,>04,>04,>06,>04,>04,>06,>0A,>0A,>0A,>0A,>0A,>06,>05,>00
+* -- Map Row 321 --
+       BYTE >05,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>05,>00
+* -- Map Row 322 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 323 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 324 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 325 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 326 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 327 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 328 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 329 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 330 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 331 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 332 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 333 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 334 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 335 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 336 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 337 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 338 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 339 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 340 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 341 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 342 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 343 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 344 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 345 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 346 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 347 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 348 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 349 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 350 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 351 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 352 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 353 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>08,>08,>09,>08,>08,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 354 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 355 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 356 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 357 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 358 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 359 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 360 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 361 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 362 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 363 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 364 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 365 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>00,>00,>00,>00,>00,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 366 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>00,>00,>00,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 367 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0A,>0A,>0A,>0A,>0A,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 368 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>05,>05,>05,>05,>05,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 369 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>0B,>0B,>0C,>0B,>0B,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 370 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 371 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 372 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 373 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 374 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 375 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 376 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 377 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 378 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 379 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 380 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 381 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 382 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 383 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 384 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 385 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 386 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 387 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 388 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 389 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 390 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 391 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 392 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 393 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 394 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 395 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 396 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 397 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 398 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 399 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 400 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 401 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 402 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 403 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>08,>08,>06,>08,>08,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 404 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>0F,>00,>06,>0F,>00,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 405 --
+       BYTE >05,>06,>07,>07,>06,>07,>07,>06,>10,>0F,>06,>10,>0F,>06,>07,>07,>06,>07,>07,>06,>05,>00
+* -- Map Row 406 --
+       BYTE >05,>06,>04,>04,>06,>04,>04,>06,>00,>10,>06,>00,>10,>06,>04,>04,>06,>04,>04,>06,>05,>00
+* -- Map Row 407 --
+       BYTE >05,>06,>0D,>0D,>06,>0D,>0D,>06,>00,>00,>06,>00,>00,>06,>0D,>0D,>06,>0D,>0D,>06,>05,>00
+* -- Map Row 408 --
+       BYTE >0E,>09,>0E,>0E,>09,>0E,>0E,>09,>00,>00,>09,>00,>00,>09,>0E,>0E,>09,>0E,>0E,>09,>0E,>00
 * == Map #3 ==
 MC3    DATA 0                          ;
 MS3    DATA >0002,>0025,>004A          ; Width, Height, Size
-* -- Map Row 0 --                       
-MD3    BYTE >0A,>0A                    ;
+* -- Map Row 0 --
+MD3    BYTE >04,>04                    ;
 close_window_below_open_0:
 * -- Map Row 1 --
-       BYTE >36,>36                    ;
-* -- Map Row 2 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 3 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 4 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 5 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 6 --                       
-       BYTE >0A,>0A                    ;
+       BYTE >07,>07                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >07,>07                    ;
+* -- Map Row 6 --
+       BYTE >04,>04                    ;
 close_window_below_open_1:
 * -- Map Row 7 --
-       BYTE >38,>0E                    ;
-* -- Map Row 8 --                       
-       BYTE >0C,>0F                    ;
-* -- Map Row 9 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 10 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 11 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 12 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >11,>12                    ;
+* -- Map Row 8 --
+       BYTE >13,>14                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >07,>07                    ;
+* -- Map Row 12 --
+       BYTE >04,>04                    ;
 close_window_below_open_2:
 * -- Map Row 13 --
-       BYTE >3A,>13                    ;
-* -- Map Row 14 --                      
-       BYTE >10,>14                    ;
-* -- Map Row 15 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 16 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 17 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 18 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >15,>16                    ;
+* -- Map Row 14 --
+       BYTE >1D,>1E                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >07,>07                    ;
+* -- Map Row 18 --
+       BYTE >04,>04                    ;
 close_window_below_open_3:
 * -- Map Row 19 --
-       BYTE >02,>39                    ;
-* -- Map Row 20 --                      
-       BYTE >19,>11                    ;
-* -- Map Row 21 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 22 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 23 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 24 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >17,>18                    ;
+* -- Map Row 20 --
+       BYTE >1F,>20                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >07,>07                    ;
+* -- Map Row 24 --
+       BYTE >04,>04                    ;
 close_window_below_open_4:
 * -- Map Row 25 --
-       BYTE >0D,>37                    ;
-* -- Map Row 26 --                      
-       BYTE >15,>16                    ;
-* -- Map Row 27 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 28 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 29 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 30 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >19,>1A                    ;
+* -- Map Row 26 --
+       BYTE >21,>22                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* -- Map Row 29 --
+       BYTE >07,>07                    ;
+* -- Map Row 30 --
+       BYTE >04,>04                    ;
 close_window_below_open_5:
 * -- Map Row 31 --
-       BYTE >0B,>35                    ;
-* -- Map Row 32 --                      
-       BYTE >00,>3C                    ;
-* -- Map Row 33 --                      
-       BYTE >24,>26                    ;
-* -- Map Row 34 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 35 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 36 --                      
-       BYTE >0A,>0A                    ;
-* == Map #4 ==                          
+       BYTE >1B,>1C                    ;
+* -- Map Row 32 --
+       BYTE >23,>24                    ;
+* -- Map Row 33 --
+       BYTE >25,>26                    ;
+* -- Map Row 34 --
+       BYTE >04,>04                    ;
+* -- Map Row 35 --
+       BYTE >07,>07                    ;
+* -- Map Row 36 --
+       BYTE >04,>04                    ;
+* == Map #4 ==
 MC4    DATA 0                          ;
 MS4    DATA >0002,>0025,>004A          ; Width, Height, Size
-* -- Map Row 0 --                       
-MD4    BYTE >00,>3C                    ;
+* -- Map Row 0 --
+MD4    BYTE >23,>24                    ;
 close_window_below_closed_0:
 * -- Map Row 1 --
-       BYTE >24,>26                    ;
-* -- Map Row 2 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 3 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 4 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 5 --                       
-       BYTE >0B,>35                    ;
-* -- Map Row 6 --                       
-       BYTE >00,>3C                    ;
+       BYTE >25,>26                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 6 --
+       BYTE >23,>24                    ;
 close_window_below_closed_1:
 * -- Map Row 7 --
-       BYTE >01,>3B                    ;
-* -- Map Row 8 --                       
-       BYTE >0C,>0F                    ;
-* -- Map Row 9 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 10 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 11 --                      
-       BYTE >0B,>35                    ;
-* -- Map Row 12 --                      
-       BYTE >00,>3C                    ;
+       BYTE >27,>28                    ;
+* -- Map Row 8 --
+       BYTE >13,>14                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 12 --
+       BYTE >23,>24                    ;
 close_window_below_closed_2:
 * -- Map Row 13 --
-       BYTE >1F,>12                    ;
-* -- Map Row 14 --                      
-       BYTE >10,>14                    ;
-* -- Map Row 15 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 16 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 17 --                      
-       BYTE >0B,>35                    ;
-* -- Map Row 18 --                      
-       BYTE >00,>3C                    ;
+       BYTE >29,>2A                    ;
+* -- Map Row 14 --
+       BYTE >1D,>1E                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 18 --
+       BYTE >23,>24                    ;
 close_window_below_closed_3:
 * -- Map Row 19 --
-       BYTE >34,>1B                    ;
-* -- Map Row 20 --                      
-       BYTE >19,>11                    ;
-* -- Map Row 21 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 22 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 23 --                      
-       BYTE >0B,>35                    ;
-* -- Map Row 24 --                      
-       BYTE >00,>3C                    ;
+       BYTE >2B,>2C                    ;
+* -- Map Row 20 --
+       BYTE >1F,>20                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 24 --
+       BYTE >23,>24                    ;
 close_window_below_closed_4:
 * -- Map Row 25 --
-       BYTE >08,>3E                    ;
-* -- Map Row 26 --                      
-       BYTE >15,>16                    ;
-* -- Map Row 27 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 28 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 29 --                      
-       BYTE >0B,>35                    ;
-* -- Map Row 30 --                      
-       BYTE >00,>3C                    ;
+       BYTE >2D,>2E                    ;
+* -- Map Row 26 --
+       BYTE >21,>22                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* -- Map Row 29 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 30 --
+       BYTE >23,>24                    ;
 close_window_below_closed_5:
 * -- Map Row 31 --
-       BYTE >23,>17                    ;
-* -- Map Row 32 --                      
-       BYTE >00,>3C                    ;
-* -- Map Row 33 --                      
-       BYTE >24,>26                    ;
-* -- Map Row 34 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 35 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 36 --                      
-       BYTE >0A,>0A                    ;
-* == Map #5 ==                          
+       BYTE >2F,>30                    ;
+* -- Map Row 32 --
+       BYTE >23,>24                    ;
+* -- Map Row 33 --
+       BYTE >25,>26                    ;
+* -- Map Row 34 --
+       BYTE >04,>04                    ;
+* -- Map Row 35 --
+       BYTE >07,>07                    ;
+* -- Map Row 36 --
+       BYTE >04,>04                    ;
+* == Map #5 ==
 MC5    DATA 0                          ;
 MS5    DATA >0002,>001D,>003A          ; Width, Height, Size
-* -- Map Row 0 --                       
-MD5    BYTE >0A,>0A                    ;
+* -- Map Row 0 --
+MD5    BYTE >04,>04                    ;
 face_0:
 * -- Map Row 1 --
-       BYTE >36,>36                    ;
-* -- Map Row 2 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 3 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 4 --                       
-       BYTE >0A,>0A                    ;
-* -- Map Row 5 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 6 --                       
-       BYTE >0A,>0A                    ;
+       BYTE >07,>07                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >07,>07                    ;
+* -- Map Row 6 --
+       BYTE >04,>04                    ;
 face_1:
 * -- Map Row 7 --
-       BYTE >3F,>1C                    ;
-* -- Map Row 8 --                       
-       BYTE >21,>22                    ;
-* -- Map Row 9 --                       
-       BYTE >36,>36                    ;
-* -- Map Row 10 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 11 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 12 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >3D,>3E                    ;
+* -- Map Row 8 --
+       BYTE >3F,>40                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >07,>07                    ;
+* -- Map Row 12 --
+       BYTE >04,>04                    ;
 face_2:
 * -- Map Row 13 --
-       BYTE >40,>1D                    ;
-* -- Map Row 14 --                      
-       BYTE >1E,>20                    ;
-* -- Map Row 15 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 16 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 17 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 18 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >39,>3A                    ;
+* -- Map Row 14 --
+       BYTE >3B,>3C                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >07,>07                    ;
+* -- Map Row 18 --
+       BYTE >04,>04                    ;
 face_3:
 * -- Map Row 19 --
-       BYTE >3D,>1A                    ;
-* -- Map Row 20 --                      
-       BYTE >27,>28                    ;
-* -- Map Row 21 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 22 --                      
-       BYTE >0A,>0A                    ;
-* -- Map Row 23 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 24 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >35,>36                    ;
+* -- Map Row 20 --
+       BYTE >37,>38                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >07,>07                    ;
+* -- Map Row 24 --
+       BYTE >04,>04                    ;
 face_4:
 * -- Map Row 25 --
-       BYTE >07,>25                    ;
-* -- Map Row 26 --                      
-       BYTE >18,>32                    ;
-* -- Map Row 27 --                      
-       BYTE >36,>36                    ;
-* -- Map Row 28 --                      
-       BYTE >0A,>0A                    ;
+       BYTE >31,>32                    ;
+* -- Map Row 26 --
+       BYTE >33,>34                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* == Map #6 ==
+MC6    DATA 0                          ;
+MS6    DATA >0004,>0007,>001C          ; Width, Height, Size
+* -- Map Row 0 --
+kong_map:
+       equ  $
+MD6    BYTE >41,>42,>43,>44            ;
+* -- Map Row 1 --
+       BYTE >45,>46,>47,>48            ;
+* -- Map Row 2 --
+       BYTE >49,>4A,>4B,>4C            ;
+* -- Map Row 3 --
+       BYTE >4D,>4E,>4F,>50            ;
+* -- Map Row 4 --
+       BYTE >51,>52,>53,>54            ;
+* -- Map Row 5 --
+       BYTE >55,>56,>57,>58            ;
+* -- Map Row 6 --
+       BYTE >59,>5A,>5B,>5C            ;
+* -- Map Row 7 --
+       BYTE >0E,>0E,>0E,>0E            ;
+kong_map_undraw:
+* -- Map Row 8 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 9 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 10 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 11 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 12 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 13 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 14 --
+       BYTE >0A,>0A,>0A,>0A            ;
+
 ****************************************
-* Scrolled Character Patterns           
+* Scrolled Character Patterns
 ****************************************
-PSTRIP DATA >007F,>7F7D,>7B77,>6E7F    ; #00 - 0E Window left bottom closed
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #00 - 10 Window left closed 5
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #01 - 10 Window left closed 1
-       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #01 - 06 Window left bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #02 - 05 Window left closed 3
-       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #02 - 0A Window open bottom
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #03 - 00 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #03 - 01 Sky/glass
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #04 - 01 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #04 - 01 Wall
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #05 - 00 Glass reflection
-       DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #05 - 03 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #06 - 04 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #06 - 01 Window open top
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #07 - 05 Face left 1 (full)
-       DATA >0F1B,>333E,>1718,>0F07    ; #07 - 12 Window open bottom
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #08 - 10 Window left closed 4
-       DATA >7F7F,>7F7D,>7B77,>6F00    ; #08 - 0C Window left bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #09 - 05 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #09 - 01 Window open bottom
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0A - 04 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0A - 05 Window open top
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0B - 05 Window left closed 5
-       DATA >007F,>7F7D,>7B77,>6E7F    ; #0B - 0E Window open bottom
-       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #0C - 06 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0C - 05 Window left closed 1
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0D - 05 Window left closed 4
-       DATA >7F7F,>7F7D,>7B77,>6F00    ; #0D - 0C Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0E - 05 Window right closed 1
-       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #0E - 07 Window open bottom
-       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #0F - 07 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0F - 05 Window right closed 1
-       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #10 - 08 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #10 - 05 Window left closed 2
-       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #11 - 0B Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #11 - 05 Window right closed 3
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #12 - 11 Window right closed 2
-       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #12 - 09 Window right bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #13 - 05 Window right closed 2
-       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #13 - 09 Window open bottom
-       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #14 - 09 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #14 - 05 Window right closed 2
-       DATA >7F7F,>7F7D,>7B77,>6F00    ; #15 - 0C Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #15 - 05 Window left closed 4
-       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #16 - 0D Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #16 - 05 Window right closed 4
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #17 - 11 Window right closed 5
-       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #17 - 0F Window right bottom closed
-       DATA >0F1B,>333E,>1718,>0F07    ; #18 - 12 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #18 - 05 Face left 1 (full)
-       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #19 - 0A Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #19 - 05 Window left closed 3
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1A - 05 Face right 2
-       DATA >0000,>E0B0,>98F8,>D030    ; #1A - 15 Window open bottom
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #1B - 11 Window right closed 3
-       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #1B - 0B Window right bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1C - 05 Face right 4
-       DATA >0000,>0000,>0000,>E0B0    ; #1C - 19 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1D - 05 Face right 3
-       DATA >0000,>0000,>E0B0,>98F8    ; #1D - 17 Window open bottom
-       DATA >0000,>0000,>0F1B,>333E    ; #1E - 16 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1E - 05 Face left 3 (1/2)
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #1F - 10 Window left closed 2
-       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #1F - 08 Window left bottom closed
-       DATA >0000,>0000,>E0B0,>98F8    ; #20 - 17 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #20 - 05 Face right 3
-       DATA >0000,>0000,>0000,>0F1B    ; #21 - 18 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #21 - 05 Face left 4 (1/4)
-       DATA >0000,>0000,>0000,>E0B0    ; #22 - 19 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #22 - 05 Face right 4
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #23 - 10 Window left closed 5
+PSTRIP DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00 - 00 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #00 - 00 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01 - 00 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01 - 04 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #02 - 04 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #02 - 01 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #03 - 04 Wall 2
+       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #03 - 02 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #04 - 04 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #04 - 05 Window open top
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #05 - 01 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #05 - 01 Wall
+       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #06 - 02 Wall 2
+       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #06 - 02 Wall 2
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #07 - 05 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #07 - 04 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #08 - 05 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #08 - 00 Window open bottom
+       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #09 - 02 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #09 - 00 Wall 2
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0A - 00 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #0A - 01 Sky/glass
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #0B - 01 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0B - 04 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #0C - 01 Wall 2
+       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #0C - 02 Wall
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #0D - 05 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #0D - 01 Window open bottom
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #0E - 01 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0E - 00 Wall
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0F - 00 Glass reflection
+       DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #0F - 03 Sky/glass
+       DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #10 - 03 Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #10 - 00 Glass reflection
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #11 - 05 Window left closed 1
+       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #11 - 06 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #12 - 05 Window right closed 1
+       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #12 - 07 Window open bottom
+       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #13 - 06 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #13 - 05 Window left closed 1
+       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #14 - 07 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #14 - 05 Window right closed 1
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #15 - 05 Window left closed 2
+       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #15 - 08 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #16 - 05 Window right closed 2
+       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #16 - 09 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #17 - 05 Window left closed 3
+       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #17 - 0A Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #18 - 05 Window right closed 3
+       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #18 - 0B Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #19 - 05 Window left closed 4
+       DATA >7F7F,>7F7D,>7B77,>6F00    ; #19 - 0C Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1A - 05 Window right closed 4
+       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #1A - 0D Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1B - 05 Window left closed 5
+       DATA >007F,>7F7D,>7B77,>6E7F    ; #1B - 0E Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1C - 05 Window right closed 5
+       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #1C - 0F Window open bottom
+       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #1D - 08 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1D - 05 Window left closed 2
+       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #1E - 09 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1E - 05 Window right closed 2
+       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #1F - 0A Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #1F - 05 Window left closed 3
+       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #20 - 0B Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #20 - 05 Window right closed 3
+       DATA >7F7F,>7F7D,>7B77,>6F00    ; #21 - 0C Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #21 - 05 Window left closed 4
+       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #22 - 0D Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #22 - 05 Window right closed 4
        DATA >007F,>7F7D,>7B77,>6E7F    ; #23 - 0E Window left bottom closed
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #24 - 10 Window open top
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #24 - 04 Window left bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #25 - 05 Face right 1
-       DATA >E0B0,>98F8,>D030,>E0C0    ; #25 - 13 Window open bottom
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #23 - 10 Window left closed 5
+       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #24 - 0F Window right bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #24 - 11 Window right closed 5
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #25 - 10 Window open top
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #25 - 04 Window left bottom closed
        DATA >FE00,>FFEF,>7FFD,>DFFF    ; #26 - 11 Window open top
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #26 - 04 Window right bottom closed
-       DATA >0000,>0F1B,>333E,>1718    ; #27 - 14 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #27 - 05 Face left 2 (3/4)
-       DATA >0000,>E0B0,>98F8,>D030    ; #28 - 15 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #28 - 05 Face right 2
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #29 - 00 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #29 - 00 Sky/glass
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #2A - 01 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2A - 00 Wall
-       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #2B - 02 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2B - 00 Wall 2
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2C - 00 Wall 2
-       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #2C - 02 Sky/glass
-       DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #2D - 03 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2D - 00 Glass reflection
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2E - 00 Window open top
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #2E - 04 Sky/glass
-       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #2F - 02 Wall 2
-       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #2F - 02 Wall 2
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #30 - 05 Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #30 - 00 Window open bottom
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #31 - 01 Window open top
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #31 - 04 Wall
-       DATA >E0B0,>98F8,>D030,>E0C0    ; #32 - 13 Window open bottom
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #27 - 10 Window left closed 1
+       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #27 - 06 Window left bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #28 - 11 Window right closed 1
+       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #28 - 07 Window right bottom closed
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #29 - 10 Window left closed 2
+       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #29 - 08 Window left bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #2A - 11 Window right closed 2
+       DATA >FEFE,>FE00,>FFFF,>FFFF    ; #2A - 09 Window right bottom closed
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #2B - 10 Window left closed 3
+       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #2B - 0A Window left bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #2C - 11 Window right closed 3
+       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #2C - 0B Window right bottom closed
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #2D - 10 Window left closed 4
+       DATA >7F7F,>7F7D,>7B77,>6F00    ; #2D - 0C Window left bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #2E - 11 Window right closed 4
+       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #2E - 0D Window right bottom closed
+       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #2F - 10 Window left closed 5
+       DATA >007F,>7F7D,>7B77,>6E7F    ; #2F - 0E Window left bottom closed
+       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #30 - 11 Window right closed 5
+       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #30 - 0F Window right bottom closed
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #31 - 05 Face left 1 (full)
+       DATA >0F1B,>333E,>1718,>0F07    ; #31 - 12 Window open bottom
        DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #32 - 05 Face right 1
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #33 - 04 Wall 2
-       DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #33 - 02 Window open top
-       DATA >7F00,>FFEF,>7FFD,>DFFF    ; #34 - 10 Window left closed 3
-       DATA >7F7F,>7E7F,>7B00,>FFFF    ; #34 - 0A Window left bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #35 - 05 Window right closed 5
-       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #35 - 0F Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #36 - 05 Window open top
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #36 - 04 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #37 - 05 Window right closed 4
-       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #37 - 0D Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #38 - 05 Window left closed 1
-       DATA >7F00,>FFFF,>FFFF,>FFFF    ; #38 - 06 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #39 - 05 Window right closed 3
-       DATA >FEFE,>EEDE,>BE00,>FFFF    ; #39 - 0B Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3A - 05 Window left closed 2
-       DATA >7F7F,>7E00,>FFFF,>FFFF    ; #3A - 08 Window open bottom
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #3B - 11 Window right closed 1
-       DATA >FE00,>FFFF,>FFFF,>FFFF    ; #3B - 07 Window right bottom closed
-       DATA >00FE,>EEDE,>BEFE,>FEFE    ; #3C - 0F Window right bottom closed
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #3C - 11 Window right closed 5
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3D - 05 Face left 2 (3/4)
-       DATA >0000,>0F1B,>333E,>1718    ; #3D - 14 Window open bottom
-       DATA >FE00,>FFEF,>7FFD,>DFFF    ; #3E - 11 Window right closed 4
-       DATA >FEFE,>EEDE,>BE7E,>FE00    ; #3E - 0D Window right bottom closed
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3F - 05 Face left 4 (1/4)
+       DATA >E0B0,>98F8,>D030,>E0C0    ; #32 - 13 Window open bottom
+       DATA >0F1B,>333E,>1718,>0F07    ; #33 - 12 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #33 - 05 Face left 1 (full)
+       DATA >E0B0,>98F8,>D030,>E0C0    ; #34 - 13 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #34 - 05 Face right 1
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #35 - 05 Face left 2 (3/4)
+       DATA >0000,>0F1B,>333E,>1718    ; #35 - 14 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #36 - 05 Face right 2
+       DATA >0000,>E0B0,>98F8,>D030    ; #36 - 15 Window open bottom
+       DATA >0000,>0F1B,>333E,>1718    ; #37 - 14 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #37 - 05 Face left 2 (3/4)
+       DATA >0000,>E0B0,>98F8,>D030    ; #38 - 15 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #38 - 05 Face right 2
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #39 - 05 Face left 3 (1/2)
+       DATA >0000,>0000,>0F1B,>333E    ; #39 - 16 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3A - 05 Face right 3
+       DATA >0000,>0000,>E0B0,>98F8    ; #3A - 17 Window open bottom
+       DATA >0000,>0000,>0F1B,>333E    ; #3B - 16 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3B - 05 Face left 3 (1/2)
+       DATA >0000,>0000,>E0B0,>98F8    ; #3C - 17 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3C - 05 Face right 3
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3D - 05 Face left 4 (1/4)
+       DATA >0000,>0000,>0000,>0F1B    ; #3D - 18 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3E - 05 Face right 4
+       DATA >0000,>0000,>0000,>E0B0    ; #3E - 19 Window open bottom
        DATA >0000,>0000,>0000,>0F1B    ; #3F - 18 Window open bottom
-       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #40 - 05 Face left 3 (1/2)
-       DATA >0000,>0000,>0F1B,>333E    ; #40 - 16 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3F - 05 Face left 4 (1/4)
+       DATA >0000,>0000,>0000,>E0B0    ; #40 - 19 Window open bottom
+       DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #40 - 05 Face right 4
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #41 - 00
+       DATA >0000,>0000,>0000,>0101    ; #41 - 1A Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #42 - 00
+       DATA >030F,>1F3F,>77FB,>FDFD    ; #42 - 1B Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #43 - 00
+       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #43 - 1C Sky/glass
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #44 - 00
+       DATA >0000,>0000,>0000,>8080    ; #44 - 1D Sky/glass
+       DATA >0000,>0000,>0000,>0101    ; #45 - 1A
+       DATA >0303,>0707,>2F87,>A773    ; #45 - 26
+       DATA >030F,>1F3F,>77FB,>FDFD    ; #46 - 1B
+       DATA >60F8,>FC86,>7B7D,>7E66    ; #46 - 27
+       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #47 - 1C
+       DATA >061F,>3F61,>DEBE,>7E4E    ; #47 - 28
+       DATA >0000,>0000,>0000,>8080    ; #48 - 1D
+       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #48 - 29
+       DATA >0303,>0707,>2F87,>A773    ; #49 - 26
+       DATA >8EAF,>AC98,>C87C,>6707    ; #49 - 1E
+       DATA >60F8,>FC86,>7B7D,>7E66    ; #4A - 27
+       DATA >5922,>3C7E,>7F3F,>1E20    ; #4A - 1F
+       DATA >061F,>3F61,>DEBE,>7E4E    ; #4B - 28
+       DATA >B244,>3C7E,>FEFC,>7804    ; #4B - 20
+       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #4C - 29
+       DATA >71F5,>3519,>133E,>E6E0    ; #4C - 21
+       DATA >8EAF,>AC98,>C87C,>6707    ; #4D - 1E
+       DATA >0305,>0E0F,>0F0F,>0F07    ; #4D - 2A
+       DATA >5922,>3C7E,>7F3F,>1E20    ; #4E - 1F
+       DATA >4078,>8E63,>90CC,>8300    ; #4E - 2B
+       DATA >B244,>3C7E,>FEFC,>7804    ; #4F - 20
+       DATA >021E,>71C6,>0933,>C100    ; #4F - 2C
+       DATA >71F5,>3519,>133E,>E6E0    ; #50 - 21
+       DATA >C0A0,>70F0,>F0F0,>F0E0    ; #50 - 2D
+       DATA >0305,>0E0F,>0F0F,>0F07    ; #51 - 2A
+       DATA >0F0F,>0F0F,>0707,>0703    ; #51 - 22
+       DATA >4078,>8E63,>90CC,>8300    ; #52 - 2B
+       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #52 - 23
+       DATA >021E,>71C6,>0933,>C100    ; #53 - 2C
+       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #53 - 24
+       DATA >C0A0,>70F0,>F0F0,>F0E0    ; #54 - 2D
+       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #54 - 25
+       DATA >0F0F,>0F0F,>0707,>0703    ; #55 - 22
+       DATA >0100,>1F3F,>3E07,>100F    ; #55 - 2E
+       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #56 - 23
+       DATA >83E7,>FFFF,>07C1,>60F0    ; #56 - 2F
+       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #57 - 24
+       DATA >C1E7,>FFFF,>E083,>060F    ; #57 - 30
+       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #58 - 25
+       DATA >8000,>F8FC,>7CE0,>08F0    ; #58 - 31
+       DATA >0100,>1F3F,>3E07,>100F    ; #59 - 2E Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #59 - 01
+       DATA >83E7,>FFFF,>07C1,>60F0    ; #5A - 2F Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5A - 01
+       DATA >C1E7,>FFFF,>E083,>060F    ; #5B - 30 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5B - 01
+       DATA >8000,>F8FC,>7CE0,>08F0    ; #5C - 31 Wall
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5C - 01
 ****************************************
-* Scrolled Character Colors             
+* Scrolled Character Colors
 ****************************************
-CSTRIP DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #00 - 0E Window left bottom closed
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #00 - 10 Window left closed 5
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #01 - 10 Window left closed 1
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #01 - 06 Window left bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #02 - 05 Window left closed 3
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #02 - 0A Window open bottom
-       DATA >7171,>7171,>7171,>7171    ; #03 - 00 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #03 - 01 Sky/glass
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #04 - 01 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #04 - 01 Wall
-       DATA >7171,>7171,>7171,>7171    ; #05 - 00 Glass reflection
-       DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #05 - 03 Sky/glass
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #06 - 04 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #06 - 01 Window open top
-       DATA >1010,>B0BA,>BABA,>BABA    ; #07 - 05 Face left 1 (full)
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #07 - 12 Window open bottom
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #08 - 10 Window left closed 4
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #08 - 0C Window left bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #09 - 05 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #09 - 01 Window open bottom
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #0A - 04 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0A - 05 Window open top
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0B - 05 Window left closed 5
-       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #0B - 0E Window open bottom
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #0C - 06 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0C - 05 Window left closed 1
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0D - 05 Window left closed 4
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #0D - 0C Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0E - 05 Window right closed 1
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #0E - 07 Window open bottom
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #0F - 07 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #0F - 05 Window right closed 1
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #10 - 08 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #10 - 05 Window left closed 2
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #11 - 0B Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #11 - 05 Window right closed 3
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #12 - 11 Window right closed 2
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #12 - 09 Window right bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #13 - 05 Window right closed 2
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #13 - 09 Window open bottom
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #14 - 09 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #14 - 05 Window right closed 2
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #15 - 0C Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #15 - 05 Window left closed 4
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #16 - 0D Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #16 - 05 Window right closed 4
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #17 - 11 Window right closed 5
-       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #17 - 0F Window right bottom closed
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #18 - 12 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #18 - 05 Face left 1 (full)
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #19 - 0A Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #19 - 05 Window left closed 3
-       DATA >1010,>B0BA,>BABA,>BABA    ; #1A - 05 Face right 2
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #1A - 15 Window open bottom
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #1B - 11 Window right closed 3
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #1B - 0B Window right bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #1C - 05 Face right 4
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #1C - 19 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #1D - 05 Face right 3
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #1D - 17 Window open bottom
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #1E - 16 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #1E - 05 Face left 3 (1/2)
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #1F - 10 Window left closed 2
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #1F - 08 Window left bottom closed
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #20 - 17 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #20 - 05 Face right 3
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #21 - 18 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #21 - 05 Face left 4 (1/4)
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #22 - 19 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #22 - 05 Face right 4
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #23 - 10 Window left closed 5
+CSTRIP DATA >7171,>7171,>7171,>7171    ; #00 - 00 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #00 - 00 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #01 - 00 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #01 - 04 Sky/glass
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #02 - 04 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #02 - 01 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #03 - 04 Wall 2
+       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #03 - 02 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #04 - 04 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #04 - 05 Window open top
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #05 - 01 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #05 - 01 Wall
+       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #06 - 02 Wall 2
+       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #06 - 02 Wall 2
+       DATA >1010,>B0BA,>BABA,>BABA    ; #07 - 05 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #07 - 04 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #08 - 05 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #08 - 00 Window open bottom
+       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #09 - 02 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #09 - 00 Wall 2
+       DATA >7171,>7171,>7171,>7171    ; #0A - 00 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #0A - 01 Sky/glass
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #0B - 01 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #0B - 04 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #0C - 01 Wall 2
+       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #0C - 02 Wall
+       DATA >1010,>B0BA,>BABA,>BABA    ; #0D - 05 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #0D - 01 Window open bottom
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #0E - 01 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #0E - 00 Wall
+       DATA >7171,>7171,>7171,>7171    ; #0F - 00 Glass reflection
+       DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #0F - 03 Sky/glass
+       DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #10 - 03 Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #10 - 00 Glass reflection
+       DATA >1010,>B0BA,>BABA,>BABA    ; #11 - 05 Window left closed 1
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #11 - 06 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #12 - 05 Window right closed 1
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #12 - 07 Window open bottom
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #13 - 06 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #13 - 05 Window left closed 1
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #14 - 07 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #14 - 05 Window right closed 1
+       DATA >1010,>B0BA,>BABA,>BABA    ; #15 - 05 Window left closed 2
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #15 - 08 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #16 - 05 Window right closed 2
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #16 - 09 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #17 - 05 Window left closed 3
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #17 - 0A Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #18 - 05 Window right closed 3
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #18 - 0B Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #19 - 05 Window left closed 4
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #19 - 0C Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1A - 05 Window right closed 4
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #1A - 0D Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1B - 05 Window left closed 5
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #1B - 0E Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1C - 05 Window right closed 5
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #1C - 0F Window open bottom
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #1D - 08 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1D - 05 Window left closed 2
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #1E - 09 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1E - 05 Window right closed 2
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #1F - 0A Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #1F - 05 Window left closed 3
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #20 - 0B Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #20 - 05 Window right closed 3
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #21 - 0C Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #21 - 05 Window left closed 4
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #22 - 0D Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #22 - 05 Window right closed 4
        DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #23 - 0E Window left bottom closed
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #24 - 10 Window open top
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #24 - 04 Window left bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #25 - 05 Face right 1
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #25 - 13 Window open bottom
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #23 - 10 Window left closed 5
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #24 - 0F Window right bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #24 - 11 Window right closed 5
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #25 - 10 Window open top
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #25 - 04 Window left bottom closed
        DATA >7F1F,>B0BA,>BABA,>BAB0    ; #26 - 11 Window open top
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #26 - 04 Window right bottom closed
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #27 - 14 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #27 - 05 Face left 2 (3/4)
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #28 - 15 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #28 - 05 Face right 2
-       DATA >7171,>7171,>7171,>7171    ; #29 - 00 Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #29 - 00 Sky/glass
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #2A - 01 Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #2A - 00 Wall
-       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #2B - 02 Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #2B - 00 Wall 2
-       DATA >7171,>7171,>7171,>7171    ; #2C - 00 Wall 2
-       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #2C - 02 Sky/glass
-       DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #2D - 03 Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #2D - 00 Glass reflection
-       DATA >7171,>7171,>7171,>7171    ; #2E - 00 Window open top
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #2E - 04 Sky/glass
-       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #2F - 02 Wall 2
-       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #2F - 02 Wall 2
-       DATA >1010,>B0BA,>BABA,>BABA    ; #30 - 05 Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #30 - 00 Window open bottom
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #31 - 01 Window open top
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #31 - 04 Wall
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #32 - 13 Window open bottom
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #27 - 10 Window left closed 1
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #27 - 06 Window left bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #28 - 11 Window right closed 1
+       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #28 - 07 Window right bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #29 - 10 Window left closed 2
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #29 - 08 Window left bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2A - 11 Window right closed 2
+       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #2A - 09 Window right bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2B - 10 Window left closed 3
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #2B - 0A Window left bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2C - 11 Window right closed 3
+       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #2C - 0B Window right bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2D - 10 Window left closed 4
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #2D - 0C Window left bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2E - 11 Window right closed 4
+       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #2E - 0D Window right bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #2F - 10 Window left closed 5
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #2F - 0E Window left bottom closed
+       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #30 - 11 Window right closed 5
+       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #30 - 0F Window right bottom closed
+       DATA >1010,>B0BA,>BABA,>BABA    ; #31 - 05 Face left 1 (full)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #31 - 12 Window open bottom
        DATA >1010,>B0BA,>BABA,>BABA    ; #32 - 05 Face right 1
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #33 - 04 Wall 2
-       DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #33 - 02 Window open top
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #34 - 10 Window left closed 3
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #34 - 0A Window left bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #35 - 05 Window right closed 5
-       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #35 - 0F Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #36 - 05 Window open top
-       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #36 - 04 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #37 - 05 Window right closed 4
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #37 - 0D Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #38 - 05 Window left closed 1
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #38 - 06 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #39 - 05 Window right closed 3
-       DATA >7F7F,>7F7F,>7F1F,>1B1B    ; #39 - 0B Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #3A - 05 Window left closed 2
-       DATA >7F7F,>7F1F,>1B1B,>1B1B    ; #3A - 08 Window open bottom
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #3B - 11 Window right closed 1
-       DATA >7F1F,>1B1B,>1B1B,>1B1B    ; #3B - 07 Window right bottom closed
-       DATA >7F7F,>7F7F,>7F7F,>7F7F    ; #3C - 0F Window right bottom closed
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #3C - 11 Window right closed 5
-       DATA >1010,>B0BA,>BABA,>BABA    ; #3D - 05 Face left 2 (3/4)
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3D - 14 Window open bottom
-       DATA >7F1F,>B0BA,>BABA,>BAB0    ; #3E - 11 Window right closed 4
-       DATA >7F7F,>7F7F,>7F7F,>7F1F    ; #3E - 0D Window right bottom closed
-       DATA >1010,>B0BA,>BABA,>BABA    ; #3F - 05 Face left 4 (1/4)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #32 - 13 Window open bottom
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #33 - 12 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #33 - 05 Face left 1 (full)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #34 - 13 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #34 - 05 Face right 1
+       DATA >1010,>B0BA,>BABA,>BABA    ; #35 - 05 Face left 2 (3/4)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #35 - 14 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #36 - 05 Face right 2
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #36 - 15 Window open bottom
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #37 - 14 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #37 - 05 Face left 2 (3/4)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #38 - 15 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #38 - 05 Face right 2
+       DATA >1010,>B0BA,>BABA,>BABA    ; #39 - 05 Face left 3 (1/2)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #39 - 16 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3A - 05 Face right 3
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3A - 17 Window open bottom
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3B - 16 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3B - 05 Face left 3 (1/2)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3C - 17 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3C - 05 Face right 3
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3D - 05 Face left 4 (1/4)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3D - 18 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3E - 05 Face right 4
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3E - 19 Window open bottom
        DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3F - 18 Window open bottom
-       DATA >1010,>B0BA,>BABA,>BABA    ; #40 - 05 Face left 3 (1/2)
-       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #40 - 16 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #3F - 05 Face left 4 (1/4)
+       DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #40 - 19 Window open bottom
+       DATA >1010,>B0BA,>BABA,>BABA    ; #40 - 05 Face right 4
+       DATA >7171,>7171,>7171,>7171    ; #41 - 00
+       DATA >7777,>7777,>7777,>8787    ; #41 - 1A Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #42 - 00
+       DATA >8787,>8787,>8A8A,>8A8A    ; #42 - 1B Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #43 - 00
+       DATA >8787,>8787,>8A8A,>8A8A    ; #43 - 1C Sky/glass
+       DATA >7171,>7171,>7171,>7171    ; #44 - 00
+       DATA >7777,>7777,>7777,>8787    ; #44 - 1D Sky/glass
+       DATA >7777,>7777,>7777,>8787    ; #45 - 1A
+       DATA >8787,>A7A7,>A7A8,>A8A8    ; #45 - 26
+       DATA >8787,>8787,>8A8A,>8A8A    ; #46 - 1B
+       DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #46 - 27
+       DATA >8787,>8787,>8A8A,>8A8A    ; #47 - 1C
+       DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #47 - 28
+       DATA >7777,>7777,>7777,>8787    ; #48 - 1D
+       DATA >87A7,>A7A7,>A7A8,>A8A8    ; #48 - 29
+       DATA >8787,>A7A7,>A7A8,>A8A8    ; #49 - 26
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #49 - 1E
+       DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #4A - 27
+       DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #4A - 1F
+       DATA >A8A8,>A8A8,>A8A8,>A8A8    ; #4B - 28
+       DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #4B - 20
+       DATA >87A7,>A7A7,>A7A8,>A8A8    ; #4C - 29
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4C - 21
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4D - 1E
+       DATA >8787,>8787,>8787,>8787    ; #4D - 2A
+       DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #4E - 1F
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4E - 2B
+       DATA >8A8A,>8A8A,>8A8A,>8A8A    ; #4F - 20
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4F - 2C
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #50 - 21
+       DATA >8787,>8787,>8787,>8787    ; #50 - 2D
+       DATA >8787,>8787,>8787,>8787    ; #51 - 2A
+       DATA >A7A7,>A7A7,>A7A7,>A787    ; #51 - 22
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #52 - 2B
+       DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #52 - 23
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #53 - 2C
+       DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #53 - 24
+       DATA >8787,>8787,>8787,>8787    ; #54 - 2D
+       DATA >A7A7,>A7A7,>A7A7,>A787    ; #54 - 25
+       DATA >A7A7,>A7A7,>A7A7,>A787    ; #55 - 22
+       DATA >8777,>8787,>8787,>8787    ; #55 - 2E
+       DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #56 - 23
+       DATA >8A8A,>8787,>8787,>8787    ; #56 - 2F
+       DATA >A7A7,>A7A8,>A7A7,>A7A8    ; #57 - 24
+       DATA >8A8A,>8787,>8787,>8787    ; #57 - 30
+       DATA >A7A7,>A7A7,>A7A7,>A787    ; #58 - 25
+       DATA >8777,>8787,>8787,>8787    ; #58 - 31
+       DATA >8777,>8787,>8787,>8787    ; #59 - 2E Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #59 - 01
+       DATA >8A8A,>8787,>8787,>8787    ; #5A - 2F Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5A - 01
+       DATA >8A8A,>8787,>8787,>8787    ; #5B - 30 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5B - 01
+       DATA >8777,>8787,>8787,>8787    ; #5C - 31 Wall
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5C - 01
