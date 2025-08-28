@@ -338,3 +338,58 @@ kong_arms_6:
        data 2
        byte >18,->18,>c8,>09
        byte >00,>10,>cc,>08
+
+bird_left:
+       data bird_left_0
+       data bird_left_1
+       data bird_left_2
+       data bird_left_3
+       data bird_left_2
+       data bird_left_1
+bird_left_0:
+       data 4
+       byte >00,>00,>a0,>0f
+       byte >00,>10,>a4,>0f
+       byte >10,->10,>b0,>0f
+       byte >00,>10,>b4,>0f
+bird_left_1:
+       data 2
+       byte >08,>00,>a8,>0f
+       byte >00,>10,>ac,>0f
+bird_left_2:
+       data 2
+       byte >0c,>00,>b8,>0f
+       byte >00,>10,>bc,>0f
+bird_left_3:
+       data 4
+       byte >00,>00,>c0,>0f
+       byte >00,>10,>c4,>0f
+       byte >10,->10,>c8,>0f
+       byte >00,>10,>cc,>0f
+bird_right:
+       data bird_right_0
+       data bird_right_1
+       data bird_right_2
+       data bird_right_3
+       data bird_right_2
+       data bird_right_1
+bird_right_0:
+       data 4
+       byte >00,>00,>d0,>0f
+       byte >00,>10,>d4,>0f
+       byte >10,->10,>e0,>0f
+       byte >00,>10,>e4,>0f
+bird_right_1:
+       data 2
+       byte >08,>00,>d8,>0f
+       byte >00,>10,>dc,>0f
+bird_right_2:
+       data 2
+       byte >0c,>00,>e8,>0f
+       byte >00,>10,>ec,>0f
+bird_right_3:
+       data 4
+       byte >00,>00,>f8,>0f
+       byte >00,>10,>fc,>0f
+       byte >10,->10,>f0,>0f
+       byte >00,>10,>f4,>0f

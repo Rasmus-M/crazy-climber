@@ -197,14 +197,14 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,>440                    ; For testing
+       li   r0,>9c0                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-       li   r0,kong_stage              ; For testing
+       li   r0,bird_stage              ; For testing
        mov  r0,@next_stage_ptr
 *      Main loop
 main_loop:
@@ -1460,9 +1460,53 @@ one_resident_stage_init:
 * Bird stage init
 *
 bird_stage_init:
+       .proc
+       li   r1,bird_patterns
+       bl   @upload_2nd_sprite_patterns
        clr  @max_residents
-       rt
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  bird_stage_init_1
+       li   r0,bird_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_vx(r4)
+       mov  *r0+,@sprite_vy(r4)
+       mov  *r0+,@sprite_count(r4)
+bird_stage_init_1:
+       .endproc
+bird_init_data:
+       data bird_handler, >0040, >0900, >0001, >0000, >0000
 *// bird_stage_init
+
+*********************************************************************
+*
+* Bird handler
+*
+bird_handler:
+       .proc
+       mov  @scroll_y,r0
+       c    r0,@two_residents_stage
+       jgt  bird_handler_0
+       clr  @sprite_handler(r3)
+       jmp  bird_handler_1
+bird_handler_0:
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       clr  r4
+       mov  @sprite_count(r3),r5
+       srl  r5,2
+       div  @w_6,r4
+       sla  r5,1
+       mov  @bird_right(r5),r4
+       bl   @draw_big_sprite
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       inc  @sprite_count(r3)
+bird_handler_1:
+       .endproc
+*// bird_handler
 
 *********************************************************************
 *
@@ -1470,10 +1514,10 @@ bird_stage_init:
 *
 two_residents_stage_init:
        .proc
-       li   r0,2
-       mov  r0,@max_residents
        li   r1,head_and_hands_patterns
        bl   @upload_2nd_sprite_patterns
+       li   r0,2
+       mov  r0,@max_residents
        .endproc
 *// two_residents_stage_init
 
@@ -1514,7 +1558,8 @@ kong_init_data:
 kong_handler:
        .proc
        mov  @scroll_y,r0
-       ci   r0,>0318
+       s    @three_residents_stage,r0
+       ci   r0,8
        jgt  kong_handler_0
        clr  @sprite_handler(r3)
        jmp  kong_handler_1
@@ -1601,10 +1646,10 @@ three_residents_stage_init:
        .proc
        li   r1,character_set_residents
        bl   @set_character_set
-       li   r0,3
-       mov  r0,@max_residents
        li   r1,head_and_hands_patterns
        bl   @upload_2nd_sprite_patterns
+       li   r0,3
+       mov  r0,@max_residents
        .endproc
 *// three_residents_stage_init
 
@@ -2556,6 +2601,8 @@ b_12:
        byte 12
 b_8:
        byte 8
+w_6:
+       data 6
 w_8:
        data 8
 w_24:
