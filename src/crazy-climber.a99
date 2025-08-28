@@ -569,10 +569,7 @@ animate_windows_5:
 *      Face animation
 animate_windows_6:
        ci   r4,16                      ; End at 16
-       jne  animate_windows_6a
-       dec  @current_residents
-       jmp  animate_windows_7
-animate_windows_6a:
+       jeq  animate_windows_7
        ci   r4,4                       ; Is it frame 4?
        jne  animate_windows_2          ; No - next window
        bl   @create_resident           ; Create a new resident sprite
@@ -595,6 +592,10 @@ animate_windows_8:
 * Modifies r1,r2
 *
 remove_window_from_list:
+       c    @window_anim_type(r3),@w_window_anim_type_resident
+       jne  remove_window_from_list_0
+       dec  @current_residents
+remove_window_from_list_0:
        clr  @window_anim_row(r3)       ; Clear y coord to mark as available
        mov  @window_anim_prev(r3),r1   ; Get previous
        mov  @window_anim_next(r3),r2   ; Get next
@@ -627,6 +628,10 @@ remove_window_from_list_3:
 * Modifies r1,r2
 *
 add_window_to_list:
+       c    @window_anim_type(r3),@w_window_anim_type_resident
+       jne  add_window_to_list_0
+       inc  @current_residents
+add_window_to_list_0:
        mov  @windows_head_ptr,r2       ; current = head
        jne  add_window_to_list_2
 *      Add to empty list
@@ -698,18 +703,39 @@ create_windows_4:
        jeq  create_windows_5           ; Zero is unused
        ai   r3,window_anim_size
        jmp  create_windows_4
-*      Add new window
 create_windows_5:
-       ai   r4,-12                     ; Y coord of top window row on screen
-       li   r2,12                      ; Y coord between 0 and 11
-       bl   @rand_max
-       a    r4,r0                      ; Add y coord of top window row on screen
-       mov  r0,*r3                     ; Save it in new window anim (window_anim_row)
+*      Add new window
+*      Determine type
+       c    @current_residents,@max_residents
+       jhe  create_windows_6           ; Jump if resident not allowed
+       bl   @rand
+       andi r0,3                       ; 1/4 chance of resident
+       ci   r0,window_anim_type_resident
+       jeq  create_windows_7
+create_windows_6:
+       li  r0,window_anim_type_window
+create_windows_7:
+*      Set type
+       mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
+*      Determine position
+       ci   r0,window_anim_type_resident
+       jne  create_windows_7a
+       mov  @current_residents,r0
+       jne  create_windows_7a
+       bl   @climber_column            ; X coord of climber
+       jmp  create_windows_7b
+create_windows_7a:
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max                  ; X coord in r0
+create_windows_7b:
        mov  r0,@window_anim_col(r3)    ; Write X coord
-       mov  *r3,r1                     ; Y coord (window_anim_row)
+       li   r2,12                      ; Y coord between 0 and 11
+       bl   @rand_max                  ; Y coord in r1
+       ai   r4,-12                     ; Y coord of top window row on screen
+       a    r4,r1                      ; Add y coord of top window row on screen
+       mov  r1,*r3                     ; Save it in new window anim (window_anim_row)
 *      Check map position
+       mov  @window_anim_col(r3),r0    ; X coord
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window?
        jne  create_windows_8           ; If not then skip
@@ -719,20 +745,7 @@ create_windows_5:
        ai   r2,4*map_width             ; Move one window down
        bl   @is_open_window            ; Is there an open window below?
        jne  create_windows_8           ; If not then skip
-*      Set type
-       c    @current_residents,@max_residents
-       jhe  create_windows_6           ; Jump if resident now allowed
-       bl   @rand
-       andi r0,3                       ; 1/4 chance of resident
-       ci   r0,window_anim_type_resident
-       jne  create_windows_6
-       inc  @current_residents
-       jmp  create_windows_7
-*      Create window
-create_windows_6:
-       li  r0,window_anim_type_window
-create_windows_7:
-       mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
+*      Other initializations
        clr  @window_anim_frame(r3)     ; Clear frame
 *      Add new window to linked list sorted by y (row)
        bl   @add_window_to_list
@@ -1741,6 +1754,21 @@ draw_big_sprite_2:
 
 *********************************************************************
 *
+* Window column of climbers head
+*
+* On return r0 contains the column, r1 contains the offset in the column
+*
+climber_column:
+       mov  @climber_pos,r1            ; y/x
+       andi r1,>00ff                   ; x
+       ai   r1,>0010->0050             ; Plus head offset, minus left position of building
+       clr  r0                         ; For division
+       div  @w_24,r0                   ; Row in r0
+       rt
+*// climber_column
+
+*********************************************************************
+*
 * Position of climber's left hand in map
 *
 * On return r2 contains the address in the map
@@ -1969,7 +1997,7 @@ is_open_window_bottom:
 *
 * R2: Maximum number (0 - 255) exclusive
 *
-* On return R0 contains the number [0; R2[
+* On return r0 and r1 contains the number [0; R2[
 *
 rand_max:
        .proc
@@ -2532,6 +2560,8 @@ w_8:
        data 8
 w_24:
        data 24
+w_window_anim_type_resident:
+       data window_anim_type_resident
 
 base_scroll_chars:
        data 49
