@@ -1,0 +1,152 @@
+kong_module:
+       data >0005
+       data kong_track_02
+       data kong_track_03
+       data >0000
+kong_track_02:
+       data snd_channel_3
+kong_track_02_rpt:
+       data kong_seq_004C
+       data kong_seq_0054
+       data kong_seq_005E
+       data kong_seq_0066
+       data >00FF
+       data kong_track_02_rpt
+       data >0000
+kong_track_03:
+       data snd_channel_4
+kong_track_03_rpt:
+       data kong_seq_0070
+       data kong_seq_0078
+       data kong_seq_0082
+       data kong_seq_0078
+       data >00FF
+       data kong_track_03_rpt
+       data >0000
+kong_seq_0048:
+       data >0020
+       data >0000
+kong_seq_004C:
+       data kong_note_008A
+       data >0003
+       data kong_note_008D
+       data >000B
+       data kong_note_0090
+       data >0003
+       data kong_note_0093
+       data >000B
+       data >0000
+kong_seq_0070:
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >000B
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >000B
+       data >0000
+kong_seq_0054:
+       data kong_note_008A
+       data >0003
+       data kong_note_008D
+       data >0003
+       data kong_note_0090
+       data >0003
+       data kong_note_0093
+       data >0003
+       data kong_note_0096
+       data >0003
+       data kong_note_0099
+       data >0007
+       data kong_note_009C
+       data >0003
+       data >0000
+kong_seq_0078:
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >0007
+       data kong_note_009F
+       data >0003
+       data >0000
+kong_seq_005E:
+       data kong_note_008A
+       data >0003
+       data kong_note_008D
+       data >000B
+       data kong_note_0090
+       data >0003
+       data kong_note_0093
+       data >000B
+       data >0000
+kong_seq_0082:
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >000B
+       data kong_note_009F
+       data >0003
+       data kong_note_009F
+       data >000B
+       data >0000
+kong_seq_0066:
+       data kong_note_008A
+       data >0003
+       data kong_note_008D
+       data >0003
+       data kong_note_0090
+       data >0003
+       data kong_note_0093
+       data >0003
+       data kong_note_0096
+       data >0003
+       data kong_note_0099
+       data >0007
+       data kong_note_009C
+       data >0003
+       data >0000
+kong_note_008A:
+       data kong_instr_01
+       data C4
+kong_note_008D:
+       data kong_instr_01
+       data C♯4
+kong_note_0090:
+       data kong_instr_01
+       data D♯4
+kong_note_0093:
+       data kong_instr_01
+       data E4
+kong_note_009F:
+       data kong_instr_00
+       data P3
+kong_note_0096:
+       data kong_instr_01
+       data A5
+kong_note_0099:
+       data kong_instr_01
+       data G♯4
+kong_note_009C:
+       data kong_instr_01
+       data G4
+kong_instr_00:
+       byte P3
+       byte 63
+       byte 0
+       byte 4
+       data >0000
+kong_instr_01:
+       byte T3
+       byte 8
+       byte 255
+       byte 0
+       data >0000

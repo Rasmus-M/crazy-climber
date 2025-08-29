@@ -9,14 +9,14 @@ snd_climb_left:
        data 32                         ; Freq step
 
 snd_climb_right:
-       byte T2
+       byte T1
        byte 3                          ; Frames
        byte 64                         ; Attn start
        byte 32                         ; Attn step
        data 32                         ; Freq step
 
 snd_boing:
-       byte T3
+       byte T1
        byte 16                         ; Frames
        byte 0                          ; Attn start
        byte 8                          ; Attn step

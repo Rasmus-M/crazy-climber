@@ -170,8 +170,10 @@ module_speed:
        equ  snd_track_4+snd_track_size
 speech_detected:
        equ  module_speed+2
-speech_status:
+speech_reserved:
        equ  speech_detected+2
+speech_status:
+       equ  speech_reserved+2
 speech_addr:
        equ  speech_status+2
 speech_counter:
@@ -802,8 +804,7 @@ check_grip_2:
        soc  @right_grip,r0
        jne  check_grip_3
 *      No grip
-       mov  @two,@animation_count      ; Animation count = 2
-       mov  @two,@scroll_dy
+       bl   @fall
        li   r0,speech_oh_no_idx
        bl   @speak
 check_grip_3:
@@ -1313,41 +1314,29 @@ plant_handler:
        li   r2,>0c00                   ; Green
        movb r2,*r15
 *      Check for collision with climber
-       mov  @climber_pos,r2
-       sb   r1,r2                      ; Climber y - plant y
-       jlt  plant_handler_1
-       cb   r2,@b_12
-       jgt  plant_handler_1
-       swpb r2
-       abs  @left_wide
-       jeq  plant_handler_0
-       ai   r2,>0800
-plant_handler_0:
-       sb   r0,r2                      ; Climber x - plant x
-       mov  r2,r1
-       abs  r2
-       cb   r2,@b_8
-       jgt  plant_handler_1
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  plant_handler_1
 *      Hit
-       mov  r1,r1
+       mov  r1,r1                      ; X offset from climber
        jlt  !
        li   r2,->0008
        jmp  !!
 !      li   r2,>0008
 !      mov  r2,@sprite_vx(r3)
        mov  @sprite_vy(r3),r2
-       neg  r2
+       neg  r2                         ; Reverse y valocity
        sra  r2,1
        mov  r2,@sprite_vy(r3)
        abs  @animation_count
        jne  !
-       mov  @two,@animation_count      ; Animation count = 2
-       mov  @two,@scroll_dy
+       bl   @fall
 !      li   r0,8
        mov  r0,@sprite_count(r3)
        .push r3
        bl   @play_boing
        .pop  r3
+       seto @speech_reserved
 *      Update sprite
 plant_handler_1:
        a    @sprite_ax(r3),@sprite_vx(r3)
@@ -1363,6 +1352,7 @@ plant_handler_1:
 plant_handler_2:
        dec  @sprite_count(r3)
        jne  plant_handler_3
+       clr  @speech_reserved
        li   r0,speech_ouch_idx
        bl   @speak
 plant_handler_3:
@@ -1455,10 +1445,10 @@ create_bird_dropping:
        mov  @w_4,@sprite_vy(r4)
        bl   @rand
        jlt  create_bird_dropping_2
-       li   r0,>940a                   ; Pattern and color
+       li   r0,>9405                   ; Pattern and color
        jmp  create_bird_dropping_3
 create_bird_dropping_2:
-       li   r0,>9806                   ; Pattern and color
+       li   r0,>980e                   ; Pattern and color
 create_bird_dropping_3:
        mov  r0,@sprite_count(r4)
        inc  @bird_droppings
@@ -1472,25 +1462,71 @@ create_bird_dropping_1:
 *
 bird_dropping_handler:
        .proc
-       mov  @sprite_y(r3),r0
-       swpb r0
-       movb r0,*r15
+*      Display sprite
+       mov  @sprite_y(r3),r1
+       swpb r1
+       movb r1,*r15
        mov  @sprite_x(r3),r0
        swpb r0
        movb r0,*r15
-       mov  @sprite_count(r3),r0
-       movb r0,*r15
-       swpb r0
-       movb r0,*r15
+       mov  @sprite_count(r3),r2
+       movb r2,*r15
+       swpb r2
+       movb r2,*r15
+*      Check for collision with climber
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  bird_dropping_handler_2
+*      Hit
+       bl   @fall
+       jmp  bird_dropping_handler_3
+*      Update sprite
+bird_dropping_handler_2:
        a    @sprite_vy(r3),@sprite_y(r3)
        mov  @sprite_y(r3),r0
        ci   r0,>00c0
-       jl   bird_dropping_handler_1
+       jl   bird_dropping_handler_4
+bird_dropping_handler_3:
        clr  *r3
        dec  @bird_droppings
-bird_dropping_handler_1:
+bird_dropping_handler_4:
        .endproc
 *// bird_dropping_handler
+
+*********************************************************************
+*
+* Check if sprite hit head of climber
+*
+* r0 MSB: sprite x in screen coordinates
+* r1 MSB: sprite y in screen coordinates
+*
+* On return r2 is not zero if hit. r1 is x offset from climber.
+*
+check_sprite_hit_head:
+       mov  @climber_pos,r2
+       sb   r1,r2                      ; Climber y - plant y
+       jlt  check_sprite_hit_head_2
+       cb   r2,@b_12
+       jgt  check_sprite_hit_head_2
+       swpb r2
+       abs  @left_wide
+       jeq  check_sprite_hit_head_1
+       ai   r2,>0800
+check_sprite_hit_head_1:
+       sb   r0,r2                      ; Climber x - plant x
+       mov  r2,r1
+       abs  r2
+       cb   r2,@b_8
+       jgt  check_sprite_hit_head_2
+*      Hit
+       seto r2
+       rt
+*      Not hit
+check_sprite_hit_head_2:
+       clr  r2
+       rt
+*// check_sprite_hit_head
+
 
 *********************************************************************
 *
@@ -1536,6 +1572,8 @@ bird_stage_init:
        mov  *r0+,@sprite_vy(r4)
        mov  *r0+,@sprite_count(r4)
        clr  @bird_droppings
+       li   r0,bird_module
+       bl   @play_module
 bird_stage_init_1:
        .endproc
 bird_init_data:
@@ -1606,12 +1644,23 @@ bird_droppings:
 *
 two_residents_stage_init:
        .proc
+       bl   @mute_sound
        li   r1,head_and_hands_patterns
        bl   @upload_2nd_sprite_patterns
        li   r0,2
        mov  r0,@max_residents
        .endproc
 *// two_residents_stage_init
+
+*********************************************************************
+*
+* Pre kong stage init
+*
+pre_kong_stage_init:
+*      Stop residents before changing character set
+       clr  @max_residents
+       rt
+*// pre_kong_stage_init
 
 *********************************************************************
 *
@@ -1637,6 +1686,8 @@ kong_stage_init:
        li   r0,kong_map
        li   r1,MD0+(>7a*map_width)+3
        bl   @copy_kong_to_map
+       li   r0,kong_module
+       bl   @play_module
 kong_stage_init_1:
        .endproc
 kong_init_data:
@@ -1734,6 +1785,7 @@ copy_kong_to_map_1:
 *
 three_residents_stage_init:
        .proc
+       bl   @mute_sound
        li   r1,character_set_residents
        bl   @set_character_set
        li   r1,head_and_hands_patterns
@@ -2125,6 +2177,17 @@ is_open_window_bottom:
 ;is_open_window_bottom_1:
        rt
 *// is_open_window_bottom
+
+
+*********************************************************************
+*
+* Fall. For now just lose grip.
+*
+fall:
+       mov  @two,@animation_count      ; Animation count = 2
+       mov  @two,@scroll_dy            ; Lose grip
+       rt
+*// fall
 
 *********************************************************************
 *
@@ -2624,6 +2687,8 @@ lower_memory_max:
        copy "sprite-animations.a99"
        copy "sound-fx.a99"
        copy "intro-music.a99"
+       copy "bird-music.a99"
+       copy "kong-music.a99"
        copy "completed-music.a99"
        copy "speech-data.a99"
 
@@ -2638,6 +2703,9 @@ bird_stage:
 two_residents_stage:
        data >0700                      ; scroll y
        data two_residents_stage_init   ; init
+pre_kong_stage:
+       data >0480                      ; scroll y
+       data pre_kong_stage_init        ; init
 kong_stage:
        data >0420                      ; scroll y
        data kong_stage_init            ; init

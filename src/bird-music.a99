@@ -1,0 +1,220 @@
+bird_module:
+       data >0004
+       data bird_track_01
+       data bird_track_02
+       data >0000
+bird_track_01:
+       data snd_channel_2
+bird_track_01_rpt:
+       data bird_seq_006C
+       data bird_seq_0076
+       data bird_seq_0080
+       data bird_seq_008A
+       data bird_seq_0094
+       data bird_seq_009E
+       data bird_seq_00A6
+       data bird_seq_0068
+       data >00FF
+       data bird_track_01_rpt
+       data >0000
+bird_track_02:
+       data snd_channel_3
+bird_track_02_rpt:
+       data bird_seq_0068
+       data bird_seq_00AB
+       data bird_seq_0068
+       data bird_seq_00B5
+       data bird_seq_00BF
+       data bird_seq_00C4
+       data bird_seq_00C9
+       data bird_seq_0068
+       data >00FF
+       data bird_track_02_rpt
+       data >0000
+bird_seq_0068:
+       data >0020
+       data >0000
+bird_seq_006C:
+       data bird_note_00CE
+       data >0007
+       data bird_note_00D1
+       data >0003
+       data bird_note_00CE
+       data >0003
+       data bird_note_00D1
+       data >0007
+       data bird_note_00D4
+       data >0007
+       data >0000
+bird_seq_0076:
+       data bird_note_00D7
+       data >0007
+       data bird_note_00DA
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00DD
+       data >0007
+       data bird_note_00D7
+       data >0007
+       data >0000
+bird_seq_00AB:
+       data bird_note_00E9
+       data >0007
+       data bird_note_00E9
+       data >0003
+       data bird_note_00E9
+       data >0003
+       data bird_note_00EC
+       data >0007
+       data bird_note_00E9
+       data >0007
+       data >0000
+bird_seq_0080:
+       data bird_note_00CE
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E0
+       data >0003
+       data bird_note_00DA
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E3
+       data >0007
+       data >0000
+bird_seq_008A:
+       data bird_note_00D7
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E0
+       data >0003
+       data bird_note_00DA
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E3
+       data >0007
+       data >0000
+bird_seq_00B5:
+       data bird_note_00EF
+       data >0007
+       data bird_note_00F2
+       data >0003
+       data bird_note_00EF
+       data >0003
+       data bird_note_00F5
+       data >0007
+       data bird_note_00EF
+       data >0007
+       data >0000
+bird_seq_0094:
+       data bird_note_00CE
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E0
+       data >0003
+       data bird_note_00DA
+       data >0003
+       data bird_note_00D7
+       data >0003
+       data bird_note_00E3
+       data >0007
+       data >0000
+bird_seq_00BF:
+       data bird_note_00F8
+       data >001F
+       data >0000
+bird_seq_009E:
+       data bird_note_00DD
+       data >000F
+       data bird_note_00DD
+       data >0003
+       data bird_note_00E6
+       data >0003
+       data bird_note_00D4
+       data >0003
+       data bird_note_00D1
+       data >0003
+       data >0000
+bird_seq_00C4:
+       data bird_note_00FB
+       data >001F
+       data >0000
+bird_seq_00A6:
+       data bird_note_00CE
+       data >001F
+       data >0000
+bird_seq_00C9:
+       data bird_note_00F8
+       data >001F
+       data >0000
+bird_note_00CE:
+       data bird_instr_00
+       data D3
+bird_note_00D1:
+       data bird_instr_00
+       data E3
+bird_note_00D4:
+       data bird_instr_00
+       data F3
+bird_note_00D7:
+       data bird_instr_00
+       data D4
+bird_note_00DA:
+       data bird_instr_00
+       data E4
+bird_note_00DD:
+       data bird_instr_00
+       data A4
+bird_note_00E9:
+       data bird_instr_01
+       data A4
+bird_note_00EC:
+       data bird_instr_01
+       data F3
+bird_note_00E0:
+       data bird_instr_00
+       data F4
+bird_note_00E3:
+       data bird_instr_00
+       data A♯4
+bird_note_00EF:
+       data bird_instr_01
+       data D3
+bird_note_00F2:
+       data bird_instr_01
+       data E3
+bird_note_00F5:
+       data bird_instr_01
+       data A3
+bird_note_00F8:
+       data bird_instr_01
+       data D1
+bird_note_00E6:
+       data bird_instr_00
+       data G3
+bird_note_00FB:
+       data bird_instr_01
+       data A2
+bird_instr_00:
+       byte T2
+       byte 42
+       byte 127
+       byte 3
+       data >0000
+bird_instr_01:
+       byte T3
+       byte 63
+       byte 127
+       byte 2
+       data >0000
