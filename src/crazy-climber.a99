@@ -199,15 +199,15 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,>9c0                    ; For testing
+;       li   r0,>9c0                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-       li   r0,bird_stage              ; For testing
-       mov  r0,@next_stage_ptr
+;       li   r0,bird_stage              ; For testing
+;       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
