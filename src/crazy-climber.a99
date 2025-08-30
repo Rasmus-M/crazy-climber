@@ -199,14 +199,14 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-;       li   r0,>9c0                    ; For testing
+;       li   r0,>420                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-;       li   r0,bird_stage              ; For testing
+;       li   r0,kong_stage              ; For testing
 ;       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
@@ -328,8 +328,17 @@ display_sprites:
        .proc
        li   r0,sprite_attr_table
        bl   @vwad
+       mov  @frame,r0
+       andi r0,1
+       jne  display_sprites_1
        bl   @display_climber_sprites
+display_sprites_1:
        bl   @handle_other_sprites
+       mov  @frame,r0
+       andi r0,1
+       jeq  display_sprites_2
+       bl   @display_climber_sprites
+display_sprites_2:
        li   r1,>d000                   ; Write end marker
        movb r1,*r15
        .endproc
@@ -731,7 +740,12 @@ create_windows_7a:
        bl   @rand_max                  ; X coord in r0
 create_windows_7b:
        mov  r0,@window_anim_col(r3)    ; Write X coord
+*      Y position
        li   r2,12                      ; Y coord between 0 and 11
+       c    @window_anim_type(r3),@w_window_anim_type_resident
+       jne  create_windows_7c
+       ai   r2,-5                      ; Only add residents above climber
+create_windows_7c:
        bl   @rand_max                  ; Y coord in r1
        ai   r4,-12                     ; Y coord of top window row on screen
        a    r4,r1                      ; Add y coord of top window row on screen
@@ -969,14 +983,14 @@ update_climber_attrs_left_1:
        movb *r1+,@sprite_attributes_body+2
        movb *r1,@sprite_attributes_body+10
        mov  *r3,r1                     ; Pointer to head/hands sprite pattern
-       movb *r1+,@sprite_attributes_head+10
-       movb *r1,@sprite_attributes_head+2
+       movb *r1+,@sprite_attributes_overlay+10
+       movb *r1,@sprite_attributes_overlay+2
 *      Update position
        mov  @climber_pos,r0
-       mov  r0,@sprite_attributes_head+8
+       mov  r0,@sprite_attributes_overlay+8
        mov  r0,@sprite_attributes_body
        ai   r0,>1000
-       mov  r0,@sprite_attributes_head
+       mov  r0,@sprite_attributes_overlay
        mov  r0,@sprite_attributes_body+8
        rt
 *// update_climber_attrs_left
@@ -996,15 +1010,15 @@ update_climber_attrs_right_1:
        movb *r1+,@sprite_attributes_body+6
        movb *r1,@sprite_attributes_body+14
        mov  *r3,r1                     ; Pointer to head/hands sprite pattern
-       movb *r1+,@sprite_attributes_head+14
-       movb *r1,@sprite_attributes_head+6
+       movb *r1+,@sprite_attributes_overlay+14
+       movb *r1,@sprite_attributes_overlay+6
 *      Update position
        mov  @climber_pos,r0
        ai   r0,>0010
-       mov  r0,@sprite_attributes_head+12
+       mov  r0,@sprite_attributes_overlay+12
        mov  r0,@sprite_attributes_body+4
        ai   r0,>1000
-       mov  r0,@sprite_attributes_head+4
+       mov  r0,@sprite_attributes_overlay+4
        mov  r0,@sprite_attributes_body+12
        rt
 *// update_climber_attrs_right
@@ -1209,39 +1223,49 @@ control_climber_horz_11:
 *
 display_climber_sprites:
        .proc
-       mov  @secondary_sprite_patterns,r0
-       jne  display_climber_sprites_0
-       mov  @vdp_status,r0
-       andi r0,>4000                   ; Test 5th sprite flag
-       jeq  display_climber_sprites_1
-display_climber_sprites_0:
+       bl   @display_climber_overlay
        li   r1,sprite_attributes_body
        li   r2,2
-       jmp  display_climber_sprites_4
-display_climber_sprites_1:
-       movb @sprite_attributes_head+2,r0
-       jeq  display_climber_sprites_2
-       li   r0,sprite_attributes_head
-       movb *r0+,*r15
-       movb *r0+,*r15
-       movb *r0+,*r15
-       movb *r0+,*r15
-display_climber_sprites_2:
-       movb @sprite_attributes_head+6,r0
-       jeq  display_climber_sprites_3
-       li   r0,sprite_attributes_head+4
-       movb *r0+,*r15
-       movb *r0+,*r15
-       movb *r0+,*r15
-       movb *r0+,*r15
-display_climber_sprites_3:
-       li   r1,sprite_attributes_head+8
-       li   r2,3
-display_climber_sprites_4:
        clr  r3
        bl   @vm8bw_pad
        .endproc
 *// display_climber_sprites
+
+*********************************************************************
+*
+* Display climber head/hands overlay
+*
+display_climber_overlay:
+       mov  @secondary_sprite_patterns,r0
+       jne  display_climber_overlay_3
+       movb @sprite_attributes_overlay+2,r0
+       jeq  display_climber_overlay_1
+       li   r0,sprite_attributes_overlay
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+display_climber_overlay_1:
+       movb @sprite_attributes_overlay+6,r0
+       jeq  display_climber_overlay_2
+       li   r0,sprite_attributes_overlay+4
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+display_climber_overlay_2:
+       li   r0,sprite_attributes_overlay+8
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+       movb *r0+,*r15
+display_climber_overlay_3:
+       rt
+*// display_climber_overlay
 
 *********************************************************************
 *
@@ -2313,6 +2337,7 @@ inisc2:
 *
 intro_climb:
        .proc
+       bl   @base_stage_init
        li   r0,intro_module
        bl   @play_module
        li   r0,>9da8
@@ -2791,11 +2816,11 @@ character_set_kong:
        data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
        data 16*16                      ; cpu_offset_to_extra_scroll_chars
 
-sprite_attributes_head:
-       byte >ad,>a8,0,>09              ; Left
-       byte >ad,>b8,0,>09              ; Right
-       byte >9d,>a8,spr_lft_top_2nd_norm_1,>09
-       byte >9d,>b8,spr_rgt_top_2nd_norm_1,>09
+sprite_attributes_overlay:
+       byte >ad,>a8,0,>09              ; Bottom, left
+       byte >ad,>b8,0,>09              ; Bottom, right
+       byte >9d,>a8,spr_lft_top_2nd_norm_1,>09 ; Top, left
+       byte >9d,>b8,spr_rgt_top_2nd_norm_1,>09 ; Top, right
 sprite_attributes_body:
        byte >9d,>a8,spr_lft_top_norm_1,>02
        byte >9d,>b8,spr_rgt_top_norm_1,>02
