@@ -60,6 +60,8 @@ n_sprites:
        equ  16
 attenuation_during_speech:
        equ  2
+chr_zero:
+       equ  100
 
 **
 * Scratch pad
@@ -150,8 +152,16 @@ secondary_sprite_patterns:             ; Secondary sprite patterns loaded (0 = h
        equ  current_residents+2
 status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished)
        equ  secondary_sprite_patterns+2
-snd_channel_1:
+lives:
        equ  status+2
+score:
+       equ  lives+2
+score_msw:
+       equ  score+2
+disp_score:
+       equ  score_msw+2
+snd_channel_1:
+       equ  disp_score+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -235,6 +245,7 @@ main_loop:
        bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
+       bl   @display_score
 *      Update stage
        bl   @update_stage
 *      Check for inactivity
@@ -515,14 +526,24 @@ update_name_table_4:
 * Change scroll offset
 *
 change_scroll_offset:
-       a    @scroll_dy,@scroll_y
-       mov  @scroll_y,r0
-       ci   r0,scroll_max
+       .proc
+       mov  @scroll_dy,r0
+       jeq  change_scroll_offset_2
+       a    r0,@scroll_y
+       mov  @scroll_y,r1
+       ci   r1,scroll_max
        jle  change_scroll_offset_1
-       li   r0,scroll_max
-       mov  r0,@scroll_y
+       li   r1,scroll_max
+       mov  r1,@scroll_y
 change_scroll_offset_1:
-       rt
+       mov  r0,r0
+       jgt  change_scroll_offset_2
+       andi r1,15
+       jne  change_scroll_offset_2
+       li   r1,100
+       bl   @add_score
+change_scroll_offset_2:
+       .endproc
 *// change_scroll_offset
 
 *********************************************************************
@@ -2213,6 +2234,95 @@ fall:
        rt
 *// fall
 
+*******************************************************************
+*
+* Add to score
+*
+* r1: Points to add
+*
+add_score:
+       a    r1,@score
+       jnc  add_score_1
+       inc  @score_msw
+add_score_1:
+       rt
+*// add_score
+
+*******************************************************************
+*
+* Display score
+*
+display_score:
+       .proc
+       c    @score,@disp_score
+       jeq  display_score_1
+       mov  @score_msw,r6
+       mov  @score,r7
+       div  @d10000,r6
+       li   r0,32*6+2
+       mov  r6,r1
+       li   r2,2
+       bl   @display_decimal
+       li   r0,32*6+4
+       mov  r7,r1
+       li   r2,4
+       bl   @display_decimal
+display_score_1:
+       .endproc
+*// display_score
+
+*********************************************************************
+*
+* Display decimal number
+*
+* r0: Screen offset
+* r1: Number to display
+* r2: Number of digits
+*
+display_decimal:
+       .proc
+       ai   r0,name_table_0
+       mov  r0,r4
+       bl   @vwad
+       li   r5,buffer
+       li   r3,5
+       s    r2,r3
+       sla  r3,1
+       ai   r3,d10000
+       dec  r2
+display_decimal_1:
+       clr  r0
+       div  *r3+,r0
+       ai   r0,chr_zero
+       swpb r0
+       movb r0,*r15
+       movb r0,*r5+
+       dec  r2
+       jne  display_decimal_1
+       ai   r1,chr_zero
+       swpb r1
+       movb r1,*r15
+       movb r1,*r5+
+*      2nd name table buffer
+       mov  r4,r0
+       ai   r0,name_table_1-name_table_0
+       li   r1,buffer
+       mov  r5,r2
+       ai   r2,-buffer
+       bl   @vmbw
+       .endproc
+buffer:
+       bss  6
+d10000:
+       data 10000
+d1000:
+       data 1000
+d100:
+       data 100
+d10:
+       data 10
+*// display_decimal
+
 *********************************************************************
 *
 * Generate a pseudo random number within the given limit
@@ -2467,6 +2577,12 @@ game_init:
        bl   @clear
        clr  @windows_head_ptr
        clr  @windows_tail_ptr
+*      Game variables
+       clr  @score
+       clr  @score_msw
+       clr  @disp_score
+       li   r0,3
+       mov  r0,@lives
        .endproc
 *// game_init
 
