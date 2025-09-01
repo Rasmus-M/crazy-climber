@@ -1,4 +1,3 @@
-- Windows should stay closer longer or random
-- Kong should be animated faster
-- Rolling eyes
+- Windows should stay closed longer or random
 - Bird move up and down
+- Kong hit

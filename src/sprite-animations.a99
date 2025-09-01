@@ -294,13 +294,7 @@ chopper_right_1:
 
 kong:
        data 1
-       byte >08, >08, >d8, >0f         ; Eyes
-       byte ->08, ->08, >a0, >09       ; Head
-       byte >00, >10, >a4, >09
-       byte >10, ->10, >a8, >09        ; Middle
-       byte >00, >10, >ac, >09
-       byte >10, ->10, >b0, >06        ; Feet
-       byte >00, >10, >b4, >06
+       byte >08,>08,>a0,>0f         ; Eyes
 kong_arms:
        data kong_arms_left
        data kong_arms_right
@@ -316,30 +310,30 @@ kong_arms_right:
        data kong_arms_6
 kong_arms_0:
        data 2
-       byte >18,->08,>b8,>08
-       byte >00,>20,>bc,>08
+       byte >18,->08,>c8,>08
+       byte >00,>20,>cc,>08
 kong_arms_1:
        data 2
        byte >18,->0b,>c0,>08
        byte >00,>26,>c4,>08
 kong_arms_2:
        data 2
-       byte >18,->08,>b8,>08
+       byte >18,->08,>c8,>08
        byte >00,>23,>c4,>08
 kong_arms_3:
        data 2
        byte >18,->0b,>c0,>08
-       byte >00,>23,>bc,>08
+       byte >00,>23,>cc,>08
 kong_arms_5:
        data 3
-       byte >18,->08,>b8,>08
+       byte >18,->08,>c8,>08
        byte >00,>20,>d0,>08
        byte >00,>10,>d4,>09
 kong_arms_6:
        data 3
-       byte >18,->18,>c8,>09
-       byte >00,>10,>cc,>08
-       byte >00,>20,>bc,>08
+       byte >18,->18,>d8,>09
+       byte >00,>10,>dc,>08
+       byte >00,>20,>cc,>08
 
 bird_left:
        data bird_left_0

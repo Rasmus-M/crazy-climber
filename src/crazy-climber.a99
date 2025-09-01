@@ -1751,6 +1751,11 @@ kong_handler:
        clr  @sprite_handler(r3)
        jmp  kong_handler_1
 kong_handler_0:
+       mov  @sprite_count(r3),r0
+       andi r0,>001c
+       swpb r0
+       ai   r0,>a000
+       movb r0,@kong+4
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        li   r4,kong
