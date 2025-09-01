@@ -1,3 +1,4 @@
-- Residents should appear over your head by default
-- Only 1, 2, or 3 residents
-- Lose grip with one hand when hit by plant
+- Windows should stay closer longer or random
+- Kong should be animated faster
+- Rolling eyes
+- Bird move up and down

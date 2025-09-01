@@ -209,15 +209,15 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-;       li   r0,>420                    ; For testing
+       li   r0,>420                    ; For testing
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-;       li   r0,kong_stage              ; For testing
-;       mov  r0,@next_stage_ptr         ; For testing
+       li   r0,kong_stage              ; For testing
+       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -741,7 +741,7 @@ create_windows_5:
        c    @current_residents,@max_residents
        jhe  create_windows_6           ; Jump if resident not allowed
        bl   @rand
-       andi r0,3                       ; 1/4 chance of resident
+       andi r0,1                       ; 1/2 chance of resident
        ci   r0,window_anim_type_resident
        jeq  create_windows_7
 create_windows_6:
@@ -1370,17 +1370,16 @@ plant_handler:
 !      li   r2,>0008
 !      mov  r2,@sprite_vx(r3)
        mov  @sprite_vy(r3),r2
-       neg  r2                         ; Reverse y valocity
+       neg  r2                         ; Reverse y velocity
        sra  r2,1
        mov  r2,@sprite_vy(r3)
-       abs  @animation_count
-       jne  !
-       bl   @fall
-!      li   r0,8
-       mov  r0,@sprite_count(r3)
+       a    r2,@sprite_y(r3)           ; Prevent double hit
        .push r3
+       bl   @lose_grip
        bl   @play_boing
        .pop  r3
+       li   r0,8
+       mov  r0,@sprite_count(r3)
        seto @speech_reserved
 *      Update sprite
 plant_handler_1:
@@ -1767,12 +1766,14 @@ kong_handler_0:
        bl   @draw_big_sprite
 *      Animate
        inc  @sprite_count(r3)
+*      Animate arms
        mov  @sprite_count(r3),r0
-       andi r0,>000f
+       andi r0,>0007
        jne  kong_handler_1
        li   r2,4
        bl   @rand_max
-       mov  r0,@sprite_ax(r3)
+       mov  r0,@sprite_ax(r3)          ; Current arms
+*      Change side
        mov  @sprite_count(r3),r1
        andi r1,>003f
        jne  kong_handler_1
@@ -2223,6 +2224,51 @@ is_open_window_bottom:
        rt
 *// is_open_window_bottom
 
+
+*********************************************************************
+*
+* Lose grip with one hand.
+*
+lose_grip:
+       .proc
+       abs  @left_grip
+       jeq  lose_grip_3
+       mov  @left_anim_ptr,r0
+       ci   r0,left_anim
+       jne  lose_grip_1
+       ai   r0,spr_anim_size
+       mov  r0,@left_anim_ptr
+       bl   @update_climber_attrs_left
+       jmp  lose_grip_6
+lose_grip_1:
+       ci   r0,left_anim_last
+       jne  lose_grip_2
+       ai   r0,-spr_anim_size
+       mov  r0,@left_anim_ptr
+       bl   @update_climber_attrs_left
+       jmp  lose_grip_4
+lose_grip_2:
+       abs  @right_grip
+       jeq  lose_grip_4
+       mov  @right_anim_ptr,r0
+       ci   r0,right_anim
+       jne  lose_grip_3
+       ai   r0,spr_anim_size
+       mov  r0,@right_anim_ptr
+       bl   @update_climber_attrs_right
+       jmp  lose_grip_6
+lose_grip_3:
+       ci   r0,right_anim_last
+       jne  lose_grip_4
+       ai   r0,-spr_anim_size
+       mov  r0,@right_anim_ptr
+       bl   @update_climber_attrs_right
+       jmp  lose_grip_4
+lose_grip_4:
+       bl   @fall
+lose_grip_6:
+       .endproc
+*// lose_grip
 
 *********************************************************************
 *
