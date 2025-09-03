@@ -209,14 +209,16 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,>420                    ; For testing
+       li   r0,>908                    ; For testing bird
+;       li   r0,>420                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-       li   r0,kong_stage              ; For testing
+       li   r0,bird_stage              ; For testing
+;       li   r0,kong_stage              ; For testing
        mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
@@ -1616,12 +1618,13 @@ bird_stage_init:
        mov  *r0+,@sprite_vy(r4)
        mov  *r0+,@sprite_count(r4)
        clr  @bird_droppings
+       clr  @bird_rounds
        li   r0,bird_module
        bl   @play_module
 bird_stage_init_1:
        .endproc
 bird_init_data:
-       data bird_handler, >0040, >0904, >0001, >0000, >0000
+       data bird_handler, >0020, >0902, >0002, >0001, >0000
 *// bird_stage_init
 
 *********************************************************************
@@ -1631,12 +1634,15 @@ bird_init_data:
 bird_handler:
        .proc
 *      Remove
+       c    @w_8,@bird_rounds
+       jeq  bird_handler_1
        mov  @scroll_y,r0
        c    r0,@two_residents_stage
-       jgt  bird_handler_0
+       jgt  bird_handler_2
+bird_handler_1:
        clr  @sprite_handler(r3)
-       jmp  bird_handler_1
-bird_handler_0:
+       jmp  bird_handler_10
+bird_handler_2:
 *      Draw
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
@@ -1646,39 +1652,53 @@ bird_handler_0:
        div  @w_6,r4
        sla  r5,1
        mov  @sprite_vx(r3),r2
-       jlt  bird_handler_5
+       jlt  bird_handler_3
        mov  @bird_right(r5),r4
-       jmp  bird_handler_6
-bird_handler_5:
+       jmp  bird_handler_4
+bird_handler_3:
        mov  @bird_left(r5),r4
-bird_handler_6:
+bird_handler_4:
        bl   @draw_big_sprite
 *      Move
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
+       a    @scroll_dy,@sprite_y(r3)
+*      X boundaries
        mov  @sprite_x(r3),r0
-       ci   r0,>40
-       jl   bird_handler_4
+       ci   r0,>20
+       jl   bird_handler_5
        ci   r0,>e0
-       jle  bird_handler_3
-bird_handler_4:
+       jle  bird_handler_6
+bird_handler_5:
        neg  @sprite_vx(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
-bird_handler_3:
-       mov  @scroll_dy,@sprite_vy(r3)
+       inc  @bird_rounds
+bird_handler_6
+*      Y boundaries
+       mov  @sprite_y(r3),r0
+       s    @scroll_y,r0
+       jlt  bird_handler_7
+       ci   r0,>18
+       jle  bird_handler_8
+bird_handler_7:
+       neg  @sprite_vy(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+bird_handler_8:
 *      Drop
        mov  @bird_droppings,r0
        ci   r0,2
-       jhe  bird_handler_8
+       jhe  bird_handler_9
        bl   @rand
        ci   r0,>f400
-       jl   bird_handler_8
+       jl   bird_handler_9
        bl   @create_bird_dropping
-bird_handler_8:
+bird_handler_9:
        inc  @sprite_count(r3)
-bird_handler_1:
+bird_handler_10:
        .endproc
 bird_droppings:
+       data 0
+bird_rounds:
        data 0
 *// bird_handler
 

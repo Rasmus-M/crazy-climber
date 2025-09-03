@@ -1,3 +1,2 @@
 - Windows should stay closed longer or random
-- Bird move up and down
 - Kong hit
