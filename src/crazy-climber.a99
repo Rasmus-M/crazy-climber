@@ -209,7 +209,7 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-       li   r0,>908                    ; For testing bird
+;       li   r0,>908                    ; For testing bird
 ;       li   r0,>420                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
@@ -217,9 +217,9 @@ new_game:
        bl   @intro_climb
 *      Init variables for main loop
        bl   @restart_init
-       li   r0,bird_stage              ; For testing
-;       li   r0,kong_stage              ; For testing
-       mov  r0,@next_stage_ptr         ; For testing
+;       li   r0,bird_stage              ; For testing bird
+;       li   r0,kong_stage              ; For testing kong
+;       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -619,8 +619,11 @@ animate_windows_5b:
 animate_windows_6:
        ci   r4,8                       ; End at 8
        jeq  animate_windows_7
-       ci   r4,4                       ; Is it frame 4?
+       ci   r4,3                       ; Is it frame 4?
        jne  animate_windows_2          ; No - next window
+       mov  @window_anim_count(r3),r0
+       ci   r0,7
+       jne  animate_windows_2
        bl   @create_resident           ; Create a new resident sprite
        jmp  animate_windows_2          ; Next window
 *      Terminate animation
