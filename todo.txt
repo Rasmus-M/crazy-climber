@@ -1,2 +1,1 @@
-- Windows should stay closed longer or random
 - Kong hit
