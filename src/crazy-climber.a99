@@ -61,7 +61,7 @@ n_sprites:
 attenuation_during_speech:
        equ  2
 chr_zero:
-       equ  100
+       equ  96
 
 **
 * Scratch pad
@@ -147,8 +147,10 @@ score_msw:
        equ  score+2
 disp_score:
        equ  score_msw+2
-snd_channel_1:
+bonus:
        equ  disp_score+2
+snd_channel_1:
+       equ  bonus+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -200,9 +202,10 @@ new_game:
        li   r0,>428                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
-*      Intro climb
+new_level:
+       bl   @level_init
        bl   @intro_climb
-*      Init variables for main loop
+restart_level:
        bl   @restart_init
 ;       li   r0,bird_stage              ; For testing bird
        li   r0,kong_stage              ; For testing kong
@@ -235,6 +238,7 @@ main_loop:
 *      Update name table buffer
        bl   @update_name_table
        bl   @display_score
+       bl   @display_bonus
 *      Update stage
        bl   @update_stage
 *      Check for inactivity
@@ -542,7 +546,7 @@ animate_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 4th frame
        andi r0,>0003
-       ci   r0,>0001
+       ci   r0,>0001                   ; Frame 1, 5, 9, 13, ...
        jne  animate_windows_8
        mov  @windows_head_ptr,r3       ; List of window animations (including resident faces)
 animate_windows_1:
@@ -716,7 +720,7 @@ add_window_to_list_5:
 create_windows:
        .proc
        mov  @frame,r0                  ; Only do this every 16th frame
-       andi r0,>000f
+       andi r0,>000f                   ; Frame 0, 16, 32, 64 ...
        jne  create_windows_11
 *      Remove window animations that are scrolled out
        mov  @scroll_y,r4
@@ -2380,6 +2384,27 @@ display_score_1:
        .endproc
 *// display_score
 
+*******************************************************************
+*
+* Display bonus
+*
+display_bonus:
+       .proc
+       mov  @frame,r0
+       andi r0,255
+       ci   r0,255
+       jne  display_bonus_1
+       mov  @bonus,r1
+       jeq  display_bonus_1
+       ai   r1,-100
+       mov  r1,@bonus
+       li   r0,32*18+2
+       li   r2,5
+       bl   @display_decimal
+display_bonus_1:
+       .endproc
+*// display_bonus
+
 *********************************************************************
 *
 * Display decimal number
@@ -2710,6 +2735,17 @@ game_init:
        mov  r0,@lives
        .endproc
 *// game_init
+
+*********************************************************************
+*
+* Level initializations
+*
+level_init:
+       .proc
+       li   r0,10000
+       mov  r0,@bonus
+       .endproc
+*// level_init
 
 *********************************************************************
 *
