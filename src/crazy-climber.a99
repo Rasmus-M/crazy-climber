@@ -210,7 +210,7 @@ new_game:
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
 ;       li   r0,>908                    ; For testing bird
-;       li   r0,>420                    ; For testing kong
+       li   r0,>420                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
@@ -218,8 +218,8 @@ new_game:
 *      Init variables for main loop
        bl   @restart_init
 ;       li   r0,bird_stage              ; For testing bird
-;       li   r0,kong_stage              ; For testing kong
-;       mov  r0,@next_stage_ptr         ; For testing
+       li   r0,kong_stage              ; For testing kong
+       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -261,7 +261,6 @@ main_loop:
        jmp  main_loop
 *      Main loop terminated
 finished:
-       jlt  died
        bl   @chopper_pickup
        b    @new_game
 died:
@@ -1792,10 +1791,10 @@ kong_handler:
        mov  @scroll_y,r0
        s    @three_residents_stage,r0
        ci   r0,8
-       jgt  kong_handler_0
+       jgt  kong_handler_1
        clr  @sprite_handler(r3)
-       jmp  kong_handler_1
-kong_handler_0:
+       jmp  kong_handler_3
+kong_handler_1:
        mov  @sprite_count(r3),r0
        andi r0,>001c
        swpb r0
@@ -1807,9 +1806,9 @@ kong_handler_0:
        bl   @draw_big_sprite
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
-       mov  @sprite_ay(r3),r4          ; Arms
-       mov  @kong_arms(r4),r4
-       mov  @sprite_ax(r3),r5
+       mov  @sprite_ay(r3),r4          ; Side 0 or 2
+       mov  @kong_arms(r4),r4          ; Arms base
+       mov  @sprite_ax(r3),r5          ; Arms 0-3
        sla  r5,1
        a    r5,r4
        mov  *r4,r4
@@ -1819,19 +1818,19 @@ kong_handler_0:
 *      Animate arms
        mov  @sprite_count(r3),r0
        andi r0,>0007
-       jne  kong_handler_1
+       jne  kong_handler_3
        li   r2,4
        bl   @rand_max
        mov  r0,@sprite_ax(r3)          ; Current arms
 *      Change side
        mov  @sprite_count(r3),r1
        andi r1,>003f
-       jne  kong_handler_1
+       jne  kong_handler_3
        mov  @sprite_count(r3),r1
        andi r1,>0040
        srl  r1,5
        mov  @kong_x(r1),@sprite_x(r3)
-       mov  r1,@sprite_ay(r3)
+       mov  r1,@sprite_ay(r3)          ; Side
        jne  kong_handler_2
 *      Remove right kong, draw left kong
        li   r0,kong_map_undraw
@@ -1840,7 +1839,7 @@ kong_handler_0:
        li   r0,kong_map
        li   r1,MD0+(>7a*map_width)+3
        bl   @copy_kong_to_map
-       jmp  kong_handler_1
+       jmp  kong_handler_3
 kong_handler_2:
 *      Remove left kong, draw right kong
        li   r0,kong_map_undraw
@@ -1849,7 +1848,23 @@ kong_handler_2:
        li   r0,kong_map
        li   r1,MD0+(>7a*map_width)+14
        bl   @copy_kong_to_map
-kong_handler_1:
+kong_handler_3:
+*      Check for collision with climber
+       c    @sprite_ax(r3),@w_3        ; Arm should be extended
+       jne  kong_handler_4
+       mov   @scroll_y,r0
+       ci   r0,>0380
+       jhe  kong_handler_4
+       ci   r0,>0360
+       jl   kong_handler_4
+       bl   @climber_column
+       mov  @sprite_ay(r3),r1          ; Side 0 or 2
+       srl  r1,1                       ; 0 or 1
+       inct r1                         ; 3 or 4
+       c    r0,r1                      ; Compare to climber column
+       jne  kong_handler_4
+       bl   @fall
+kong_handler_4:
        .endproc
 kong_x:
        data >0058, >00b0
@@ -1882,6 +1897,14 @@ copy_kong_to_map_1:
 three_residents_stage_init:
        .proc
        bl   @mute_sound
+*      Undraw kong
+       li   r0,kong_map_undraw
+       li   r1,MD0+(>7a*map_width)+14
+       bl   @copy_kong_to_map
+       li   r0,kong_map_undraw
+       li   r1,MD0+(>7a*map_width)+3
+       bl   @copy_kong_to_map
+*      Restore characters and sprite patterns
        li   r1,character_set_residents
        bl   @set_character_set
        li   r1,head_and_hands_patterns
@@ -2325,8 +2348,11 @@ lose_grip_6:
 * Fall. For now just lose grip.
 *
 fall:
+       mov  @animation_count,r0
+       jne  fall_1
        mov  @two,@animation_count      ; Animation count = 2
        mov  @two,@scroll_dy            ; Lose grip
+fall_1:
        rt
 *// fall
 
@@ -2998,6 +3024,8 @@ b_12:
        byte 12
 b_16:
        byte 16
+w_3:
+       data 3
 w_4:
        data 4
 w_6:
