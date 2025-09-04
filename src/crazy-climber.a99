@@ -83,23 +83,10 @@ wrksp2:
 stack:
        equ  wrksp2+>20
 **
-* PAD constants
-*
-padcon:
-       equ  stack+>16                  ; Start of pad constants
-one:
-       equ  padcon
-two:
-       equ  padcon+2
-**
 * PAD variables
 *
 padvar:                                ; Start of pad variables
-       equ  two+2
-*********************************************************************
-*
-* Variables and data
-*
+       equ  stack+>10
 rand_no:                               ; Random number seed
        equ  padvar
 vdp_status:                            ; VDP status byte
@@ -210,7 +197,7 @@ new_game:
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
 ;       li   r0,>908                    ; For testing bird
-       li   r0,>420                    ; For testing kong
+       li   r0,>428                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
 *      Intro climb
@@ -925,7 +912,7 @@ control_climber_vert_3:
        mov  r3,@left_anim_ptr          ; Save new pointer
 control_climber_vert_4:
        bl   @update_climber_attrs_left
-       mov  @two,@animation_count      ; Animation count = 2
+       mov  @w_2,@animation_count      ; Animation count = 2
        seto @animation_changed
 *      Right
 control_climber_vert_5:
@@ -969,7 +956,7 @@ control_climber_vert_7:
        mov  r3,@right_anim_ptr         ; Save new pointer
 control_climber_vert_8:
        bl   @update_climber_attrs_right
-       mov  @two,@animation_count      ; Animation count = 2
+       mov  @w_2,@animation_count      ; Animation count = 2
        seto @animation_changed
 control_climber_vert_9:
        abs  @animation_changed
@@ -2350,8 +2337,8 @@ lose_grip_6:
 fall:
        mov  @animation_count,r0
        jne  fall_1
-       mov  @two,@animation_count      ; Animation count = 2
-       mov  @two,@scroll_dy            ; Lose grip
+       mov  @w_2,@animation_count      ; Animation count = 2
+       mov  @w_2,@scroll_dy            ; Lose grip
 fall_1:
        rt
 *// fall
@@ -2492,41 +2479,57 @@ rand:
 initial_screen:
        .proc
 *      Upload patterns 1st part
-       li   r0,96*8+pattern_table      ; Non-scrolling characters
-       li   r1,PAT96
-       li   r2,32*8
-       bl   @vmbw
        li   r0,pattern_table           ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
        mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
-*      Upload patterns 2nd part
-       li   r0,96*8+pattern_table_1    ; Non-scrolling characters
+       li   r0,96*8+pattern_table      ; Non-scrolling characters
        li   r1,PAT96
        li   r2,32*8
        bl   @vmbw
+       li   r0,224*8+pattern_table     ; Non-scrolling characters
+       li   r1,PAT224
+       li   r2,32*8
+       bl   @vmbw
+*      Upload patterns 2nd part
        li   r0,pattern_table_1         ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
        mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
-*      Upload patterns 3rd part
-       li   r0,96*8+pattern_table_2    ; Non-scrolling characters
+       li   r0,96*8+pattern_table_1    ; Non-scrolling characters
        li   r1,PAT96
        li   r2,32*8
        bl   @vmbw
+       li   r0,224*8+pattern_table_1    ; Non-scrolling characters
+       li   r1,PAT224
+       li   r2,32*8
+       bl   @vmbw
+*      Upload patterns 3rd part
        li   r0,pattern_table_2         ; destination address in vdp ram
        li   r1,PSTRIP                  ; address of first scrolled pattern frame
        mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
        bl   @vm8bw8                    ; call copying routine
-*      Upload colors
-       li   r0,96*8+color_table        ; Non-scrolling colors
-       li   r1,COL96
+       li   r0,96*8+pattern_table_2    ; Non-scrolling characters
+       li   r1,PAT96
        li   r2,32*8
        bl   @vmbw
+       li   r0,224*8+pattern_table_2    ; Non-scrolling characters
+       li   r1,PAT224
+       li   r2,32*8
+       bl   @vmbw
+*      Upload colors
        LI   r0,color_table             ; Destination address in VDP RAM
        li   r1,CSTRIP                  ; address of first scrolled color frame
        mov  @TCHNUM,r2                 ; number of pattern colors of 8 bytes
        bl   @vm8bw8                    ; call copying routine
+       li   r0,96*8+color_table        ; Non-scrolling colors
+       li   r1,COL96
+       li   r2,32*8
+       bl   @vmbw
+       li   r0,224*8+color_table        ; Non-scrolling colors
+       li   r1,COL224
+       li   r2,32*8
+       bl   @vmbw
 *      Init name tables
        mov  @scroll_y,r4               ; get initial scroll offset in pixels
        srl  r4,3                       ; convert to row offset
@@ -2641,7 +2644,7 @@ chopper_pickup_2:
        bl   @update_climber_attrs_left
        bl   @update_climber_attrs_right
        bl   @display_sprites
-       sb   @one+1,@climber_pos
+       sb   @w_1+1,@climber_pos
        dec  r8
        jne  chopper_pickup_1
        .endproc
@@ -2655,9 +2658,9 @@ one_time_init:
        .proc
        li   r15,vdpwd
        li   r0,1
-       mov  r0,@one
+       mov  r0,@w_1
        li   r0,2
-       mov  r0,@two
+       mov  r0,@w_2
        mov  @>83c0,r1                  ; Random number seed
 *      Clear scratchpad
        li   r0,padvar
@@ -3024,6 +3027,10 @@ b_12:
        byte 12
 b_16:
        byte 16
+w_1:
+       data 1
+w_2:
+       data 2
 w_3:
        data 3
 w_4:

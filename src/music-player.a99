@@ -40,7 +40,7 @@ module_player_1:
        movb @snd_track_duration_count(r5),r6    ; Count in progress?
        jeq  module_player_2
 *      Wait
-       sb   @one+1,@snd_track_duration_count(r5)
+       sb   @w_1+1,@snd_track_duration_count(r5)
        jmp  module_player_11
 module_player_2:
 *      Next sequence part
@@ -68,7 +68,7 @@ module_player_5:
        movb @snd_track_repeat_count(r5),r2    ; Repeat already in progress?
        jeq  module_player_7
 *      Repeat in progress
-       sb   @one+1,@snd_track_repeat_count(r5)
+       sb   @w_1+1,@snd_track_repeat_count(r5)
        jne  module_player_6
 *      Repeat over
        inct r6                         ; Skip over repeat address

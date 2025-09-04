@@ -93,7 +93,7 @@ snd_player_3:
        movb r0,@sound                  ; Write attenuation
        ab   @snd_attn_step(r3),@snd_channel_attn(r2)    ; Change attenuation
 *      Count down and loop
-       sb   @one+1,@snd_channel_duration(r2)      ; Count down duration
+       sb   @w_1+1,@snd_channel_duration(r2)      ; Count down duration
 snd_player_4:
        ai   r2,-snd_channel_size       ; Next (previous) channel
        ci   r2,snd_channel_1           ; Are we done?
