@@ -199,7 +199,7 @@ new_game:
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
 ;       li   r0,>908                    ; For testing bird
-       li   r0,>428                    ; For testing kong
+;       li   r0,>428                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
 new_level:
@@ -208,8 +208,8 @@ new_level:
 restart_level:
        bl   @restart_init
 ;       li   r0,bird_stage              ; For testing bird
-       li   r0,kong_stage              ; For testing kong
-       mov  r0,@next_stage_ptr         ; For testing
+;       li   r0,kong_stage              ; For testing kong
+;       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -239,6 +239,7 @@ main_loop:
        bl   @update_name_table
        bl   @display_score
        bl   @display_bonus
+       bl   @display_progress
 *      Update stage
        bl   @update_stage
 *      Check for inactivity
@@ -2346,6 +2347,76 @@ fall:
 fall_1:
        rt
 *// fall
+
+*******************************************************************
+*
+* Display progress
+*
+display_progress:
+       .proc
+       mov  @frame,r0
+       andi r0,63
+       jeq  display_progress_1
+       mov  @climber_pos,r3            ; World y coordinate of climber
+       srl  r3,8
+       a    @scroll_y,r3
+       srl  r3,4                       ; One pixel of progress per 16 lines of scrolling
+       mov  r3,r4                      ; Save number of pixels
+       srl  r3,3                       ; Number of characters from top
+       clr  r1
+       movb @MD2(r3),r1                ; Get character code
+*      Copy pattern to buffer
+       swpb r1
+       ai   r1,-96
+       sla  r1,3
+       ai   r1,PAT96
+       li   r0,progress_char_buffer
+       mov  *r1+,*r0+                  ; Copy 8 bytes
+       mov  *r1+,*r0+
+       mov  *r1+,*r0+
+       mov  *r1+,*r0+
+*      Copy colors to VDP
+       li   r0,127*8+color_table
+       ai   r1,COL96-PAT96-8
+       li   r2,8
+       bl   @vmbw
+*      Update pattern buffer
+       andi r4,7                       ; Pixel offset
+       li   r1,>1800
+       socb r1,@progress_char_buffer(r4)
+*      Copy pattern to VDP
+       li   r0,127*8+pattern_table
+       li   r1,progress_char_buffer
+       li   r2,8
+       bl   @vmbw
+       li   r0,127*8+pattern_table_1
+       li   r1,progress_char_buffer
+       li   r2,8
+       bl   @vmbw
+       li   r0,127*8+pattern_table_2
+       li   r1,progress_char_buffer
+       li   r2,8
+       bl   @vmbw
+*      Copy char to VDP
+       li   r0,-3                      ; Screen row for top of map
+       a    r3,r0                      ; Add character offset
+       sla  r0,5                       ; * 32
+       ai   r0,name_table_0
+       li   r1,>7f00                   ; Char 127
+       bl   @vsbw
+       ai   r0,name_table_1-name_table_0
+       bl   @vsbw
+*      Restore char below
+       ai   r0,32                      ; Next row
+       movb @MD2+1(r3),r1              ; Next character
+       bl   @vsbw
+       ai   r0,name_table_0-name_table_1
+       bl   @vsbw
+display_progress_1:
+       .endproc
+progress_char_buffer:
+       bss 8
+*// display_progress
 
 *******************************************************************
 *
