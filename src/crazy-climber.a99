@@ -53,7 +53,7 @@ sprite_attr_table:                     ; Sprite attribute table
 map_width:
        equ  22
 scroll_max:
-       equ  >0c08
+       equ  >0c88
 n_windows:
        equ  12
 n_sprites:
@@ -62,6 +62,8 @@ attenuation_during_speech:
        equ  2
 chr_zero:
        equ  96
+kong_row:
+       equ  >88
 
 **
 * Scratch pad
@@ -198,8 +200,8 @@ new_game:
        bl   @game_init
 *      Display initial screen
        li   r0,scroll_max              ; start at the bottom of the map
-;       li   r0,>908                    ; For testing bird
-;       li   r0,>428                    ; For testing kong
+;       li   r0,>988                    ; For testing bird
+       li   r0,>4A8                    ; For testing kong
        mov  r0,@scroll_y
        bl   @initial_screen
 new_level:
@@ -208,8 +210,8 @@ new_level:
 restart_level:
        bl   @restart_init
 ;       li   r0,bird_stage              ; For testing bird
-;       li   r0,kong_stage              ; For testing kong
-;       mov  r0,@next_stage_ptr         ; For testing
+       li   r0,kong_stage              ; For testing kong
+       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -231,7 +233,7 @@ main_loop:
 *      Animate windows and faces
        bl   @animate_windows
        bl   @check_int
-       bl   @create_windows
+;       bl   @create_windows
        bl   @check_int
 *      Update patterns
        bl   @update_pattern_table
@@ -1764,14 +1766,14 @@ kong_stage_init:
        mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
        mov  *r0+,@sprite_ay(r4)        ; Used to store current side (left = 0, right <> 0)
        li   r0,kong_map
-       li   r1,MD0+(>7a*map_width)+3
+       li   r1,MD0+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_module
        bl   @play_module
 kong_stage_init_1:
        .endproc
 kong_init_data:
-       data kong_handler, >0058, >03d8, >0000, >0000, >0000
+       data kong_handler, >0058, >0448, >0000, >0000, >0000
 *// kong_stage_init
 
 *********************************************************************
@@ -1826,28 +1828,28 @@ kong_handler_1:
        jne  kong_handler_2
 *      Remove right kong, draw left kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(>7a*map_width)+14
+       li   r1,MD0+(kong_row*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,MD0+(>7a*map_width)+3
+       li   r1,MD0+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        jmp  kong_handler_3
 kong_handler_2:
 *      Remove left kong, draw right kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(>7a*map_width)+3
+       li   r1,MD0+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,MD0+(>7a*map_width)+14
+       li   r1,MD0+(kong_row*map_width)+14
        bl   @copy_kong_to_map
 kong_handler_3:
 *      Check for collision with climber
        c    @sprite_ax(r3),@w_3        ; Arm should be extended
        jne  kong_handler_4
        mov   @scroll_y,r0
-       ci   r0,>0380
+       ci   r0,>03F0
        jhe  kong_handler_4
-       ci   r0,>0360
+       ci   r0,>03D0
        jl   kong_handler_4
        bl   @climber_column
        mov  @sprite_ay(r3),r1          ; Side 0 or 2
@@ -1891,10 +1893,10 @@ three_residents_stage_init:
        bl   @mute_sound
 *      Undraw kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(>7a*map_width)+14
+       li   r1,MD0+(kong_row*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map_undraw
-       li   r1,MD0+(>7a*map_width)+3
+       li   r1,MD0+(kong_row*map_width)+3
        bl   @copy_kong_to_map
 *      Restore characters and sprite patterns
        li   r1,character_set_residents
@@ -2356,7 +2358,7 @@ display_progress:
        .proc
        mov  @frame,r0
        andi r0,63
-       jeq  display_progress_1
+       jeq  display_progress_2
        mov  @climber_pos,r3            ; World y coordinate of climber
        srl  r3,8
        a    @scroll_y,r3
@@ -2382,8 +2384,11 @@ display_progress:
        bl   @vmbw
 *      Update pattern buffer
        andi r4,7                       ; Pixel offset
+       ai   r4,progress_char_buffer
+       movb *r4,r0
        li   r1,>1800
-       socb r1,@progress_char_buffer(r4)
+       xor  r1,r0
+       movb r0,*r4
 *      Copy pattern to VDP
        li   r0,127*8+pattern_table
        li   r1,progress_char_buffer
@@ -2398,8 +2403,17 @@ display_progress:
        li   r2,8
        bl   @vmbw
 *      Copy char to VDP
-       li   r0,-3                      ; Screen row for top of map
-       a    r3,r0                      ; Add character offset
+display_progress_0:
+       mov  r3,r0                      ; Character offset
+       s    @progress_top_offset,r0    ; Screen row for top of map
+       ci   r0,3
+       jgt  display_progress_1
+       mov  @progress_top_offset,r1
+       jeq  display_progress_1
+       dec  @progress_top_offset
+       bl   @display_progress_indicator
+       jmp  display_progress_0
+display_progress_1:
        sla  r0,5                       ; * 32
        ai   r0,name_table_0
        li   r1,>7f00                   ; Char 127
@@ -2412,11 +2426,37 @@ display_progress:
        bl   @vsbw
        ai   r0,name_table_0-name_table_1
        bl   @vsbw
-display_progress_1:
+display_progress_2:
        .endproc
 progress_char_buffer:
        bss 8
 *// display_progress
+
+*******************************************************************
+*
+* Display progress indicator
+*
+display_progress_indicator:
+       .proc
+       li   r4,2
+       li   r0,name_table_0
+display_progress_indicator_1:
+       li   r1,MD2
+       a    @progress_top_offset,r1
+       li   r2,24
+display_progress_indicator_2:
+       bl   @vwad
+       movb *r1+,*r15
+       ai   r0,32
+       dec  r2
+       jne  display_progress_indicator_2
+       li   r0,name_table_1
+       dec  r4
+       jne  display_progress_indicator_1
+       .endproc
+progress_top_offset:
+       data 3
+*// display_progress_indicator
 
 *******************************************************************
 *
@@ -2804,6 +2844,7 @@ game_init:
        clr  @disp_score
        li   r0,3
        mov  r0,@lives
+       mov  r0,@progress_top_offset
        .endproc
 *// game_init
 
@@ -3068,22 +3109,22 @@ lower_memory_max:
 stages:
        equ  $
 one_resident_stage:
-       data >0a80                      ; scroll y
+       data >0900                      ; scroll y
        data one_resident_stage_init    ; init
 bird_stage:
-       data >0900                      ; scroll y
+       data >0980                      ; scroll y
        data bird_stage_init            ; init
 two_residents_stage:
-       data >0700                      ; scroll y
+       data >0780                      ; scroll y
        data two_residents_stage_init   ; init
 pre_kong_stage:
-       data >0480                      ; scroll y
+       data >0500                      ; scroll y
        data pre_kong_stage_init        ; init
 kong_stage:
-       data >0420                      ; scroll y
+       data >04A0                      ; scroll y
        data kong_stage_init            ; init
 three_residents_stage:
-       data >0310                      ; scroll y
+       data >0390                      ; scroll y
        data three_residents_stage_init ; init
 chopper_stage:
        data >0080                      ; scroll y
