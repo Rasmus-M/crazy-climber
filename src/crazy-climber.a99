@@ -95,8 +95,10 @@ vdp_status:                            ; VDP status byte
        equ  rand_no+2
 frame:                                 ; Frame counter
        equ  vdp_status+2
-scroll_y:                              ; Vertical scroll offset
+sprite_dupl_bug:                       ; Does VDP have sprite duplication bug?
        equ  frame+2
+scroll_y:                              ; Vertical scroll offset
+       equ  sprite_dupl_bug+2
 scroll_dy:                             ; Scroll direction
        equ  scroll_y+2
 climber_pos:                           ; Climber y/x position in screen coordinates
@@ -198,20 +200,20 @@ start  limi 0                          ; disable interrupts
        bl   @one_time_init
 new_game:
        bl   @game_init
-*      Display initial screen
-       li   r0,scroll_max              ; start at the bottom of the map
-;       li   r0,>988                    ; For testing bird
-       li   r0,>4A8                    ; For testing kong
-       mov  r0,@scroll_y
-       bl   @initial_screen
 new_level:
        bl   @level_init
+;       li   r0,>988                    ; For testing bird
+;       li   r0,>4A8                    ; For testing kong
+;       li   r0,>088                    ; For testing chopper
+;       mov  r0,@scroll_y
+;       li   r0,bird_stage              ; For testing bird
+;       li   r0,kong_stage              ; For testing kong
+;       li   r0,chopper_stage           ; For testing chopper
+;       mov  r0,@next_stage_ptr         ; For testing
+       bl   @initial_screen
        bl   @intro_climb
 restart_level:
        bl   @restart_init
-;       li   r0,bird_stage              ; For testing bird
-       li   r0,kong_stage              ; For testing kong
-       mov  r0,@next_stage_ptr         ; For testing
 *      Main loop
 main_loop:
 *      Wait for vsync
@@ -222,7 +224,7 @@ main_loop:
        bl   @int_routine
 *      Display sprites
        bl   @display_sprites
-*      Control climber
+*      Control climber--
        bl   @check_grip
        bl   @control_climber_vert
        bl   @check_int
@@ -233,14 +235,14 @@ main_loop:
 *      Animate windows and faces
        bl   @animate_windows
        bl   @check_int
-;       bl   @create_windows
+       bl   @create_windows
        bl   @check_int
 *      Update patterns
        bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
        bl   @display_score
-       bl   @display_bonus
+       bl   @update_and_display_bonus
        bl   @display_progress
 *      Update stage
        bl   @update_stage
@@ -386,6 +388,9 @@ update_pattern_table:
        mov  @extra_scroll_chars,r2
        bl   @vm8bw0
        bl   @check_int
+*      Only copy next to table 2 and 3 on original VDP
+       abs  @sprite_dupl_bug
+       jeq  update_pattern_table_1
 *      Copy patterns 2nd part
        mov  r4,r0                      ; Base patterns
        ai   r0,>800
@@ -414,6 +419,7 @@ update_pattern_table:
        mov  @extra_scroll_chars,r2
        bl   @vm8bw0
        bl   @check_int
+update_pattern_table_1:
 *      Copy colors
        mov  r4,r0                      ; Base patterns
        ai   r0,color_table
@@ -2491,6 +2497,7 @@ display_score:
        mov  r7,r1
        li   r2,4
        bl   @display_decimal
+       mov  @score,@disp_score
 display_score_1:
        .endproc
 *// display_score
@@ -2499,20 +2506,31 @@ display_score_1:
 *
 * Display bonus
 *
-display_bonus:
+update_and_display_bonus:
        .proc
        mov  @frame,r0
        andi r0,255
        ci   r0,255
-       jne  display_bonus_1
+       jne  update_and_display_bonus_1
        mov  @bonus,r1
-       jeq  display_bonus_1
+       jeq  update_and_display_bonus_1
        ai   r1,-100
        mov  r1,@bonus
+       bl   @display_bonus
+update_and_display_bonus_1:
+       .endproc
+*// update_and_display_bonus
+
+*******************************************************************
+*
+* Display bonus
+*
+display_bonus:
+       .proc
        li   r0,32*18+2
+       mov  @bonus,r1
        li   r2,5
        bl   @display_decimal
-display_bonus_1:
        .endproc
 *// display_bonus
 
@@ -2780,7 +2798,16 @@ chopper_pickup_2:
        bl   @update_climber_attrs_left
        bl   @update_climber_attrs_right
        bl   @display_sprites
-       sb   @w_1+1,@climber_pos
+       mov  @bonus,r0
+       jeq  chopper_pickup_3
+       li   r1,100
+       s    r1,r0
+       mov  r0,@bonus
+       bl   @add_score
+       bl   @display_score
+       bl   @display_bonus
+chopper_pickup_3:
+       sb   @b_1,@climber_pos
        dec  r8
        jne  chopper_pickup_1
        .endproc
@@ -2812,6 +2839,8 @@ one_time_init:
        bl   @copy_speech_read_to_pad
 *      Detect speech
        bl   @speech_check
+*      Detect F18A
+       seto @sprite_dupl_bug
 *      Setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Sprite patterns
@@ -2854,8 +2883,15 @@ game_init:
 *
 level_init:
        .proc
+       li   r0,scroll_max              ; start at the bottom of the map
+       mov  r0,@scroll_y
        li   r0,10000
        mov  r0,@bonus
+       bl   @base_stage_init
+       li   r0,one_resident_stage
+       mov  r0,@next_stage_ptr
+       li   r0,>6da8
+       mov  r0,@climber_pos
        .endproc
 *// level_init
 
@@ -2866,11 +2902,6 @@ level_init:
 restart_init:
        .proc
        clr  @status
-       bl   @base_stage_init
-       li   r0,one_resident_stage
-       mov  r0,@next_stage_ptr
-       li   r0,>6da8
-       mov  r0,@climber_pos
        li   r0,left_anim
        mov  r0,@left_anim_ptr
        clr  @left_wide
@@ -2940,6 +2971,10 @@ set_character_set:
 graphics_mode:
        .proc
        clr  r0
+       abs  @sprite_dupl_bug
+       jne  graphics_mode_0
+       movb r0,@vdp_registers+4        ; One pattern table
+graphics_mode_0:
        li   r1,vdp_registers
        li   r2,8
 graphics_mode_1:
@@ -3109,7 +3144,7 @@ lower_memory_max:
 stages:
        equ  $
 one_resident_stage:
-       data >0900                      ; scroll y
+       data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
 bird_stage:
        data >0980                      ; scroll y
@@ -3169,12 +3204,12 @@ b_building_left:
        byte >40
 b_building_right:
        byte >c8
+b_1:
+       byte 1
 b_8:
        byte 8
 b_12:
        byte 12
-b_16:
-       byte 16
 w_1:
        data 1
 w_2:
