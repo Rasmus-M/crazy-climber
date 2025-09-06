@@ -212,12 +212,12 @@ new_level:
        bl   @level_init
 ;       li   r0,>988                    ; For testing bird
 ;       li   r0,>4A8                    ; For testing kong
-;       li   r0,>088                    ; For testing chopper
-;       mov  r0,@scroll_y
+       li   r0,>088                    ; For testing chopper
+       mov  r0,@scroll_y               ; For testing
 ;       li   r0,bird_stage              ; For testing bird
 ;       li   r0,kong_stage              ; For testing kong
-;       li   r0,chopper_stage           ; For testing chopper
-;       mov  r0,@next_stage_ptr         ; For testing
+       li   r0,chopper_stage           ; For testing chopper
+       mov  r0,@next_stage_ptr         ; For testing
        bl   @initial_screen
        bl   @intro_climb
 restart_level:
@@ -265,8 +265,14 @@ main_loop:
        jmp  main_loop
 *      Main loop terminated
 finished:
+       ci   r0,1
+       jeq  finished_1
+       li   r0,5300
+       s    r0,@bonus
+       jgt  finished_1
+       clr  @bonus
+finished_1:
        bl   @chopper_pickup
-       b    @new_game
 died:
        b    @new_game
 *// main_loop
@@ -1957,9 +1963,15 @@ chopper_init_data:
 *
 chopper_handler:
        .proc
+       mov  @sprite_count(r3),r4
+       ci   r4,480                     ; Give up?
+       jne  chopper_handler_0
+       inc  @status                    ; Yes, give up
+       inc  @sprite_count(r3)
+       jmp  chopper_handler_2b
+chopper_handler_0:
        mov  @sprite_x(r3),r0           ; Position of middle of landing gear
        mov  @sprite_y(r3),r1
-       mov  @sprite_count(r3),r4
        andi r4,1
        sla  r4,1
        mov  @sprite_vx(r3),r2
@@ -1974,8 +1986,10 @@ chopper_handler:
        inc  @sprite_count(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
+*      Skip the rest if it's the end sequence
        mov  @status,r0
        jne  chopper_handler_3
+*      Boundary check
        mov  @sprite_x(r3),r0
        ci   r0,>40
        jl   !
@@ -2015,6 +2029,7 @@ chopper_handler_2a:
        ci   r0,>10
        jgt  chopper_handler_3
 *      Pickup
+chopper_handler_2b:
        clr  @sprite_vx(r3)
        seto @sprite_vy(r3)
        inc  @status
@@ -2810,8 +2825,11 @@ intro_climb_data_end:
 *
 chopper_pickup:
        .proc
+       c    @status,@w_1
+       jne  chopper_pickup_0
        li   r0,completed_module
        bl   @play_module
+chopper_pickup_0:
        li   r8,>70
 chopper_pickup_1:
        li   r9,3
@@ -2832,7 +2850,11 @@ chopper_pickup_2:
        bl   @display_score
        bl   @display_bonus
 chopper_pickup_3:
+       c    @status,@w_1
+       jne  chopper_pickup_4
        sb   @b_1,@climber_pos
+chopper_pickup_4:
+       inc  @frame
        dec  r8
        jne  chopper_pickup_1
        .endproc

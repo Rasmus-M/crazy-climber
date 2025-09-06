@@ -1,3 +1,2 @@
-- Chopper should give up after a while, then you only get a tiny bonus
 - Falling, dying. Return to same place with no enemies.
 - Joystick control
