@@ -1,5 +1,3 @@
-- Bonus when rescued, drops 100 every 9 seconds
 - Chopper should give up after a while, then you only get a tiny bonus
-- Should not be able to climb over resident
 - Falling, dying. Return to same place with no enemies.
-- Indicator for position in building.
+- Joystick control

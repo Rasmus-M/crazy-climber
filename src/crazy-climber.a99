@@ -62,6 +62,14 @@ attenuation_during_speech:
        equ  2
 chr_zero:
        equ  96
+chr_window_open_top:
+       equ  4
+chr_window_open_bottom:
+       equ  5
+chr_face_first:
+       equ  18
+chr_face_last:
+       equ  25
 kong_row:
        equ  >88
 
@@ -794,13 +802,13 @@ create_windows_7c:
        mov  @window_anim_col(r3),r0    ; X coord
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window?
-       jne  create_windows_10           ; If not then skip
+       jne  create_windows_10          ; If not then skip
        ai   r2,-2*map_width            ; Move one window up
        bl   @is_open_window_bottom     ; Is there an open window above?
-       jne  create_windows_10           ; If not then skip
+       jne  create_windows_10          ; If not then skip
        ai   r2,4*map_width             ; Move one window down
        bl   @is_open_window            ; Is there an open window below?
-       jne  create_windows_10           ; If not then skip
+       jne  create_windows_10          ; If not then skip
 *      Other initializations
        clr  @window_anim_frame(r3)     ; Clear frame
        c    @window_anim_type(r3),@w_window_anim_type_resident
@@ -840,6 +848,8 @@ check_grip:
        bl   @left_hand_map_addr
        bl   @is_open_window_bottom
        jne  check_grip_1
+       bl   @is_resident_above
+       jeq  check_grip_1
        seto @left_grip
        bl   @left_hand_position
        mov  r1,@left_hand_pos
@@ -856,6 +866,8 @@ check_grip_1:
        bl   @right_hand_map_addr
        bl   @is_open_window_bottom
        jne  check_grip_2
+       bl   @is_resident_above
+       jeq  check_grip_2
        seto @right_grip
        bl   @right_hand_position
        mov  r1,@right_hand_pos
@@ -1648,7 +1660,7 @@ bird_stage_init:
 bird_stage_init_1:
        .endproc
 bird_init_data:
-       data bird_handler, >0020, >0902, >0002, >0001, >0000
+       data bird_handler, >0020, >0982, >0002, >0001, >0000
 *// bird_stage_init
 
 *********************************************************************
@@ -2269,10 +2281,6 @@ is_open_window:
        sla  r1,1
        mov  @TCHARS(r1),r1
        cb   @b_window_open_top,r1
-;       jeq  is_open_window_1
-;       swpb r1
-;       cb   @b_window_open_top,r1
-;is_open_window_1:
        rt
 *// is_open_window
 
@@ -2290,13 +2298,30 @@ is_open_window_bottom:
        mov  @TCHARS(r1),r1
        swpb r1
        cb   @b_window_open_bottom,r1
-;       jeq  is_open_window_bottom_1
-;       swpb r1
-;       cb   @b_window_open_bottom,r1
-;is_open_window_bottom_1:
        rt
 *// is_open_window_bottom
 
+*********************************************************************
+*
+* Checks whether r2 points to a window with a resident
+*
+* On return EQ means that there is a resident. r1 is modified.
+*
+is_resident_above:
+       clr  r1
+       movb @-map_width(r2),r1
+       swpb r1
+       sla  r1,1
+       mov  @TCHARS(r1),r1
+       swpb r1
+       cb   r1,@b_face_first
+       jl   is_resident_above_1
+       cb   r1,@b_face_last
+       jh   is_resident_above_1
+       cb   r1,r1                      ; Set EQ
+is_resident_above_1:
+       rt
+*// is_resident_above
 
 *********************************************************************
 *
@@ -3197,9 +3222,13 @@ window_anims_end:
 b_window_closed_tch:                   ; Window left bottom closed -> Window left closed 5
        byte >23
 b_window_open_top:                     ; Original window open top char
-       byte >04
+       byte chr_window_open_top
 b_window_open_bottom:                  ; Original window open bottom char
-       byte >05
+       byte chr_window_open_bottom
+b_face_first:
+       byte chr_face_first
+b_face_last:
+       byte chr_face_last
 b_building_left:
        byte >40
 b_building_right:
