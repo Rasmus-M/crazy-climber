@@ -1,2 +1,2 @@
+- Opening screen
 - Falling, dying. Return to same place with no enemies.
-- Joystick control

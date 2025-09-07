@@ -133,7 +133,7 @@ right_wide:                            ; Flag: wide on right side?
        equ  left_wide+2
 animation_count:                       ; Number of frames to repeat last animation frame
        equ  right_wide+2
-inactivity_count:
+inactivity_count:                      ; Incremented when player is inactive
        equ  animation_count+2
 animation_changed:                     ; Flag: did animation frame (left or right) change?
        equ  inactivity_count+2
@@ -141,27 +141,29 @@ windows_head_ptr:                      ; Head of window animation list
        equ  animation_changed+2
 windows_tail_ptr:                      ; Head of window animation list
        equ  windows_head_ptr+2
-next_stage_ptr:
+next_stage_ptr:                        ; Pointer to next stage in the stages list
        equ  windows_tail_ptr+2
-max_residents:
+max_residents:                         ; Maximum residents together on screen
        equ  next_stage_ptr+2
-current_residents:
+current_residents:                     ; Currently disaplyed residents
        equ  max_residents+2
 secondary_sprite_patterns:             ; Secondary sprite patterns loaded (0 = head and hands)
        equ  current_residents+2
-status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished)
+control_set:                           ; Points to current control set (joystick_control or keyboard_control)
        equ  secondary_sprite_patterns+2
-lives:
+status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished, 2 = finished but not picked up by chopper)
+       equ  control_set+2
+lives:                                 ; Number of lives
        equ  status+2
-score:
+score:                                 ; Score LSW
        equ  lives+2
-score_msw:
+score_msw:                             ; Score MSW
        equ  score+2
-disp_score:
+disp_score:                            ; Currently displayed score (LSW)
        equ  score_msw+2
-bonus:
+bonus:                                 ; Bonus (counts down)
        equ  disp_score+2
-snd_channel_1:
+snd_channel_1:                         ; Sound/music player data
        equ  bonus+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
@@ -179,7 +181,7 @@ snd_track_4:
        equ  snd_track_3+snd_track_size
 module_speed:
        equ  snd_track_4+snd_track_size
-speech_detected:
+speech_detected:                       ; Speech data
        equ  module_speed+2
 speech_reserved:
        equ  speech_detected+2
@@ -191,7 +193,7 @@ speech_counter:
        equ  speech_addr+2
 speech_read_pad:
        equ  speech_counter+2
-vm8bw_pad:
+vm8bw_pad:                             ; Copy routine
        equ  speech_read_pad+14
 pad_max:                               ; Max scratchpad address used
        equ  vm8bw_pad+24
@@ -212,12 +214,12 @@ new_level:
        bl   @level_init
 ;       li   r0,>988                    ; For testing bird
 ;       li   r0,>4A8                    ; For testing kong
-       li   r0,>088                    ; For testing chopper
-       mov  r0,@scroll_y               ; For testing
+;       li   r0,>088                    ; For testing chopper
+;       mov  r0,@scroll_y               ; For testing
 ;       li   r0,bird_stage              ; For testing bird
 ;       li   r0,kong_stage              ; For testing kong
-       li   r0,chopper_stage           ; For testing chopper
-       mov  r0,@next_stage_ptr         ; For testing
+;       li   r0,chopper_stage           ; For testing chopper
+;       mov  r0,@next_stage_ptr         ; For testing
        bl   @initial_screen
        bl   @intro_climb
 restart_level:
@@ -902,6 +904,8 @@ control_climber_vert:
 control_climber_vert_1:
        clr  @animation_changed
        clr  @scroll_dy
+       li   r5,control_set
+       mov  @control_set,r5
 *      Left side
        mov  @left_anim_ptr,r3          ; Get animation pointer
 *      Check for left grip
@@ -910,7 +914,7 @@ control_climber_vert_1:
 *      Left grip
        ci   r3,left_anim_last          ; Is it the last animation frame?
        jeq  control_climber_vert_2     ; Skip ahead if so
-       li   r0,KEY_D                   ; Check down key
+       mov  @CTRL_LEFT_DN(r5),r0       ; Check down key
        bl   @check_key
        jeq  control_climber_vert_2     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
@@ -926,7 +930,7 @@ control_climber_vert_2:
 *      Right grip
        ci   r3,left_anim_last          ; Is it the last animation frame?
        jeq  control_climber_vert_3     ; Skip ahead if so
-       li   r0,KEY_D                   ; Check down key
+       mov  @CTRL_LEFT_DN(r5),r0       ; Check down key
        bl   @check_key
        jeq  control_climber_vert_3     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
@@ -936,7 +940,7 @@ control_climber_vert_2:
 control_climber_vert_3:
        ci   r3,left_anim               ; Is it the first animation frame?
        jeq  control_climber_vert_5     ; Skip ahead if so
-       li   r0,KEY_E                   ; Check up key
+       mov  @CTRL_LEFT_UP(r5),r0       ; Check up key
        bl   @check_key
        jeq  control_climber_vert_5     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
@@ -954,7 +958,7 @@ control_climber_vert_5:
 *      Right grip
        ci   r3,right_anim_last         ; Is it the last animation frame?
        jeq  control_climber_vert_6     ; Skip ahead if so
-       li   r0,KEY_K                   ; Check down key
+       mov  @CTRL_RIGHT_DN(r5),r0      ; Check down key
        bl   @check_key
        jeq  control_climber_vert_6     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
@@ -970,7 +974,7 @@ control_climber_vert_6:
 *      Left grip
        ci   r3,right_anim_last         ; Is it the last animation frame?
        jeq  control_climber_vert_7     ; Skip ahead if so
-       li   r0,KEY_K                   ; Check down key
+       mov  @CTRL_RIGHT_DN(r5),r0      ; Check down key
        bl   @check_key
        jeq  control_climber_vert_7     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
@@ -980,7 +984,7 @@ control_climber_vert_6:
 control_climber_vert_7:
        ci   r3,right_anim              ; Is it the first animation frame?
        jeq  control_climber_vert_9     ; Skip ahead if so
-       li   r0,KEY_I                   ; Check up key
+       mov  @CTRL_RIGHT_UP(r5),r0      ; Check up key
        bl   @check_key
        jeq  control_climber_vert_9     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
@@ -1099,26 +1103,27 @@ control_climber_horz:
        b    @control_climber_horz_11   ; Skip ahead if so
 *      Check keys
 control_climber_check_keys:
+       mov  @control_set,r5
        clr  r1                         ; Check if the left joystick is moved left
-       li   r0,KEY_S
+       mov  @CTRL_LEFT_LT(r5),r0
        bl   @check_key
        jeq  check_keys_1
        seto r1
 check_keys_1:
        clr  r2                         ; Check if the left joystick is moved right
-       li   r0,KEY_F
+       mov  @CTRL_LEFT_RT(r5),r0
        bl   @check_key
        jeq  check_keys_2
        seto r2
 check_keys_2:
        clr  r3                         ; Check if the right joystick is moved left
-       li   r0,KEY_J
+       mov  @CTRL_RIGHT_LT(r5),r0
        bl   @check_key
        jeq  check_keys_3
        seto r3
 check_keys_3:
        clr  r4                         ; Check if the right joystick is moved right
-       li   r0,KEY_L
+       mov  @CTRL_RIGHT_RT(r5),r0
        bl   @check_key
        jeq  check_keys_4
        seto r4
@@ -2921,6 +2926,8 @@ game_init:
        li   r0,3
        mov  r0,@lives
        mov  r0,@progress_top_offset
+       li   r0,keyboard_control
+       mov  r0,@control_set
        .endproc
 *// game_init
 
@@ -3147,6 +3154,10 @@ JOY_LT EQU  >0608
 JOY_RT EQU  >060A
 JOY_DN EQU  >060C
 JOY_UP EQU  >060E
+JO2_LT EQU  >0708
+JO2_RT EQU  >070A
+JO2_DN EQU  >070C
+JO2_UP EQU  >070E
 *
 check_key:
        li   r12,>0024                  ; CRU address of the column decoder
@@ -3187,6 +3198,29 @@ lower_memory_max:
        copy "kong-music.a99"
        copy "completed-music.a99"
        copy "speech-data.a99"
+
+CTRL_LEFT_DN:
+       equ  0
+CTRL_LEFT_UP:
+       equ  2
+CTRL_RIGHT_DN:
+       equ  4
+CTRL_RIGHT_UP:
+       equ  6
+CTRL_LEFT_LT:
+       equ  8
+CTRL_LEFT_RT:
+       equ  10
+CTRL_RIGHT_LT:
+       equ  12
+CTRL_RIGHT_RT:
+       equ  14
+joystick_control:
+       data JOY_DN, JOY_UP, JO2_DN, JO2_UP
+       data JOY_LT, JOY_RT, JO2_LT, JO2_RT
+keyboard_control:
+       data KEY_D, KEY_E, KEY_K, KEY_I
+       data KEY_S, KEY_F, KEY_J, KEY_L
 
 stages:
        equ  $
