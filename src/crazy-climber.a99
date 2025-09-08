@@ -12,6 +12,8 @@
        copy "sound-defs.a99"
        copy "speech-defs.a99"
 
+       copy "rom-bank-4.a99"
+
 **
 * Memory mapped addresses
 *
@@ -72,6 +74,8 @@ chr_face_last:
        equ  25
 kong_row:
        equ  >88
+title_bank_select:
+       equ  >6008
 
 **
 * Scratch pad
@@ -208,6 +212,7 @@ start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
+       bl   @title_screen
 new_game:
        bl   @game_init
 new_level:
@@ -2864,6 +2869,100 @@ chopper_pickup_4:
        jne  chopper_pickup_1
        .endproc
 *// chopper_pickup
+
+*********************************************************************
+*
+* Display title screen
+*
+title_screen:
+       .proc
+       seto @title_bank_select
+       clr  @scroll_y
+title_screen_1:
+       bl   @vsync
+       bl   @set_name_table
+*      Calculate VDP RAM destination offset
+       mov  @frame,r4
+       inv  r4
+       andi r4,1
+       sla  r4,10                      ; 0 or >400
+*      Calculate cpu ram source address
+       mov  @scroll_y,r5               ; Scroll offset
+       andi r5,>0007                   ; Mod 8
+       ai   r5,T_PSTRIP                ; Add base address of pattern strips
+*      Copy patterns 1st part
+       li   r0,pattern_table
+       a    r4,r0
+       mov  r5,r1
+       mov  @T_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy patterns 2nd part
+       li   r0,pattern_table_1
+       a    r4,r0
+       mov  r5,r1
+       mov  @T_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy patterns 3rd part
+       li   r0,pattern_table_2
+       a    r4,r0
+       mov  r5,r1
+       mov  @T_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy colors
+       li   r0,color_table
+       a    r4,r0
+       mov  r5,r1
+       ai   r1,T_CSTRIP-T_PSTRIP
+       mov  @T_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy name table
+       mov  @frame,r0
+       inv  r0
+       andi r0,1
+       jne  title_screen_3
+       li   r0,name_table_0+>300
+       li   r1,T_MAP_LOW
+       jmp  title_screen_4
+title_screen_3:
+       li   r0,name_table_1+>300
+       li   r1,T_MAP_HIGH
+title_screen_4:
+       mov  @scroll_y,r2
+       srl  r2,3
+       sla  r2,5
+       s    r2,r0
+       srl  r2,3
+       jeq  title_screen_5
+       bl   @vm8bw
+*      Change scroll offset
+title_screen_5:
+       inct @scroll_y
+       mov  @scroll_y,r0
+       ci   r0,192
+       jeq  title_screen_2
+       inc  @frame
+       jmp  title_screen_1
+title_screen_2:
+       li   r0,KEY_1
+       bl   @check_key
+       jeq  title_screen_6
+       li   r0,keyboard_control
+       mov  r0,@control_set
+       jmp  title_screen_8
+title_screen_6:
+       li   r0,KEY_2
+       bl   @check_key
+       jeq  title_screen_7
+       li   r0,joystick_control
+       mov  r0,@control_set
+       jmp  title_screen_8
+title_screen_7:
+       jmp  title_screen_2
+title_screen_8:
+       clr  @frame
+       bl   @set_name_table
+       .endproc
+*// title_screen
 
 *********************************************************************
 *

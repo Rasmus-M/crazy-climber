@@ -1,0 +1,5 @@
+       aorg >6000
+       bss  >40
+       copy "title-graphics.a99"
+       copy "title-sprites.a99"
+       bss  >8000-$
