@@ -2767,6 +2767,9 @@ inisc2:
        ai   r0,32
        dec  r7
        jne  inisc2
+*      Screen on
+       li   r0,>01e2
+       bl   @vwtr
        .endproc
 *// initial_screen
 
@@ -2993,6 +2996,9 @@ title_screen_7:
 title_screen_8:
        clr  @frame
        bl   @set_name_table
+*      Screen off
+       li   r0,>01a2
+       bl   @vwtr
        .endproc
 *// title_screen
 
