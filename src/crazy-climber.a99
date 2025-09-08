@@ -2878,9 +2878,41 @@ title_screen:
        .proc
        seto @title_bank_select
        clr  @scroll_y
+*      Sprite patterns
+       li   r0,sprite_pattern_table
+       li   r1,T_SPR0
+       li   r2,4*32
+       bl   @vmbw
+*      Main loop
 title_screen_1:
        bl   @vsync
        bl   @set_name_table
+*      Display sprites
+       li   r0,sprite_attr_table
+       bl   @vwad
+       li   r1,T_SL0
+       li   r2,4
+       li   r3,194
+       s    @scroll_y,r3
+title_screen_9:
+       clr  r0
+       movb *r1+,@r0lb
+       a    r3,r0
+       ci   r0,192
+       jgt  title_screen_10
+       swpb r0
+       movb r0,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       movb *r1+,*r15
+       jmp  title_screen_11
+title_screen_10:
+       ai   r0,3
+title_screen_11:
+       dec  r2
+       jne  title_screen_9
+       li   r1,>d000
+       movb r1,*r15
 *      Calculate VDP RAM destination offset
        mov  @frame,r4
        inv  r4
@@ -2994,11 +3026,9 @@ one_time_init:
        seto @sprite_dupl_bug
 *      Setup graphics mode
        bl   @graphics_mode             ; call setup routine
-*      Sprite patterns
-       li   r0,sprite_pattern_table
-       li   r1,SPR0
-       li   r2,64*32
-       bl   @vmbw
+*      Default values
+       li   r0,keyboard_control
+       mov  r0,@control_set
        .endproc
 *// one_time_init
 
@@ -3008,6 +3038,11 @@ one_time_init:
 *
 game_init:
        .proc
+*      Sprite patterns
+       li   r0,sprite_pattern_table
+       li   r1,SPR0
+       li   r2,64*32
+       bl   @vmbw
 *      Clear sprites table
        li   r0,sprites
        li   r2,sprites_end-sprites
@@ -3025,8 +3060,6 @@ game_init:
        li   r0,3
        mov  r0,@lives
        mov  r0,@progress_top_offset
-       li   r0,keyboard_control
-       mov  r0,@control_set
        .endproc
 *// game_init
 
