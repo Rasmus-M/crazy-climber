@@ -2879,6 +2879,9 @@ chopper_pickup_4:
 *
 title_screen:
        .proc
+*      One pattern table
+       li   r0,>0400
+       bl   @vwtr
        seto @title_bank_select
        clr  @scroll_y
 *      Sprite patterns
@@ -2925,20 +2928,8 @@ title_screen_11:
        mov  @scroll_y,r5               ; Scroll offset
        andi r5,>0007                   ; Mod 8
        ai   r5,T_PSTRIP                ; Add base address of pattern strips
-*      Copy patterns 1st part
+*      Copy patterns
        li   r0,pattern_table
-       a    r4,r0
-       mov  r5,r1
-       mov  @T_TCHNUM,r2
-       bl   @vm8bw8
-*      Copy patterns 2nd part
-       li   r0,pattern_table_1
-       a    r4,r0
-       mov  r5,r1
-       mov  @T_TCHNUM,r2
-       bl   @vm8bw8
-*      Copy patterns 3rd part
-       li   r0,pattern_table_2
        a    r4,r0
        mov  r5,r1
        mov  @T_TCHNUM,r2
@@ -2999,6 +2990,12 @@ title_screen_8:
 *      Screen off
        li   r0,>01a2
        bl   @vwtr
+       abs  @sprite_dupl_bug
+       jeq  title_screen_12
+*      3 pattern tables
+       li   r0,>0403
+       bl   @vwtr
+title_screen_12:
        .endproc
 *// title_screen
 
