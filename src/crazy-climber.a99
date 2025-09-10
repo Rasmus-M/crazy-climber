@@ -2883,14 +2883,54 @@ title_screen:
        li   r0,>0400
        bl   @vwtr
        seto @title_bank_select
-       clr  @scroll_y
+       bl   @title_scroll_logo
+       bl   @title_scroll_text
+title_screen_1:
+       li   r0,KEY_1
+       bl   @check_key
+       jeq  title_screen_2
+       li   r0,keyboard_control
+       mov  r0,@control_set
+       jmp  title_screen_4
+title_screen_2:
+       li   r0,KEY_2
+       bl   @check_key
+       jeq  title_screen_3
+       li   r0,joystick_control
+       mov  r0,@control_set
+       jmp  title_screen_4
+title_screen_3:
+       jmp  title_screen_1
+title_screen_4:
+       clr  @frame
+       bl   @set_name_table
+*      Screen off
+       li   r0,>01a2
+       bl   @vwtr
+       abs  @sprite_dupl_bug
+       jeq  title_screen_5
+*      3 pattern tables
+       li   r0,>0403
+       bl   @vwtr
+title_screen_5:
+       .endproc
+*// title_screen
+
+*********************************************************************
+*
+* Display scrolling logo
+*
+title_scroll_logo:
+       .proc
+       li   r0,55
+       mov  r0,@scroll_y
 *      Sprite patterns
        li   r0,sprite_pattern_table
        li   r1,T_SPR0
        li   r2,4*32
        bl   @vmbw
 *      Main loop
-title_screen_1:
+title_scroll_logo_1:
        bl   @vsync
        bl   @set_name_table
 *      Display sprites
@@ -2898,25 +2938,19 @@ title_screen_1:
        bl   @vwad
        li   r1,T_SL0
        li   r2,4
-       li   r3,194
+       li   r3,-1
        s    @scroll_y,r3
-title_screen_9:
+title_scroll_logo_2:
        clr  r0
        movb *r1+,@r0lb
        a    r3,r0
-       ci   r0,192
-       jgt  title_screen_10
        swpb r0
        movb r0,*r15
        movb *r1+,*r15
        movb *r1+,*r15
        movb *r1+,*r15
-       jmp  title_screen_11
-title_screen_10:
-       ai   r0,3
-title_screen_11:
        dec  r2
-       jne  title_screen_9
+       jne  title_scroll_logo_2
        li   r1,>d000
        movb r1,*r15
 *      Calculate VDP RAM destination offset
@@ -2927,15 +2961,81 @@ title_screen_11:
 *      Calculate cpu ram source address
        mov  @scroll_y,r5               ; Scroll offset
        andi r5,>0007                   ; Mod 8
-       ai   r5,T_PSTRIP                ; Add base address of pattern strips
+       ai   r5,L_PSTRIP                ; Add base address of pattern strips
 *      Copy patterns
        li   r0,pattern_table
+       a    r4,r0
+       mov  r5,r1
+       mov  @L_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy colors
+       li   r0,color_table
+       a    r4,r0
+       mov  r5,r1
+       ai   r1,L_CSTRIP-L_PSTRIP
+       mov  @L_TCHNUM,r2
+       bl   @vm8bw8
+*      Copy name table
+       mov  @frame,r0
+       inv  r0
+       andi r0,1
+       jne  title_scroll_logo_3
+       li   r0,name_table_0
+       li   r1,7*32+L_MAP_LOW
+       jmp  title_scroll_logo_4
+title_scroll_logo_3:
+       li   r0,name_table_1
+       li   r1,7*32+L_MAP_HIGH
+title_scroll_logo_4:
+       li   r2,55
+       s     @scroll_y,r2
+       srl  r2,3
+       sla  r2,5
+       s    r2,r1
+       srl  r2,3
+       jeq  title_scroll_logo_5
+       bl   @vm8bw
+*      Change scroll offset
+title_scroll_logo_5:
+       dec  @scroll_y
+       jeq  title_scroll_logo_6
+       inc  @frame
+       jmp  title_scroll_logo_1
+title_scroll_logo_6:
+       li   r0,name_table_1
+       li   r1,L_MAP_LOW+32
+       li   r2,6*32/8
+       bl   @vm8bw
+       .endproc
+*// title_scroll_logo
+
+*********************************************************************
+*
+* Display scrolling text
+*
+title_scroll_text:
+       .proc
+*      Main loop
+title_scroll_text_1:
+       bl   @vsync
+       bl   @set_name_table
+*      Calculate VDP RAM destination offset
+       mov  @frame,r4
+       inv  r4
+       andi r4,1
+       sla  r4,10                      ; 0 or >400
+*      Calculate cpu ram source address
+       mov  @scroll_y,r5               ; Scroll offset
+       andi r5,>0007                   ; Mod 8
+       ai   r5,T_PSTRIP                ; Add base address of pattern strips
+*      Copy patterns
+       li   r0,58*8+pattern_table
        a    r4,r0
        mov  r5,r1
        mov  @T_TCHNUM,r2
        bl   @vm8bw8
 *      Copy colors
-       li   r0,color_table
+       li   r0,58*8+color_table
        a    r4,r0
        mov  r5,r1
        ai   r1,T_CSTRIP-T_PSTRIP
@@ -2945,59 +3045,32 @@ title_screen_11:
        mov  @frame,r0
        inv  r0
        andi r0,1
-       jne  title_screen_3
+       jne  title_scroll_text_2
        li   r0,name_table_0+>300
        li   r1,T_MAP_LOW
-       jmp  title_screen_4
-title_screen_3:
+       jmp  title_scroll_text_3
+title_scroll_text_2:
        li   r0,name_table_1+>300
        li   r1,T_MAP_HIGH
-title_screen_4:
+title_scroll_text_3:
        mov  @scroll_y,r2
        srl  r2,3
        sla  r2,5
        s    r2,r0
        srl  r2,3
-       jeq  title_screen_5
+       jeq  title_scroll_text_4
        bl   @vm8bw
 *      Change scroll offset
-title_screen_5:
+title_scroll_text_4:
        inct @scroll_y
        mov  @scroll_y,r0
-       ci   r0,192
-       jeq  title_screen_2
+       ci   r0,130
+       jeq  title_scroll_text_5
        inc  @frame
-       jmp  title_screen_1
-title_screen_2:
-       li   r0,KEY_1
-       bl   @check_key
-       jeq  title_screen_6
-       li   r0,keyboard_control
-       mov  r0,@control_set
-       jmp  title_screen_8
-title_screen_6:
-       li   r0,KEY_2
-       bl   @check_key
-       jeq  title_screen_7
-       li   r0,joystick_control
-       mov  r0,@control_set
-       jmp  title_screen_8
-title_screen_7:
-       jmp  title_screen_2
-title_screen_8:
-       clr  @frame
-       bl   @set_name_table
-*      Screen off
-       li   r0,>01a2
-       bl   @vwtr
-       abs  @sprite_dupl_bug
-       jeq  title_screen_12
-*      3 pattern tables
-       li   r0,>0403
-       bl   @vwtr
-title_screen_12:
+       jmp  title_scroll_text_1
+title_scroll_text_5:
        .endproc
-*// title_screen
+*// title_scroll_text
 
 *********************************************************************
 *
