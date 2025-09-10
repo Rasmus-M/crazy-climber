@@ -2938,7 +2938,7 @@ title_scroll_logo_1:
        bl   @vwad
        li   r1,T_SL0
        li   r2,4
-       li   r3,-1
+       seto r3
        s    @scroll_y,r3
 title_scroll_logo_2:
        clr  r0
@@ -2998,12 +2998,12 @@ title_scroll_logo_4:
 *      Change scroll offset
 title_scroll_logo_5:
        dec  @scroll_y
-       jeq  title_scroll_logo_6
+       jlt  title_scroll_logo_6
        inc  @frame
        jmp  title_scroll_logo_1
 title_scroll_logo_6:
-       li   r0,name_table_1
-       li   r1,L_MAP_LOW+32
+       li   r0,name_table_0
+       li   r1,L_MAP_HIGH+32
        li   r2,6*32/8
        bl   @vm8bw
        .endproc
@@ -3015,6 +3015,7 @@ title_scroll_logo_6:
 *
 title_scroll_text:
        .proc
+       clr  @scroll_y
 *      Main loop
 title_scroll_text_1:
        bl   @vsync
@@ -3064,7 +3065,7 @@ title_scroll_text_3:
 title_scroll_text_4:
        inct @scroll_y
        mov  @scroll_y,r0
-       ci   r0,130
+       ci   r0,140
        jeq  title_scroll_text_5
        inc  @frame
        jmp  title_scroll_text_1
