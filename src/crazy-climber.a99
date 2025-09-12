@@ -49,9 +49,11 @@ name_table_0:                          ; Name table base 0 (>0A)
 name_table_1:                          ; Name table base 1 (>0B)
        equ  >2C00
 sprite_attr_table:                     ; Sprite attribute table
-       equ  >3700
+       equ  >3000
 
 *      Constants
+falling_enabled:
+       equ  1
 map_width:
        equ  22
 scroll_max:
@@ -68,10 +70,18 @@ chr_window_open_top:
        equ  4
 chr_window_open_bottom:
        equ  5
+chr_window_left_bottom_closed:
+       equ  16
+chr_window_right_bottom_closed:
+       equ  17
 chr_face_first:
        equ  18
 chr_face_last:
        equ  25
+chr_life:
+       equ  111
+chr_space:
+       equ  107
 kong_row:
        equ  >88
 title_bank_select:
@@ -212,8 +222,8 @@ start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
-       bl   @title_screen
 new_game:
+       bl   @title_screen
        bl   @game_init
 new_level:
        bl   @level_init
@@ -248,12 +258,19 @@ main_loop:
 *      Change scroll offset
        bl   @change_scroll_offset
 *      Animate windows and faces
+       mov  @frame,r0                  ; Only do this every 4th frame
+       andi r0,>0003
+       ci   r0,>0001                   ; Frame 1, 5, 9, 13, ...
+       jne  !
        bl   @animate_windows
        bl   @check_int
+!      mov  @frame,r0                  ; Only do this every 16th frame
+       andi r0,>000f                   ; Frame 0, 16, 32, 64 ...
+       jne  !
        bl   @create_windows
        bl   @check_int
 *      Update patterns
-       bl   @update_pattern_table
+!      bl   @update_pattern_table
 *      Update name table buffer
        bl   @update_name_table
        bl   @display_score
@@ -281,6 +298,9 @@ finished:
 finished_1:
        bl   @chopper_pickup
 died:
+       bl   @fall_sequence
+       dec  @lives
+       jne  restart_level
        b    @new_game
 *// main_loop
 
@@ -574,10 +594,6 @@ change_scroll_offset_2:
 *
 animate_windows:
        .proc
-       mov  @frame,r0                  ; Only do this every 4th frame
-       andi r0,>0003
-       ci   r0,>0001                   ; Frame 1, 5, 9, 13, ...
-       jne  animate_windows_8
        mov  @windows_head_ptr,r3       ; List of window animations (including resident faces)
 animate_windows_1:
        mov  r3,r3
@@ -593,7 +609,7 @@ animate_windows_1:
        ai   r4,face_appear             ; Yes - add base address of face animations
        jmp  animate_windows_5
 animate_windows_3:
-       cb   @-map_width(r2),@b_window_closed_tch  ; Is window above closed?
+       cb   @-map_width(r2),@b_window_closed_left_tch  ; Is window above closed?
        jeq  animate_windows_4          ; Yes - move on
        ai   r4,close_window_below_open ; No - add base address of closing windows below open animation
        jmp  animate_windows_5
@@ -749,9 +765,6 @@ add_window_to_list_5:
 *
 create_windows:
        .proc
-       mov  @frame,r0                  ; Only do this every 16th frame
-       andi r0,>000f                   ; Frame 0, 16, 32, 64 ...
-       jne  create_windows_11
 *      Remove window animations that are scrolled out
        mov  @scroll_y,r4
        srl  r4,4                       ; Number of windows scrolled
@@ -848,7 +861,7 @@ create_windows_11:
 check_grip:
        .proc
        mov  @animation_count,r1        ; Is an animation count already taking place?
-       jne  check_grip_3               ; Yes - return
+       jne  check_grip_4               ; Yes - return
 *      Left
        clr  @left_grip
        clr  @left_hand_pos
@@ -859,6 +872,7 @@ check_grip:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_1
        bl   @left_hand_map_addr
+       mov  r2,r4
        bl   @is_open_window_bottom
        jne  check_grip_1
        bl   @is_resident_above
@@ -877,6 +891,7 @@ check_grip_1:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_2
        bl   @right_hand_map_addr
+       mov  r2,r5
        bl   @is_open_window_bottom
        jne  check_grip_2
        bl   @is_resident_above
@@ -888,12 +903,19 @@ check_grip_1:
 check_grip_2:
        mov  @left_grip,r0
        soc  @right_grip,r0
-       jne  check_grip_3
+       jne  check_grip_4
 *      No grip
+       mov  r4,r2
+       bl   @is_closed_window
+       jne  check_grip_3
+       mov  r5,r2
+       bl   @is_closed_window
+       jne  check_grip_3
        bl   @fall
-       li   r0,speech_oh_no_idx
-       bl   @speak
+       jmp  check_grip_4
 check_grip_3:
+       bl   @fall_short
+check_grip_4:
        .endproc
 *// check_grip
 
@@ -1675,8 +1697,6 @@ bird_stage_init:
        bl   @play_module
 bird_stage_init_1:
        .endproc
-bird_init_data:
-       data bird_handler, >0020, >0982, >0002, >0001, >0000
 *// bird_stage_init
 
 *********************************************************************
@@ -1806,8 +1826,6 @@ kong_stage_init:
        bl   @play_module
 kong_stage_init_1:
        .endproc
-kong_init_data:
-       data kong_handler, >0058, >0448, >0000, >0000, >0000
 *// kong_stage_init
 
 *********************************************************************
@@ -1963,8 +1981,6 @@ chopper_stage_init:
        mov  *r0+,@sprite_vy(r4)
 chopper_stage_init_1:
        .endproc
-chopper_init_data:
-       data chopper_handler, >0040, >0000, >0000, >0001, >0002
 *// chopper_stage_init
 
 *********************************************************************
@@ -2328,6 +2344,26 @@ is_open_window_bottom:
 
 *********************************************************************
 *
+* Checks whether r2 points to a closed window in the map
+*
+* On return EQ means that it's a closed window. r1 is modified.
+*
+is_closed_window:
+       clr  r1
+       movb *r2,r1
+       swpb r1
+       sla  r1,1
+       mov  @TCHARS(r1),r1
+       swpb r1
+       cb   @b_window_left_bottom_closed,r1
+       jeq  is_closed_window_1
+       cb   @b_window_right_bottom_closed,r1
+is_closed_window_1:
+       rt
+*// is_closed_window
+
+*********************************************************************
+*
 * Checks whether r2 points to a window with a resident
 *
 * On return EQ means that there is a resident. r1 is modified.
@@ -2395,16 +2431,32 @@ lose_grip_6:
 
 *********************************************************************
 *
-* Fall. For now just lose grip.
+* Fall
 *
 fall:
+       .proc
+       .ifeq falling_enabled,1
+       dec  @status
+       .else
        mov  @animation_count,r0
        jne  fall_1
+       bl   @fall_short
+fall_1:
+       .endif
+       li   r0,speech_oh_no_idx
+       bl   @speak
+       .endproc
+*// fall
+
+*********************************************************************
+*
+* Fall short
+*
+fall_short:
        mov  @w_2,@animation_count      ; Animation count = 2
        mov  @w_2,@scroll_dy            ; Lose grip
-fall_1:
        rt
-*// fall
+*// fall_short
 
 *******************************************************************
 *
@@ -2428,7 +2480,7 @@ display_progress:
        ai   r1,-96
        sla  r1,3
        ai   r1,PAT96
-       li   r0,progress_char_buffer
+       li   r0,buffer
        mov  *r1+,*r0+                  ; Copy 8 bytes
        mov  *r1+,*r0+
        mov  *r1+,*r0+
@@ -2440,22 +2492,22 @@ display_progress:
        bl   @vmbw
 *      Update pattern buffer
        andi r4,7                       ; Pixel offset
-       ai   r4,progress_char_buffer
+       ai   r4,buffer
        movb *r4,r0
        li   r1,>1800
        xor  r1,r0
        movb r0,*r4
 *      Copy pattern to VDP
        li   r0,127*8+pattern_table
-       li   r1,progress_char_buffer
+       li   r1,buffer
        li   r2,8
        bl   @vmbw
        li   r0,127*8+pattern_table_1
-       li   r1,progress_char_buffer
+       li   r1,buffer
        li   r2,8
        bl   @vmbw
        li   r0,127*8+pattern_table_2
-       li   r1,progress_char_buffer
+       li   r1,buffer
        li   r2,8
        bl   @vmbw
 *      Copy char to VDP
@@ -2484,8 +2536,6 @@ display_progress_1:
        bl   @vsbw
 display_progress_2:
        .endproc
-progress_char_buffer:
-       bss 8
 *// display_progress
 
 *******************************************************************
@@ -2538,7 +2588,7 @@ display_score:
        jeq  display_score_1
        mov  @score_msw,r6
        mov  @score,r7
-       div  @d10000,r6
+       div  @w_10000,r6
        li   r0,32*6+2
        mov  r6,r1
        li   r2,2
@@ -2601,7 +2651,7 @@ display_decimal:
        li   r3,5
        s    r2,r3
        sla  r3,1
-       ai   r3,d10000
+       ai   r3,w_10000
        dec  r2
 display_decimal_1:
        clr  r0
@@ -2624,17 +2674,39 @@ display_decimal_1:
        ai   r2,-buffer
        bl   @vmbw
        .endproc
-buffer:
-       bss  6
-d10000:
-       data 10000
-d1000:
-       data 1000
-d100:
-       data 100
-d10:
-       data 10
 *// display_decimal
+
+*******************************************************************
+*
+* Display lives
+*
+display_lives:
+       .proc
+*      Write to buffer
+       li   r1,buffer
+       li   r2,1
+display_lives_1:
+       c    @lives,r2
+       jle  display_lives_2
+       movb @b_life,*r1+
+       jmp  display_lives_3
+display_lives_2:
+       movb @b_space,*r1+
+display_lives_3:
+       inc  r2
+       ci   r2,6
+       jle  display_lives_1
+*      Display
+       li   r0,22*32+2+name_table_0
+       li   r1,buffer
+       li   r2,6
+       bl   @vmbw
+       li   r0,22*32+2+name_table_1
+       li   r1,buffer
+       li   r2,6
+       bl   @vmbw
+       .endproc
+*// display_lives
 
 *********************************************************************
 *
@@ -2875,14 +2947,44 @@ chopper_pickup_4:
 
 *********************************************************************
 *
+* Climber is falling from building
+*
+fall_sequence:
+       .proc
+fall_sequence_1:
+       li   r9,1
+fall_sequence_2:
+       bl   @vsync
+       bl   @int_routine
+       dec  r9
+       jne  fall_sequence_2
+       bl   @update_climber_attrs_left
+       bl   @update_climber_attrs_right
+       bl   @display_sprites
+       ab   @b_1,@climber_pos
+       cb   @climber_pos,@b_191
+       jeq  fall_sequence_3
+       inc  @frame
+       jmp  fall_sequence_1
+fall_sequence_3:
+       .endproc
+*// fall_sequence
+
+*********************************************************************
+*
 * Display title screen
 *
 title_screen:
        .proc
+       seto @title_bank_select
 *      One pattern table
        li   r0,>0400
        bl   @vwtr
-       seto @title_bank_select
+*      Clear screen
+       li   r0,name_table_0
+       clr  r1
+       li   r2,>700
+       bl   @vsmw
        bl   @title_scroll_logo
        bl   @title_scroll_text
 title_screen_1:
@@ -3120,23 +3222,12 @@ game_init:
        li   r1,SPR0
        li   r2,64*32
        bl   @vmbw
-*      Clear sprites table
-       li   r0,sprites
-       li   r2,sprites_end-sprites
-       bl   @clear
-*      Clear window animations table and pointers
-       li   r0,window_anims
-       li   r2,window_anims_end-window_anims
-       bl   @clear
-       clr  @windows_head_ptr
-       clr  @windows_tail_ptr
 *      Game variables
        clr  @score
        clr  @score_msw
        clr  @disp_score
        li   r0,3
        mov  r0,@lives
-       mov  r0,@progress_top_offset
        .endproc
 *// game_init
 
@@ -3148,13 +3239,13 @@ level_init:
        .proc
        li   r0,scroll_max              ; start at the bottom of the map
        mov  r0,@scroll_y
+       li   r0,3
+       mov  r0,@progress_top_offset
        li   r0,10000
        mov  r0,@bonus
        bl   @base_stage_init
        li   r0,one_resident_stage
        mov  r0,@next_stage_ptr
-       li   r0,>6da8
-       mov  r0,@climber_pos
        .endproc
 *// level_init
 
@@ -3165,6 +3256,8 @@ level_init:
 restart_init:
        .proc
        clr  @status
+       li   r0,>6da8
+       mov  r0,@climber_pos
        li   r0,left_anim
        mov  r0,@left_anim_ptr
        clr  @left_wide
@@ -3173,8 +3266,23 @@ restart_init:
        mov  r0,@right_anim_ptr
        clr  @right_wide
        bl   @update_climber_attrs_right
+       mov  @scroll_y,r0
+       andi r0,>fff0
+       ori  r0,>0008
+       mov  r0,@scroll_y
        clr  @scroll_dy
        clr  @frame
+       bl   @display_lives
+*      Clear sprites table
+       li   r0,sprites
+       li   r2,sprites_end-sprites
+       bl   @clear
+*      Clear window animations table and pointers
+       li   r0,window_anims
+       li   r2,window_anims_end-window_anims
+       bl   @clear
+       clr  @windows_head_ptr
+       clr  @windows_tail_ptr
        .endproc
 *// restart_init
 
@@ -3408,6 +3516,9 @@ lower_memory_max:
        copy "completed-music.a99"
        copy "speech-data.a99"
 
+buffer:
+       bss  8
+
 CTRL_LEFT_DN:
        equ  0
 CTRL_LEFT_UP:
@@ -3457,6 +3568,13 @@ chopper_stage:
 stages_end:
        equ   $
 
+bird_init_data:
+       data bird_handler, >0020, >0982, >0002, >0001, >0000
+kong_init_data:
+       data kong_handler, >0058, >0448, >0000, >0000, >0000
+chopper_init_data:
+       data chopper_handler, >0040, >0000, >0000, >0001, >0002
+
 window_anim_row:
        equ  0
 window_anim_col:
@@ -3484,12 +3602,16 @@ window_anims:
 window_anims_end:
        data -1
 
-b_window_closed_tch:                   ; Window left bottom closed -> Window left closed 5
+b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5
        byte >23
 b_window_open_top:                     ; Original window open top char
        byte chr_window_open_top
 b_window_open_bottom:                  ; Original window open bottom char
        byte chr_window_open_bottom
+b_window_left_bottom_closed:           ; Original Window left bottom closed char
+       byte chr_window_left_bottom_closed
+b_window_right_bottom_closed:   ; Original Window right bottom closed char
+       byte chr_window_right_bottom_closed
 b_face_first:
        byte chr_face_first
 b_face_last:
@@ -3498,12 +3620,20 @@ b_building_left:
        byte >40
 b_building_right:
        byte >c8
+b_life:
+       byte chr_life
+b_space:
+       byte chr_space
 b_1:
        byte 1
 b_8:
        byte 8
 b_12:
        byte 12
+b_191:
+       byte 191
+b_192:
+       byte 192
 w_1:
        data 1
 w_2:
@@ -3520,6 +3650,18 @@ w_24:
        data 24
 w_window_anim_type_resident:
        data window_anim_type_resident
+
+*      For decimal printing - maintain order
+w_10000:
+       data 10000
+w_1000:
+       data 1000
+w_100:
+       data 100
+w_10:
+       data 10
+
+
 
 base_scroll_chars:
        data 49

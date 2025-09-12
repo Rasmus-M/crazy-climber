@@ -4,6 +4,8 @@
 *
 * r0: index of speech data
 *
+* Modifies r0-r2
+*
 speak:
        .proc
        mov  @speech_detected,r1
