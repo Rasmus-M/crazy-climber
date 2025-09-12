@@ -212,9 +212,9 @@ vm8bw_pad:                             ; Copy routine
 pad_max:                               ; Max scratchpad address used
        equ  vm8bw_pad+24
 
-********************************************************************************
+*********************************************************************
 *
-* Main program
+*      Lower memory
 *
        aorg >2000
 
@@ -235,6 +235,7 @@ new_level:
 ;       li   r0,kong_stage              ; For testing kong
 ;       li   r0,chopper_stage           ; For testing chopper
 ;       mov  r0,@next_stage_ptr         ; For testing
+       bl   @unpack_map
        bl   @initial_screen
        bl   @intro_climb
 restart_level:
@@ -3283,6 +3284,9 @@ restart_init:
        bl   @clear
        clr  @windows_head_ptr
        clr  @windows_tail_ptr
+*      Reset map
+       bl   @unpack_map
+       bl   @update_name_table
        .endproc
 *// restart_init
 
@@ -3378,6 +3382,31 @@ vdp_registers:
 
 *********************************************************************
 *
+* Unpack map to RAM
+*
+unpack_map:
+       .proc
+       li   r0,MD0                     ; Destination
+       li   r1,RIDX1                   ; Source index
+       mov  @NROWS1,r4
+unpack_map_1:
+       clr  r2
+       movb *r1+,r2                    ; Map row index
+       swpb r2
+       mpy  @MS0,r2                    ; Offset in r3
+       ai   r3,ROWS1
+       li   r2,map_width
+unpack_map_2:
+       movb *r3+,r0
+       dec  r2
+       jne  unpack_map_2
+       dec  r4
+       jne  unpack_map_1
+       .endproc
+*// unpack_map
+
+*********************************************************************
+*
 * Clear CPU memory
 *
 clear:
@@ -3386,7 +3415,6 @@ clear:
        jne  clear
        rt
 *// clear
-
 
 *********************************************************************
 *
@@ -3485,9 +3513,18 @@ check_key:
        rt
 *// check_key
 
+lower_memory_max:
+       equ  $
+
 *********************************************************************
 *
-*       Includes
+*      Upper memory
+*
+       aorg >A000
+
+*********************************************************************
+*
+*      Program includes
 *
        copy "vdp.a99"
        copy "sound-player.a99"
@@ -3495,26 +3532,10 @@ check_key:
        copy "sound-fx-routines.a99"
        copy "speech.a99"
 
-lower_memory_max:
-       equ  $
-
 *********************************************************************
 *
 *       Data
 *
-       aorg >A000
-
-       copy "graphics.a99"
-       copy "screen.a99"
-       copy "sprite-patterns.a99"
-       copy "map-animations.a99"
-       copy "sprite-animations.a99"
-       copy "sound-fx.a99"
-       copy "intro-music.a99"
-       copy "bird-music.a99"
-       copy "kong-music.a99"
-       copy "completed-music.a99"
-       copy "speech-data.a99"
 
 buffer:
        bss  8
@@ -3661,8 +3682,6 @@ w_100:
 w_10:
        data 10
 
-
-
 base_scroll_chars:
        data 49
 extra_scroll_chars:
@@ -3731,6 +3750,25 @@ big_sprite_pattern:
        equ  2
 big_sprite_color:
        equ  3
+
+*********************************************************************
+*
+*      Data includes
+*
+       copy "graphics.a99"
+       copy "screen.a99"
+       copy "sprite-patterns.a99"
+       copy "map-animations.a99"
+       copy "sprite-animations.a99"
+       copy "sound-fx.a99"
+       copy "intro-music.a99"
+       copy "bird-music.a99"
+       copy "kong-music.a99"
+       copy "completed-music.a99"
+       copy "speech-data.a99"
+
+level_1_graphics:
+       copy "level-1-graphics.a99"
 
 upper_memory_max:
        equ  $
