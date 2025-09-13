@@ -300,6 +300,7 @@ finished_1:
        bl   @chopper_pickup
 died:
        bl   @fall_sequence
+       seto  @unpack_on_restart
        dec  @lives
        jne  restart_level
        b    @new_game
@@ -536,7 +537,7 @@ update_name_table:
        mov  @scroll_y,r1               ; get scroll offset in pixels
        srl  r1,3                       ; divide by 8 to get row offset
        mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
-       li   r1,md0                     ; get the map base address
+       li   r1,map_buffer              ; get the map base address
        a    r2,r1                      ; add the character offset
        li   r4,24                      ; number of rows to copy
 *      Decide which buffer to update
@@ -1821,7 +1822,7 @@ kong_stage_init:
        mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
        mov  *r0+,@sprite_ay(r4)        ; Used to store current side (left = 0, right <> 0)
        li   r0,kong_map
-       li   r1,MD0+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_module
        bl   @play_module
@@ -1881,19 +1882,19 @@ kong_handler_1:
        jne  kong_handler_2
 *      Remove right kong, draw left kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(kong_row*map_width)+14
+       li   r1,map_buffer+(kong_row*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,MD0+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        jmp  kong_handler_3
 kong_handler_2:
 *      Remove left kong, draw right kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,MD0+(kong_row*map_width)+14
+       li   r1,map_buffer+(kong_row*map_width)+14
        bl   @copy_kong_to_map
 kong_handler_3:
 *      Check for collision with climber
@@ -1946,10 +1947,10 @@ three_residents_stage_init:
        bl   @mute_sound
 *      Undraw kong
        li   r0,kong_map_undraw
-       li   r1,MD0+(kong_row*map_width)+14
+       li   r1,map_buffer+(kong_row*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map_undraw
-       li   r1,MD0+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
 *      Restore characters and sprite patterns
        li   r1,character_set_residents
@@ -2265,7 +2266,7 @@ sprite_map_addr:
        srl  r1,3                       ; To character rows
        mpy  @MS0,r1                    ; Multiply by map width
        a    r0,r2                      ; Add x
-       ai   r2,MD0                     ; Add base
+       ai   r2,map_buffer              ; Add base
        rt
 *// sprite_map_addr
 
@@ -2282,7 +2283,7 @@ window_map_addr:
        .push r1
        mpy  @MS0,r1                    ; Multiply by map width to r2
        sla  r2,1                       ; Two rows per window
-       ai   r2,MD0-map_width+2         ; Add address of start of map + offset for left wall
+       ai   r2,map_buffer-map_width+2  ; Add address of start of map + offset for left wall
        a    r0,r2                      ; Add x to address x 1
        a    r0,r2                      ; Add x to address x 2
        a    r0,r2                      ; Add x to address x 3
@@ -2818,7 +2819,7 @@ initial_screen:
        li   r2,>300
        bl   @vmbw
        li   r0,name_table_0+8          ; destination address in vdp ram
-       li   r1,md0                     ; base address of map data
+       li   r1,map_buffer              ; base address of map data
        a    r6,r1                      ; add map offset
        li   r7,24                      ; number of rows
 inisc1:
@@ -2832,7 +2833,7 @@ inisc1:
        li   r2,>300
        bl   @vmbw
        li   r0,name_table_1+8          ; destination address in vdp ram
-       li   r1,MD0                     ; base address of map data
+       li   r1,map_buffer              ; base address of map data
        a    r6,r1                      ; add map offset
        li   r7,24                      ; number of rows
 inisc2:
@@ -3229,6 +3230,7 @@ game_init:
        clr  @disp_score
        li   r0,3
        mov  r0,@lives
+       clr  @unpack_on_restart
        .endproc
 *// game_init
 
@@ -3285,9 +3287,13 @@ restart_init:
        clr  @windows_head_ptr
        clr  @windows_tail_ptr
 *      Reset map
+       abs  @unpack_on_restart
+       jeq  restart_init_1
        bl   @unpack_map
-       bl   @update_name_table
+restart_init_1:
        .endproc
+unpack_on_restart:
+       data 0
 *// restart_init
 
 *********************************************************************
@@ -3386,9 +3392,9 @@ vdp_registers:
 *
 unpack_map:
        .proc
-       li   r0,MD0                     ; Destination
+       li   r0,map_buffer              ; Destination
        li   r1,RIDX1                   ; Source index
-       mov  @NROWS1,r4
+       mov  @MS0+2,r4
 unpack_map_1:
        clr  r2
        movb *r1+,r2                    ; Map row index
@@ -3397,7 +3403,7 @@ unpack_map_1:
        ai   r3,ROWS1
        li   r2,map_width
 unpack_map_2:
-       movb *r3+,r0
+       movb *r3+,*r0+
        dec  r2
        jne  unpack_map_2
        dec  r4
@@ -3767,8 +3773,8 @@ big_sprite_color:
        copy "completed-music.a99"
        copy "speech-data.a99"
 
-level_1_graphics:
-       copy "level-1-graphics.a99"
+map_buffer:
+       bss  >2486
 
 upper_memory_max:
        equ  $
