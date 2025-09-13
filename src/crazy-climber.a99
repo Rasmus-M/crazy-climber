@@ -2472,6 +2472,7 @@ display_progress:
        mov  @frame,r0
        andi r0,63
        jeq  display_progress_2
+       seto @title_bank_select
        mov  @climber_pos,r3            ; World y coordinate of climber
        srl  r3,8
        a    @scroll_y,r3
@@ -2539,6 +2540,7 @@ display_progress_1:
        bl   @vsbw
        ai   r0,name_table_0-name_table_1
        bl   @vsbw
+       seto @level_1_bank_select
 display_progress_2:
        .endproc
 *// display_progress
@@ -2759,11 +2761,9 @@ rand:
 *
 initial_screen:
        .proc
-*      Upload patterns 1st part
-       li   r0,pattern_table           ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
+*      Non-scrolling screen
+       seto @title_bank_select
+*      Non-scrolling patterns 1st part
        li   r0,96*8+pattern_table      ; Non-scrolling characters
        li   r1,PAT96
        li   r2,32*8
@@ -2772,11 +2772,7 @@ initial_screen:
        li   r1,PAT224
        li   r2,32*8
        bl   @vmbw
-*      Upload patterns 2nd part
-       li   r0,pattern_table_1         ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
+*      Non-scrolling patterns 2nd part
        li   r0,96*8+pattern_table_1    ; Non-scrolling characters
        li   r1,PAT96
        li   r2,32*8
@@ -2785,11 +2781,7 @@ initial_screen:
        li   r1,PAT224
        li   r2,32*8
        bl   @vmbw
-*      Upload patterns 3rd part
-       li   r0,pattern_table_2         ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
+*      Non-scrolling patterns 2rd part
        li   r0,96*8+pattern_table_2    ; Non-scrolling characters
        li   r1,PAT96
        li   r2,32*8
@@ -2798,11 +2790,7 @@ initial_screen:
        li   r1,PAT224
        li   r2,32*8
        bl   @vmbw
-*      Upload colors
-       LI   r0,color_table             ; Destination address in VDP RAM
-       li   r1,CSTRIP                  ; address of first scrolled color frame
-       mov  @TCHNUM,r2                 ; number of pattern colors of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
+*      Non-scrolling colors
        li   r0,96*8+color_table        ; Non-scrolling colors
        li   r1,COL96
        li   r2,32*8
@@ -2811,16 +2799,43 @@ initial_screen:
        li   r1,COL224
        li   r2,32*8
        bl   @vmbw
-*      Init name tables
-       mov  @scroll_y,r4               ; get initial scroll offset in pixels
-       srl  r4,3                       ; convert to row offset
-       mov  r4,r5
-       mpy  @MS0,r5                    ; convert to map offset in r6
-*      Table 0
+*      Name table 0
        li   r0,name_table_0
        li   r1,MD1
        li   r2,>300
        bl   @vmbw
+*      Name table 1
+       li   r0,name_table_1
+       li   r1,MD1
+       li   r2,>300
+       bl   @vmbw
+*      Scrolling screen
+       seto @level_1_bank_select
+*      Scrolling patterns 1st part
+       li   r0,pattern_table           ; destination address in vdp ram
+       li   r1,PSTRIP                  ; address of first scrolled pattern frame
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+*      Scrolling patterns 2nd part
+       li   r0,pattern_table_1         ; destination address in vdp ram
+       li   r1,PSTRIP                  ; address of first scrolled pattern frame
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+*      Scrolling patterns 3rd part
+       li   r0,pattern_table_2         ; destination address in vdp ram
+       li   r1,PSTRIP                  ; address of first scrolled pattern frame
+       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+*      Scrolling colors
+       LI   r0,color_table             ; Destination address in VDP RAM
+       li   r1,CSTRIP                  ; address of first scrolled color frame
+       mov  @TCHNUM,r2                 ; number of pattern colors of 8 bytes
+       bl   @vm8bw8                    ; call copying routine
+       mov  @scroll_y,r4               ; get initial scroll offset in pixels
+       srl  r4,3                       ; convert to row offset
+       mov  r4,r5
+       mpy  @MS0,r5                    ; convert to map offset in r6
+*      Name table 0
        li   r0,name_table_0+8          ; destination address in vdp ram
        li   r1,map_buffer              ; base address of map data
        a    r6,r1                      ; add map offset
@@ -2830,11 +2845,7 @@ inisc1:
        ai   r0,32
        dec  r7
        jne  inisc1
-*      Table 1
-       li   r0,name_table_1
-       li   r1,MD1
-       li   r2,>300
-       bl   @vmbw
+*      Name table 1
        li   r0,name_table_1+8          ; destination address in vdp ram
        li   r1,map_buffer              ; base address of map data
        a    r6,r1                      ; add map offset
@@ -3765,7 +3776,7 @@ big_sprite_color:
 *
 *      Data includes
 *
-       copy "screen.a99"
+       copy "progress-map.a99"
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
        copy "sprite-animations.a99"

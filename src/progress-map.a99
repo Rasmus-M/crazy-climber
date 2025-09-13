@@ -1,0 +1,57 @@
+* == Map #2 ==
+MC2    DATA 0                          ;
+MS2    DATA >0001,>001B,>001B          ; Width, Height, Size
+* -- Map Row 0 --
+MD2    BYTE >6B                        ;
+* -- Map Row 1 --
+       BYTE >70                        ;
+* -- Map Row 2 --
+       BYTE >70                        ;
+* -- Map Row 3 --
+       BYTE >70                        ;
+* -- Map Row 4 --
+       BYTE >71                        ;
+* -- Map Row 5 --
+       BYTE >70                        ;
+* -- Map Row 6 --
+       BYTE >70                        ;
+* -- Map Row 7 --
+       BYTE >72                        ;
+* -- Map Row 8 --
+       BYTE >72                        ;
+* -- Map Row 9 --
+       BYTE >70                        ;
+* -- Map Row 10 --
+       BYTE >70                        ;
+* -- Map Row 11 --
+       BYTE >70                        ;
+* -- Map Row 12 --
+       BYTE >71                        ;
+* -- Map Row 13 --
+       BYTE >70                        ;
+* -- Map Row 14 --
+       BYTE >70                        ;
+* -- Map Row 15 --
+       BYTE >70                        ;
+* -- Map Row 16 --
+       BYTE >71                        ;
+* -- Map Row 17 --
+       BYTE >70                        ;
+* -- Map Row 18 --
+       BYTE >70                        ;
+* -- Map Row 19 --
+       BYTE >70                        ;
+* -- Map Row 20 --
+       BYTE >72                        ;
+* -- Map Row 21 --
+       BYTE >70                        ;
+* -- Map Row 22 --
+       BYTE >70                        ;
+* -- Map Row 23 --
+       BYTE >71                        ;
+* -- Map Row 24 --
+       BYTE >70                        ;
+* -- Map Row 25 --
+       BYTE >70                        ;
+* -- Map Row 26 --
+       BYTE >73                        ;
