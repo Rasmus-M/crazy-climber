@@ -65,6 +65,8 @@ n_sprites:
        equ  16
 attenuation_during_speech:
        equ  2
+climber_position:
+       equ  >6da8
 chr_zero:
        equ  96
 chr_window_open_top:
@@ -244,6 +246,7 @@ new_level:
 restart_level:
        bl   @restart_init
 *      Main loop
+       clr  @frame
 main_loop:
 *      Wait for vsync
        bl   @vsync
@@ -253,7 +256,7 @@ main_loop:
        bl   @int_routine
 *      Display sprites
        bl   @display_sprites
-*      Control climber--
+*      Control climber
        bl   @check_grip
        bl   @control_climber_vert
        bl   @check_int
@@ -303,7 +306,6 @@ finished_1:
        bl   @chopper_pickup
 died:
        bl   @fall_sequence
-       seto  @unpack_on_restart
        dec  @lives
        jne  restart_level
        b    @new_game
@@ -2968,23 +2970,51 @@ chopper_pickup_4:
 fall_sequence:
        .proc
 fall_sequence_1:
-       li   r9,1
-fall_sequence_2:
        bl   @vsync
        bl   @int_routine
-       dec  r9
-       jne  fall_sequence_2
        bl   @update_climber_attrs_left
        bl   @update_climber_attrs_right
        bl   @display_sprites
+       bl   @update_name_table
        ab   @b_1,@climber_pos
        cb   @climber_pos,@b_191
-       jeq  fall_sequence_3
+       jeq  fall_sequence_2
        inc  @frame
        jmp  fall_sequence_1
-fall_sequence_3:
+fall_sequence_2:
        .endproc
 *// fall_sequence
+
+*********************************************************************
+*
+* Scroll from bottom to last climber position
+*
+scroll_to_climber:
+       .proc
+       mov  @scroll_y,r9
+       andi r9,>fff0
+       ori  r9,>0008
+       li   r0,scroll_max
+       mov  r0,@scroll_y
+       c    r0,r9
+       jeq  scroll_to_climber_2
+       li   r0,-8
+       mov  r0,@scroll_dy
+       clr  @frame
+       bl   @update_pattern_table
+scroll_to_climber_1:
+       bl   @vsync
+       bl   @set_name_table
+       bl   @int_routine
+       bL   @update_name_table
+       a    @scroll_dy,@scroll_y
+       mov  @scroll_y,r0
+       inc  @frame
+       c    r0,r9
+       jh   scroll_to_climber_1
+scroll_to_climber_2:
+       .endproc
+*// scroll_to_climber
 
 *********************************************************************
 *
@@ -3244,7 +3274,6 @@ game_init:
        clr  @disp_score
        li   r0,3
        mov  r0,@lives
-       clr  @unpack_on_restart
        .endproc
 *// game_init
 
@@ -3264,6 +3293,8 @@ level_init:
        bl   @base_stage_init
        li   r0,one_resident_stage
        mov  r0,@next_stage_ptr
+       li   r0,climber_position
+       mov  r0,@climber_pos
        .endproc
 *// level_init
 
@@ -3273,9 +3304,31 @@ level_init:
 *
 restart_init:
        .proc
+       bl   @display_lives
+*      Clear sprites table
+       li   r0,sprites
+       li   r2,sprites_end-sprites
+       bl   @clear
+       bl   @disable_sprites
+*      Clear window animations table and pointers
+       li   r0,window_anims
+       li   r2,window_anims_end-window_anims
+       bl   @clear
+       clr  @windows_head_ptr
+       clr  @windows_tail_ptr
+*      Check if climber died
+       mov  @status,r0
+       jeq  restart_init_1
+*      Actions after dying
+       bl   @unpack_map
+       bl   @scroll_to_climber
+       clr  @max_residents
+restart_init_1:
        clr  @status
-       li   r0,>6da8
-       mov  r0,@climber_pos
+       clr  @scroll_dy
+*      Restare climber
+       li   r0,climber_position
+       movb r0,@climber_pos            ; Only reset y
        li   r0,left_anim
        mov  r0,@left_anim_ptr
        clr  @left_wide
@@ -3284,31 +3337,7 @@ restart_init:
        mov  r0,@right_anim_ptr
        clr  @right_wide
        bl   @update_climber_attrs_right
-       mov  @scroll_y,r0
-       andi r0,>fff0
-       ori  r0,>0008
-       mov  r0,@scroll_y
-       clr  @scroll_dy
-       clr  @frame
-       bl   @display_lives
-*      Clear sprites table
-       li   r0,sprites
-       li   r2,sprites_end-sprites
-       bl   @clear
-*      Clear window animations table and pointers
-       li   r0,window_anims
-       li   r2,window_anims_end-window_anims
-       bl   @clear
-       clr  @windows_head_ptr
-       clr  @windows_tail_ptr
-*      Reset map
-       abs  @unpack_on_restart
-       jeq  restart_init_1
-       bl   @unpack_map
-restart_init_1:
        .endproc
-unpack_on_restart:
-       data 0
 *// restart_init
 
 *********************************************************************
@@ -3385,9 +3414,7 @@ graphics_mode_1:
        li   r2,>4000
        bl   @vsmw
 *      Disable sprites
-       li   r0,sprite_attr_table
-       li   r1,>d000
-       bl   @vsbw
+       bl   @disable_sprites
        .endproc
 *      VDP registers
 vdp_registers:
@@ -3400,6 +3427,19 @@ vdp_registers:
        byte sprite_pattern_table/>800  ; Sprite pattern table
        byte >01                        ; Backdrop color
 *// graphics_mode
+
+*********************************************************************
+*
+* Disable sporites
+*
+disable_sprites
+       .proc
+       li   r0,sprite_attr_table
+       li   r1,>d000
+       bl   @vsbw
+       .endproc
+*// disable_sprites
+
 
 *********************************************************************
 *
