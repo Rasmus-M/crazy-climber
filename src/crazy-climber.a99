@@ -13,6 +13,7 @@
        copy "speech-defs.a99"
 
        copy "rom-bank-4.a99"
+       copy "rom-bank-5.a99"
 
 **
 * Memory mapped addresses
@@ -86,6 +87,8 @@ kong_row:
        equ  >88
 title_bank_select:
        equ  >6008
+level_1_bank_select:
+       equ  >600a
 
 **
 * Scratch pad
@@ -3240,6 +3243,7 @@ game_init:
 *
 level_init:
        .proc
+       seto @level_1_bank_select
        li   r0,scroll_max              ; start at the bottom of the map
        mov  r0,@scroll_y
        li   r0,3
@@ -3761,7 +3765,6 @@ big_sprite_color:
 *
 *      Data includes
 *
-       copy "graphics.a99"
        copy "screen.a99"
        copy "sprite-patterns.a99"
        copy "map-animations.a99"
@@ -3775,6 +3778,8 @@ big_sprite_color:
 
 map_buffer:
        bss  >2486
+
+       data -1
 
 upper_memory_max:
        equ  $

@@ -1,0 +1,4 @@
+       aorg >6000
+       bss  >40
+       copy "graphics.a99"
+       bss  >8000-$
