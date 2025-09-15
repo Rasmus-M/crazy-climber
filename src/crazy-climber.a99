@@ -304,6 +304,7 @@ finished:
        clr  @bonus
 finished_1:
        bl   @chopper_pickup
+       jmp  new_level
 died:
        bl   @fall_sequence
        dec  @lives
@@ -2960,6 +2961,7 @@ chopper_pickup_4:
        inc  @frame
        dec  r8
        jne  chopper_pickup_1
+       bl   @disable_sprites
        .endproc
 *// chopper_pickup
 
@@ -3321,6 +3323,8 @@ restart_init:
        jeq  restart_init_1
 *      Actions after dying
        bl   @unpack_map
+       mov  @status,r0
+       jgt  restart_init_1
        bl   @scroll_to_climber
        clr  @max_residents
 restart_init_1:
