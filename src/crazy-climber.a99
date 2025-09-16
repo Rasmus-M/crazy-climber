@@ -3332,6 +3332,9 @@ restart_init:
        bl   @unpack_map
        bl   @scroll_to_climber
        clr  @max_residents
+       mov  @next_stage_ptr,r0
+       jne  restart_init_1
+       bl   @chopper_stage_init
 restart_init_1:
        clr  @status
        clr  @scroll_dy
