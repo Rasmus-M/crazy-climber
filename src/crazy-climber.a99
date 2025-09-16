@@ -229,8 +229,9 @@ start  limi 0                          ; disable interrupts
        bl   @one_time_init
 new_game:
        bl   @title_screen
+       bl   @initial_static_screen
        bl   @game_init
-new_level:
+next_level:
        bl   @level_init
 ;       li   r0,>988                    ; For testing bird
 ;       li   r0,>4A8                    ; For testing kong
@@ -241,7 +242,7 @@ new_level:
 ;       li   r0,chopper_stage           ; For testing chopper
 ;       mov  r0,@next_stage_ptr         ; For testing
        bl   @unpack_map
-       bl   @initial_screen
+       bl   @initial_scrolling_screen
        bl   @intro_climb
 restart_level:
        bl   @restart_init
@@ -304,7 +305,7 @@ finished:
        clr  @bonus
 finished_1:
        bl   @chopper_pickup
-       jmp  new_level
+       jmp  next_level
 died:
        bl   @fall_sequence
        dec  @lives
@@ -2002,7 +2003,7 @@ chopper_handler:
        jne  chopper_handler_0
        inc  @status                    ; Yes, give up
        inc  @sprite_count(r3)
-       jmp  chopper_handler_2b
+       jmp  chopper_handler_4
 chopper_handler_0:
        mov  @sprite_x(r3),r0           ; Position of middle of landing gear
        mov  @sprite_y(r3),r1
@@ -2022,7 +2023,8 @@ chopper_handler_0:
        a    @sprite_vy(r3),@sprite_y(r3)
 *      Skip the rest if it's the end sequence
        mov  @status,r0
-       jne  chopper_handler_3
+       jlt  chopper_handler_5
+       jne  chopper_handler_6
 *      Boundary check
        mov  @sprite_x(r3),r0
        ci   r0,>40
@@ -2043,17 +2045,17 @@ chopper_handler_1:
 chopper_handler_2:
 *      Check for collision with climber
        c    @scroll_y,@w_8
-       jne  chopper_handler_3
+       jne  chopper_handler_6
        mov  @sprite_y(r3),r0
        ci   r0,>50
-       jlt  chopper_handler_3
+       jlt  chopper_handler_6
        mov  @left_anim_ptr,r0
        ci   r0,left_anim
-       jeq  chopper_handler_2a
+       jeq  chopper_handler_3
        mov  @right_anim_ptr,r0
        ci   r0,right_anim
-       jne  chopper_handler_3
-chopper_handler_2a:
+       jne  chopper_handler_6
+chopper_handler_3:
        mov  @sprite_x(r3),r0
        mov  @climber_pos,r1           ; TODO: Improve location of hand
        andi r1,>00ff
@@ -2061,13 +2063,14 @@ chopper_handler_2a:
        s    r1,r0
        abs  r0
        ci   r0,>10
-       jgt  chopper_handler_3
+       jgt  chopper_handler_6
 *      Pickup
-chopper_handler_2b:
+chopper_handler_4:
+       inc  @status
+chopper_handler_5:
        clr  @sprite_vx(r3)
        seto @sprite_vy(r3)
-       inc  @status
-chopper_handler_3:
+chopper_handler_6:
        .endproc
 *// chopper_handler
 
@@ -2756,15 +2759,10 @@ rand:
 
 *********************************************************************
 *
-* Display initial screen
+* Display initial static screen
 *
-* If sprites beyond 0-7 are to be used on a real 9918A VDP we need to update
-* the second and third part of the pattern table as well (with the same 
-* patterns). The color table is always OK at >800 bytes. See GMODE.
-*
-initial_screen:
+initial_static_screen:
        .proc
-*      Non-scrolling screen
        seto @title_bank_select
 *      Non-scrolling patterns 1st part
        li   r0,96*8+pattern_table      ; Non-scrolling characters
@@ -2812,7 +2810,15 @@ initial_screen:
        li   r1,MD1
        li   r2,>300
        bl   @vmbw
-*      Scrolling screen
+       .endproc
+*// initial_static_screen
+
+*********************************************************************
+*
+* Display initial scrolling screen
+*
+initial_scrolling_screen:
+       .proc
        seto @level_1_bank_select
 *      Scrolling patterns 1st part
        li   r0,pattern_table           ; destination address in vdp ram
@@ -2862,7 +2868,7 @@ inisc2:
        li   r0,>01e2
        bl   @vwtr
        .endproc
-*// initial_screen
+*// initial_scrolling_screen
 
 *********************************************************************
 *
@@ -3273,7 +3279,6 @@ game_init:
 *      Game variables
        clr  @score
        clr  @score_msw
-       clr  @disp_score
        li   r0,3
        mov  r0,@lives
        .endproc
@@ -3286,12 +3291,14 @@ game_init:
 level_init:
        .proc
        seto @level_1_bank_select
+       seto  @disp_score
        li   r0,scroll_max              ; start at the bottom of the map
        mov  r0,@scroll_y
        li   r0,3
        mov  r0,@progress_top_offset
        li   r0,10000
        mov  r0,@bonus
+       bl   @display_bonus
        bl   @base_stage_init
        li   r0,one_resident_stage
        mov  r0,@next_stage_ptr
@@ -3311,7 +3318,6 @@ restart_init:
        li   r0,sprites
        li   r2,sprites_end-sprites
        bl   @clear
-       bl   @disable_sprites
 *      Clear window animations table and pointers
        li   r0,window_anims
        li   r2,window_anims_end-window_anims
@@ -3321,10 +3327,9 @@ restart_init:
 *      Check if climber died
        mov  @status,r0
        jeq  restart_init_1
+       jgt  restart_init_1
 *      Actions after dying
        bl   @unpack_map
-       mov  @status,r0
-       jgt  restart_init_1
        bl   @scroll_to_climber
        clr  @max_residents
 restart_init_1:
