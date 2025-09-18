@@ -3256,7 +3256,7 @@ one_time_init:
 *      Detect speech
        bl   @speech_check
 *      Detect F18A
-       seto @sprite_dupl_bug
+       bl   @f18a_detect
 *      Setup graphics mode
        bl   @graphics_mode             ; call setup routine
 *      Default values
@@ -3439,6 +3439,34 @@ vdp_registers:
        byte sprite_pattern_table/>800  ; Sprite pattern table
        byte >01                        ; Backdrop color
 *// graphics_mode
+
+********************************************************************************
+*
+* F18A detection
+*
+f18a_detect:
+       .proc
+*	   F18A Unlock
+	   li   r0,>391C                   ; VR1/57, value 00011100
+	   bl   @vwtr                      ; Write once
+	   bl   @vwtr                      ; Write twice, unlock
+*	   Check the version status reg
+	   movb	@vdpsta,r0                 ; Clear status
+	   li	r0,>0F01                   ; Set to read reg 1, Identity
+	   bl   @vwtr
+	   movb	@vdpsta,r0
+	   andi	r0,>F000
+	   ci	r0,>E000
+	   jne	f18a_detect_1
+	   clr	@sprite_dupl_bug           ; F18A - no sprite duplication bug
+	   li	r0,>0F00                   ; Set to read reg 0
+	   bl   @vwtr
+	   jmp	f18a_detect_2
+f18a_detect_1:
+       seto	@sprite_dupl_bug            ; No F18A - assume sprite duplication bug is present
+f18a_detect_2:
+       .endproc
+*// f18a_detect
 
 *********************************************************************
 *
