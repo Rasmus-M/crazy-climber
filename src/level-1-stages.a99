@@ -21,6 +21,6 @@ three_residents_stage:
 chopper_stage:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
-stages_end:
-       equ   $
+stages1_end:
+       data 0
 

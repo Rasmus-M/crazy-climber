@@ -14,6 +14,7 @@
 
        copy "rom-bank-4.a99"
        copy "rom-bank-5.a99"
+       copy "rom-bank-6.a99"
 
 **
 * Memory mapped addresses
@@ -62,7 +63,7 @@ map_height:
 scroll_max:
        equ  >0c88
 n_levels:
-       equ  1
+       equ  2
 n_windows:
        equ  12
 n_sprites:
@@ -95,6 +96,8 @@ title_bank_select:
        equ  >6008
 level_1_bank_select:
        equ  >600a
+level_2_bank_select:
+       equ  >600c
 
 **
 * Scratch pad
@@ -518,7 +521,7 @@ update_stage:
        bl   *r1                        ; Execute init routine
        .pop r0
 update_stage_1:
-       ci   r0,stages_end
+       c   *r0,@w_0
        jne  update_stage_2
        clr  r0
 update_stage_2:
@@ -3261,6 +3264,7 @@ game_init:
        li   r0,3
        mov  r0,@lives
        clr  @level
+;      inc  @level
        .endproc
 *// game_init
 
@@ -3628,40 +3632,72 @@ lower_memory_max:
 *       Data
 *
 
+b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5
+       byte >23
+b_window_open_top:                     ; Original window open top char
+       byte chr_window_open_top
+b_window_open_bottom:                  ; Original window open bottom char
+       byte chr_window_open_bottom
+b_window_left_bottom_closed:           ; Original Window left bottom closed char
+       byte chr_window_left_bottom_closed
+b_window_right_bottom_closed:   ; Original Window right bottom closed char
+       byte chr_window_right_bottom_closed
+b_face_first:
+       byte chr_face_first
+b_face_last:
+       byte chr_face_last
+b_building_left:
+       byte >40
+b_building_right:
+       byte >c8
+b_life:
+       byte chr_life
+b_space:
+       byte chr_space
+b_1:
+       byte 1
+b_8:
+       byte 8
+b_12:
+       byte 12
+b_191:
+       byte 191
+b_192:
+       byte 192
+w_0:
+       data 0
+w_1:
+       data 1
+w_2:
+       data 2
+w_3:
+       data 3
+w_4:
+       data 4
+w_6:
+       data 6
+w_8:
+       data 8
+w_24:
+       data 24
+w_window_anim_type_resident:
+       data window_anim_type_resident
+w_map_width:
+       data map_width
+w_map_height:
+       data map_height
+*      For decimal printing - maintain order
+w_10000:
+       data 10000
+w_1000:
+       data 1000
+w_100:
+       data 100
+w_10:
+       data 10
+
 buffer:
        bss  8
-
-levels:
-       data level1
-       data 0
-level1:
-       data level_1_bank_select
-       data TCHARS1
-       data RIDX1
-       data ROWS1
-       data PSTRIP1
-       data CSTRIP1-PSTRIP1
-       data stages1
-
-*      Level dependent constants
-current_level_data:
-       equ  $
-level_bank_select:
-       data level_1_bank_select
-trans_chars:
-       data TCHARS1
-map_row_index:
-       data RIDX1
-map_rows:
-       data ROWS1
-pattern_strips:
-       data PSTRIP1
-color_strip_offset:
-       data CSTRIP1-PSTRIP1
-stages:
-       data stages1
-level_data_size:
-       equ  $-current_level_data
 
 CTRL_LEFT_DN:
        equ  0
@@ -3686,7 +3722,48 @@ keyboard_control:
        data KEY_D, KEY_E, KEY_K, KEY_I
        data KEY_S, KEY_F, KEY_J, KEY_L
 
+levels:
+       data level1
+       data level2
+level1:
+       data level_1_bank_select
+       data TCHARS1
+       data RIDX1
+       data ROWS1
+       data PSTRIP1
+       data CSTRIP1-PSTRIP1
+       data stages1
+level2:
+       data level_2_bank_select
+       data TCHARS2
+       data RIDX2
+       data ROWS2
+       data PSTRIP2
+       data CSTRIP2-PSTRIP2
+       data stages2
+
+*      Level dependent constants
+current_level_data:
+       equ  $
+level_bank_select:
+       data level_1_bank_select
+trans_chars:
+       data TCHARS1
+map_row_index:
+       data RIDX1
+map_rows:
+       data ROWS1
+pattern_strips:
+       data PSTRIP1
+color_strip_offset:
+       data CSTRIP1-PSTRIP1
+stages:
+       data stages1
+level_data_size:
+       equ  $-current_level_data
+
        copy "level-1-stages.a99"
+       copy "level-2-stages.a99"
 
 bird_init_data:
        data bird_handler, >0020, >0982, >0002, >0001, >0000
@@ -3721,68 +3798,6 @@ window_anims:
        bss  n_windows*window_anim_size
 window_anims_end:
        data -1
-
-b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5
-       byte >23
-b_window_open_top:                     ; Original window open top char
-       byte chr_window_open_top
-b_window_open_bottom:                  ; Original window open bottom char
-       byte chr_window_open_bottom
-b_window_left_bottom_closed:           ; Original Window left bottom closed char
-       byte chr_window_left_bottom_closed
-b_window_right_bottom_closed:   ; Original Window right bottom closed char
-       byte chr_window_right_bottom_closed
-b_face_first:
-       byte chr_face_first
-b_face_last:
-       byte chr_face_last
-b_building_left:
-       byte >40
-b_building_right:
-       byte >c8
-b_life:
-       byte chr_life
-b_space:
-       byte chr_space
-b_1:
-       byte 1
-b_8:
-       byte 8
-b_12:
-       byte 12
-b_191:
-       byte 191
-b_192:
-       byte 192
-w_1:
-       data 1
-w_2:
-       data 2
-w_3:
-       data 3
-w_4:
-       data 4
-w_6:
-       data 6
-w_8:
-       data 8
-w_24:
-       data 24
-w_window_anim_type_resident:
-       data window_anim_type_resident
-w_map_width:
-       data map_width
-w_map_height:
-       data map_height
-*      For decimal printing - maintain order
-w_10000:
-       data 10000
-w_1000:
-       data 1000
-w_100:
-       data 100
-w_10:
-       data 10
 
 base_scroll_chars:
        data 49
