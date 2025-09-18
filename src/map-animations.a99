@@ -50,3 +50,272 @@ face_appear:
        data face_2
        data face_1
        data face_0
+
+* == Map #3 ==
+MC3    DATA 0                          ;
+MS3    DATA >0002,>0025,>004A          ; Width, Height, Size
+* -- Map Row 0 --
+MD3    BYTE >04,>04                    ;
+close_window_below_open_0:
+* -- Map Row 1 --
+       BYTE >07,>07                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >07,>07                    ;
+* -- Map Row 6 --
+       BYTE >04,>04                    ;
+close_window_below_open_1:
+* -- Map Row 7 --
+       BYTE >11,>12                    ;
+* -- Map Row 8 --
+       BYTE >13,>14                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >07,>07                    ;
+* -- Map Row 12 --
+       BYTE >04,>04                    ;
+close_window_below_open_2:
+* -- Map Row 13 --
+       BYTE >15,>16                    ;
+* -- Map Row 14 --
+       BYTE >1D,>1E                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >07,>07                    ;
+* -- Map Row 18 --
+       BYTE >04,>04                    ;
+close_window_below_open_3:
+* -- Map Row 19 --
+       BYTE >17,>18                    ;
+* -- Map Row 20 --
+       BYTE >1F,>20                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >07,>07                    ;
+* -- Map Row 24 --
+       BYTE >04,>04                    ;
+close_window_below_open_4:
+* -- Map Row 25 --
+       BYTE >19,>1A                    ;
+* -- Map Row 26 --
+       BYTE >21,>22                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* -- Map Row 29 --
+       BYTE >07,>07                    ;
+* -- Map Row 30 --
+       BYTE >04,>04                    ;
+close_window_below_open_5:
+* -- Map Row 31 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 32 --
+       BYTE >23,>24                    ;
+* -- Map Row 33 --
+       BYTE >25,>26                    ;
+* -- Map Row 34 --
+       BYTE >04,>04                    ;
+* -- Map Row 35 --
+       BYTE >07,>07                    ;
+* -- Map Row 36 --
+       BYTE >04,>04                    ;
+* == Map #4 ==
+MC4    DATA 0                          ;
+MS4    DATA >0002,>0025,>004A          ; Width, Height, Size
+* -- Map Row 0 --
+MD4    BYTE >23,>24                    ;
+close_window_below_closed_0:
+* -- Map Row 1 --
+       BYTE >25,>26                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 6 --
+       BYTE >23,>24                    ;
+close_window_below_closed_1:
+* -- Map Row 7 --
+       BYTE >27,>28                    ;
+* -- Map Row 8 --
+       BYTE >13,>14                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 12 --
+       BYTE >23,>24                    ;
+close_window_below_closed_2:
+* -- Map Row 13 --
+       BYTE >29,>2A                    ;
+* -- Map Row 14 --
+       BYTE >1D,>1E                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 18 --
+       BYTE >23,>24                    ;
+close_window_below_closed_3:
+* -- Map Row 19 --
+       BYTE >2B,>2C                    ;
+* -- Map Row 20 --
+       BYTE >1F,>20                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 24 --
+       BYTE >23,>24                    ;
+close_window_below_closed_4:
+* -- Map Row 25 --
+       BYTE >2D,>2E                    ;
+* -- Map Row 26 --
+       BYTE >21,>22                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* -- Map Row 29 --
+       BYTE >1B,>1C                    ;
+* -- Map Row 30 --
+       BYTE >23,>24                    ;
+close_window_below_closed_5:
+* -- Map Row 31 --
+       BYTE >2F,>30                    ;
+* -- Map Row 32 --
+       BYTE >23,>24                    ;
+* -- Map Row 33 --
+       BYTE >25,>26                    ;
+* -- Map Row 34 --
+       BYTE >04,>04                    ;
+* -- Map Row 35 --
+       BYTE >07,>07                    ;
+* -- Map Row 36 --
+       BYTE >04,>04                    ;
+* == Map #5 ==
+MC5    DATA 0                          ;
+MS5    DATA >0002,>001D,>003A          ; Width, Height, Size
+* -- Map Row 0 --
+MD5    BYTE >04,>04                    ;
+face_0:
+* -- Map Row 1 --
+       BYTE >07,>07                    ;
+* -- Map Row 2 --
+       BYTE >04,>04                    ;
+* -- Map Row 3 --
+       BYTE >07,>07                    ;
+* -- Map Row 4 --
+       BYTE >04,>04                    ;
+* -- Map Row 5 --
+       BYTE >07,>07                    ;
+* -- Map Row 6 --
+       BYTE >04,>04                    ;
+face_1:
+* -- Map Row 7 --
+       BYTE >3D,>3E                    ;
+* -- Map Row 8 --
+       BYTE >3F,>40                    ;
+* -- Map Row 9 --
+       BYTE >07,>07                    ;
+* -- Map Row 10 --
+       BYTE >04,>04                    ;
+* -- Map Row 11 --
+       BYTE >07,>07                    ;
+* -- Map Row 12 --
+       BYTE >04,>04                    ;
+face_2:
+* -- Map Row 13 --
+       BYTE >39,>3A                    ;
+* -- Map Row 14 --
+       BYTE >3B,>3C                    ;
+* -- Map Row 15 --
+       BYTE >07,>07                    ;
+* -- Map Row 16 --
+       BYTE >04,>04                    ;
+* -- Map Row 17 --
+       BYTE >07,>07                    ;
+* -- Map Row 18 --
+       BYTE >04,>04                    ;
+face_3:
+* -- Map Row 19 --
+       BYTE >35,>36                    ;
+* -- Map Row 20 --
+       BYTE >37,>38                    ;
+* -- Map Row 21 --
+       BYTE >07,>07                    ;
+* -- Map Row 22 --
+       BYTE >04,>04                    ;
+* -- Map Row 23 --
+       BYTE >07,>07                    ;
+* -- Map Row 24 --
+       BYTE >04,>04                    ;
+face_4:
+* -- Map Row 25 --
+       BYTE >31,>32                    ;
+* -- Map Row 26 --
+       BYTE >33,>34                    ;
+* -- Map Row 27 --
+       BYTE >07,>07                    ;
+* -- Map Row 28 --
+       BYTE >04,>04                    ;
+* == Map #6 ==
+MC6    DATA 0                          ;
+MS6    DATA >0004,>000F,>003C          ; Width, Height, Size
+* -- Map Row 0 --
+kong_map:
+       equ  $
+MD6    BYTE >41,>42,>43,>44            ;
+* -- Map Row 1 --
+       BYTE >45,>46,>47,>48            ;
+* -- Map Row 2 --
+       BYTE >49,>4A,>4B,>4C            ;
+* -- Map Row 3 --
+       BYTE >4D,>4E,>4F,>50            ;
+* -- Map Row 4 --
+       BYTE >51,>52,>53,>54            ;
+* -- Map Row 5 --
+       BYTE >55,>56,>57,>58            ;
+* -- Map Row 6 --
+       BYTE >59,>5A,>5B,>5C            ;
+* -- Map Row 7 --
+       BYTE >0E,>0E,>0E,>0E            ;
+kong_map_undraw:
+* -- Map Row 8 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 9 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 10 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 11 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 12 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 13 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 14 --
+       BYTE >0A,>0A,>0A,>0A            ;

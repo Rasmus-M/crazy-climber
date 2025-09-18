@@ -57,8 +57,12 @@ falling_enabled:
        equ  1
 map_width:
        equ  22
+map_height:
+       equ  425
 scroll_max:
        equ  >0c88
+n_levels:
+       equ  1
 n_windows:
        equ  12
 n_sprites:
@@ -172,16 +176,20 @@ control_set:                           ; Points to current control set (joystick
        equ  secondary_sprite_patterns+2
 status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished, 2 = finished but not picked up by chopper)
        equ  control_set+2
-lives:                                 ; Number of lives
+level:                                 ; Current level, 0 - ...
        equ  status+2
+lives:                                 ; Number of lives
+       equ  level+2
 score:                                 ; Score LSW
        equ  lives+2
 score_msw:                             ; Score MSW
        equ  score+2
 disp_score:                            ; Currently displayed score (LSW)
        equ  score_msw+2
-bonus:                                 ; Bonus (counts down)
+step_point:                            ; Points per step
        equ  disp_score+2
+bonus:                                 ; Bonus (counts down)
+       equ  step_point+2
 snd_channel_1:                         ; Sound/music player data
        equ  bonus+2
 snd_channel_2:
@@ -305,6 +313,10 @@ finished:
        clr  @bonus
 finished_1:
        bl   @chopper_pickup
+       mov  @level,r0
+       inc r0
+       andi r0,n_levels-1
+       mov  r0,@level
        jmp  next_level
 died:
        bl   @fall_sequence
@@ -424,7 +436,7 @@ update_pattern_table:
 *      Calculate cpu ram source address
        mov  @scroll_y,r1               ; Scroll offset
        andi r1,>0007                   ; Mod 8
-       ai   r1,pstrip                  ; Add base address of pattern strips
+       a    @pattern_strips,r1         ; Add base address of pattern strips
 *      Save calculated values
        mov  r0,r4
        mov  r1,r5
@@ -474,7 +486,7 @@ update_pattern_table_1:
        mov  r4,r0                      ; Base patterns
        ai   r0,color_table
        mov  r5,r1
-       ai   r1,cstrip-pstrip           ; Add offset betweem patterns and colors
+       a    @color_strip_offset,r1           ; Add offset between patterns and colors
        mov  @base_scroll_chars,r2      ; Number of patterns
        bl   @vm8bw8
        bl   @check_int
@@ -543,7 +555,7 @@ update_name_table:
 *      Calculate map source address in r1
        mov  @scroll_y,r1               ; get scroll offset in pixels
        srl  r1,3                       ; divide by 8 to get row offset
-       mpy  @ms0,r1                    ; multiply by map width to get character offset in r2
+       mpy  @w_map_width,r1            ; multiply by map width to get character offset in r2
        li   r1,map_buffer              ; get the map base address
        a    r2,r1                      ; add the character offset
        li   r4,24                      ; number of rows to copy
@@ -2273,7 +2285,7 @@ sprite_map_addr:
        inc  r1
        a    @scroll_y,r1
        srl  r1,3                       ; To character rows
-       mpy  @MS0,r1                    ; Multiply by map width
+       mpy  @w_map_width,r1            ; Multiply by map width
        a    r0,r2                      ; Add x
        ai   r2,map_buffer              ; Add base
        rt
@@ -2290,7 +2302,7 @@ sprite_map_addr:
 *
 window_map_addr:
        .push r1
-       mpy  @MS0,r1                    ; Multiply by map width to r2
+       mpy  @w_map_width,r1            ; Multiply by map width to r2
        sla  r2,1                       ; Two rows per window
        ai   r2,map_buffer-map_width+2  ; Add address of start of map + offset for left wall
        a    r0,r2                      ; Add x to address x 1
@@ -2331,7 +2343,8 @@ is_open_window:
        movb *r2,r1
        swpb r1
        sla  r1,1
-       mov  @TCHARS(r1),r1
+       a    @trans_chars,r1
+       mov  *r1,r1
        cb   @b_window_open_top,r1
        rt
 *// is_open_window
@@ -2347,7 +2360,8 @@ is_open_window_bottom:
        movb *r2,r1
        swpb r1
        sla  r1,1
-       mov  @TCHARS(r1),r1
+       a    @trans_chars,r1
+       mov  *r1,r1
        swpb r1
        cb   @b_window_open_bottom,r1
        rt
@@ -2364,7 +2378,8 @@ is_closed_window:
        movb *r2,r1
        swpb r1
        sla  r1,1
-       mov  @TCHARS(r1),r1
+       a    @trans_chars,r1
+       mov  *r1,r1
        swpb r1
        cb   @b_window_left_bottom_closed,r1
        jeq  is_closed_window_1
@@ -2384,7 +2399,8 @@ is_resident_above:
        movb @-map_width(r2),r1
        swpb r1
        sla  r1,1
-       mov  @TCHARS(r1),r1
+       a    @trans_chars,r1
+       mov  *r1,r1
        swpb r1
        cb   r1,@b_face_first
        jl   is_resident_above_1
@@ -2546,7 +2562,8 @@ display_progress_1:
        bl   @vsbw
        ai   r0,name_table_0-name_table_1
        bl   @vsbw
-       seto @level_1_bank_select
+       mov  @level_bank_select,r0
+       seto *r0
 display_progress_2:
        .endproc
 *// display_progress
@@ -2819,51 +2836,13 @@ initial_static_screen:
 *
 initial_scrolling_screen:
        .proc
-       seto @level_1_bank_select
-*      Scrolling patterns 1st part
-       li   r0,pattern_table           ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
-*      Scrolling patterns 2nd part
-       li   r0,pattern_table_1         ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
-*      Scrolling patterns 3rd part
-       li   r0,pattern_table_2         ; destination address in vdp ram
-       li   r1,PSTRIP                  ; address of first scrolled pattern frame
-       mov  @TCHNUM,r2                 ; number of patterns of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
-*      Scrolling colors
-       LI   r0,color_table             ; Destination address in VDP RAM
-       li   r1,CSTRIP                  ; address of first scrolled color frame
-       mov  @TCHNUM,r2                 ; number of pattern colors of 8 bytes
-       bl   @vm8bw8                    ; call copying routine
-       mov  @scroll_y,r4               ; get initial scroll offset in pixels
-       srl  r4,3                       ; convert to row offset
-       mov  r4,r5
-       mpy  @MS0,r5                    ; convert to map offset in r6
-*      Name table 0
-       li   r0,name_table_0+8          ; destination address in vdp ram
-       li   r1,map_buffer              ; base address of map data
-       a    r6,r1                      ; add map offset
-       li   r7,24                      ; number of rows
-inisc1:
-       bl   @copy_row
-       ai   r0,32
-       dec  r7
-       jne  inisc1
-*      Name table 1
-       li   r0,name_table_1+8          ; destination address in vdp ram
-       li   r1,map_buffer              ; base address of map data
-       a    r6,r1                      ; add map offset
-       li   r7,24                      ; number of rows
-inisc2:
-       bl   @copy_row_hi
-       ai   r0,32
-       dec  r7
-       jne  inisc2
+       mov  @level_bank_select,r0
+       seto *r0
+       mov  @w_1,@frame
+       bl   @update_pattern_table
+       bl   @update_name_table
+       clr  @frame
+       bl   @set_name_table
 *      Screen on
        li   r0,>01e2
        bl   @vwtr
@@ -3281,6 +3260,7 @@ game_init:
        clr  @score_msw
        li   r0,3
        mov  r0,@lives
+       clr  @level
        .endproc
 *// game_init
 
@@ -3290,7 +3270,17 @@ game_init:
 *
 level_init:
        .proc
-       seto @level_1_bank_select
+*      Copy level data
+       mov  @level,r0
+       sla  r0,1
+       ai   r0,levels
+       mov  *r0,r0
+       li   r1,current_level_data
+       li   r2,level_data_size
+       bl   @copy
+*      Other
+       mov  @level_bank_select,r0
+       seto *r0
        seto  @disp_score
        li   r0,scroll_max              ; start at the bottom of the map
        mov  r0,@scroll_y
@@ -3300,7 +3290,7 @@ level_init:
        mov  r0,@bonus
        bl   @display_bonus
        bl   @base_stage_init
-       li   r0,one_resident_stage
+       mov  @stages,r0
        mov  r0,@next_stage_ptr
        li   r0,climber_position
        mov  r0,@climber_pos
@@ -3488,14 +3478,14 @@ disable_sprites
 unpack_map:
        .proc
        li   r0,map_buffer              ; Destination
-       li   r1,RIDX1                   ; Source index
-       mov  @MS0+2,r4
+       mov  @map_row_index,r1          ; Source index
+       mov  @w_map_height,r4
 unpack_map_1:
        clr  r2
        movb *r1+,r2                    ; Map row index
        swpb r2
-       mpy  @MS0,r2                    ; Offset in r3
-       ai   r3,ROWS1
+       mpy  @w_map_width,r2            ; Offset in r3
+       a    @map_rows,r3
        li   r2,map_width
 unpack_map_2:
        movb *r3+,*r0+
@@ -3641,6 +3631,38 @@ lower_memory_max:
 buffer:
        bss  8
 
+levels:
+       data level1
+       data 0
+level1:
+       data level_1_bank_select
+       data TCHARS1
+       data RIDX1
+       data ROWS1
+       data PSTRIP1
+       data CSTRIP1-PSTRIP1
+       data stages1
+
+*      Level dependent constants
+current_level_data:
+       equ  $
+level_bank_select:
+       data level_1_bank_select
+trans_chars:
+       data TCHARS1
+map_row_index:
+       data RIDX1
+map_rows:
+       data ROWS1
+pattern_strips:
+       data PSTRIP1
+color_strip_offset:
+       data CSTRIP1-PSTRIP1
+stages:
+       data stages1
+level_data_size:
+       equ  $-current_level_data
+
 CTRL_LEFT_DN:
        equ  0
 CTRL_LEFT_UP:
@@ -3664,31 +3686,7 @@ keyboard_control:
        data KEY_D, KEY_E, KEY_K, KEY_I
        data KEY_S, KEY_F, KEY_J, KEY_L
 
-stages:
-       equ  $
-one_resident_stage:
-       data >0b00                      ; scroll y
-       data one_resident_stage_init    ; init
-bird_stage:
-       data >0980                      ; scroll y
-       data bird_stage_init            ; init
-two_residents_stage:
-       data >0780                      ; scroll y
-       data two_residents_stage_init   ; init
-pre_kong_stage:
-       data >0500                      ; scroll y
-       data pre_kong_stage_init        ; init
-kong_stage:
-       data >04A0                      ; scroll y
-       data kong_stage_init            ; init
-three_residents_stage:
-       data >0390                      ; scroll y
-       data three_residents_stage_init ; init
-chopper_stage:
-       data >0080                      ; scroll y
-       data chopper_stage_init         ; init
-stages_end:
-       equ   $
+       copy "level-1-stages.a99"
 
 bird_init_data:
        data bird_handler, >0020, >0982, >0002, >0001, >0000
@@ -3772,7 +3770,10 @@ w_24:
        data 24
 w_window_anim_type_resident:
        data window_anim_type_resident
-
+w_map_width:
+       data map_width
+w_map_height:
+       data map_height
 *      For decimal printing - maintain order
 w_10000:
        data 10000

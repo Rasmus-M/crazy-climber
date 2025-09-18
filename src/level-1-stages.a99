@@ -1,0 +1,26 @@
+stages1:
+       equ  $
+one_resident_stage:
+       data >0b00                      ; scroll y
+       data one_resident_stage_init    ; init
+bird_stage:
+       data >0980                      ; scroll y
+       data bird_stage_init            ; init
+two_residents_stage:
+       data >0780                      ; scroll y
+       data two_residents_stage_init   ; init
+pre_kong_stage:
+       data >0500                      ; scroll y
+       data pre_kong_stage_init        ; init
+kong_stage:
+       data >04A0                      ; scroll y
+       data kong_stage_init            ; init
+three_residents_stage:
+       data >0390                      ; scroll y
+       data three_residents_stage_init ; init
+chopper_stage:
+       data >0080                      ; scroll y
+       data chopper_stage_init         ; init
+stages_end:
+       equ   $
+
