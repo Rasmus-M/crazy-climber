@@ -252,24 +252,6 @@ new_game:
        bl   @game_init
 next_level:
        bl   @level_init
-       .ifeq test_bird,1
-       li   r0,>988                    ; For testing bird
-       mov  r0,@scroll_y
-       li   r0,bird_stage
-       mov  r0,@next_stage_ptr
-       .endif
-       .ifeq test_kong,1
-       li   r0,>4A8                    ; For testing kong
-       mov  r0,@scroll_y
-       li   r0,kong_stage
-       mov  r0,@next_stage_ptr
-       .endif
-       .ifeq test_chopper,1
-       li   r0,>088                    ; For testing chopper
-       mov  r0,@scroll_y
-       li   r0,chopper_stage
-       mov  r0,@next_stage_ptr
-       .endif
        bl   @intro_climb
 restart_level:
        bl   @restart_init
@@ -1746,6 +1728,8 @@ bird_stage_init_1:
 bird_handler:
        .proc
 *      Remove
+       mov  @status,r0
+       jne  bird_handler_1
        c    @w_8,@bird_rounds
        jeq  bird_handler_1
        mov  @scroll_y,r0
@@ -1753,6 +1737,7 @@ bird_handler:
        jgt  bird_handler_2
 bird_handler_1:
        clr  @sprite_handler(r3)
+       bl   @mute_sound
        jmp  bird_handler_10
 bird_handler_2:
 *      Draw
@@ -3044,6 +3029,7 @@ scroll_to_climber_2:
 *
 title_screen:
        .proc
+       bl   @mute_sound
        seto @title_bank_select
 *      One pattern table
        li   r0,>0400
@@ -3319,6 +3305,10 @@ level_init:
 *      Set ROM bank
        mov  @level_bank_select,r0
        seto *r0
+*      Stage
+       bl   @base_stage_init
+       mov  @stages,r0
+       mov  r0,@next_stage_ptr
 *      Initial screen
        li   r0,scroll_max              ; Start at the bottom of the map
        mov  r0,@scroll_y
@@ -3330,12 +3320,26 @@ level_init:
        bl   @display_bonus
        bl   @display_step_point
        bl   @display_progress_indicator
+       .ifeq test_bird,1
+       li   r0,>988                    ; For testing bird
+       mov  r0,@scroll_y
+       li   r0,bird_stage
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_kong,1
+       li   r0,>4A8                    ; For testing kong
+       mov  r0,@scroll_y
+       li   r0,kong_stage
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_chopper,1
+       li   r0,>088                    ; For testing chopper
+       mov  r0,@scroll_y
+       li   r0,chopper_stage
+       mov  r0,@next_stage_ptr
+       .endif
        bl   @unpack_map                ; Map
        bl   @initial_scrolling_screen
-*      Stage
-       bl   @base_stage_init
-       mov  @stages,r0
-       mov  r0,@next_stage_ptr
 *      Place climber
        li   r0,initial_climber_position
        mov  r0,@climber_pos
