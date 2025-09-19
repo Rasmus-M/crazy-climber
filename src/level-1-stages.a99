@@ -21,6 +21,6 @@ three_residents_stage:
 chopper_stage:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
-stages1_end:
+*      End marker
        data 0
 

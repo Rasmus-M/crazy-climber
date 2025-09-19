@@ -1,8 +1,9 @@
 stages2:
        equ  $
-one_resident_stage_2:
        data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
-stages2_end:
+       data >0080                      ; scroll y
+       data chopper_stage_init         ; init
+*      End marker
        data 0
 

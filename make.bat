@@ -1,7 +1,7 @@
 xas99.py src/crazy-climber.a99 -i -q -R -L crazy-climber.lst -E symbols.txt -o bin/main
 xas99.py src/rom-bank-4.a99 -B -q -R -o bin/bank4.bin
 xas99.py src/rom-bank-5.a99 -B -q -R -o bin/bank5.bin
-xas99.py src/rom-bank-6.a99 -B -q -R -o bin/bank7.bin
+xas99.py src/rom-bank-6.a99 -B -q -R -o bin/bank6.bin
 
 java -jar tools/ea5tocart.jar bin\main "CRAZY CLIMBER"
 

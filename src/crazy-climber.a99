@@ -56,6 +56,14 @@ sprite_attr_table:                     ; Sprite attribute table
 *      Constants
 falling_enabled:
        equ  1
+test_bird:
+       equ  0
+test_kong:
+       equ  0
+test_chopper:
+       equ  0
+start_level:
+       equ  1
 map_width:
        equ  22
 map_height:
@@ -70,7 +78,7 @@ n_sprites:
        equ  16
 attenuation_during_speech:
        equ  2
-climber_position:
+initial_climber_position:
        equ  >6da8
 chr_zero:
        equ  96
@@ -189,10 +197,8 @@ score_msw:                             ; Score MSW
        equ  score+2
 disp_score:                            ; Currently displayed score (LSW)
        equ  score_msw+2
-step_point:                            ; Points per step
-       equ  disp_score+2
 bonus:                                 ; Bonus (counts down)
-       equ  step_point+2
+       equ  disp_score+2
 snd_channel_1:                         ; Sound/music player data
        equ  bonus+2
 snd_channel_2:
@@ -244,16 +250,24 @@ new_game:
        bl   @game_init
 next_level:
        bl   @level_init
-;       li   r0,>988                    ; For testing bird
-;       li   r0,>4A8                    ; For testing kong
-;       li   r0,>088                    ; For testing chopper
-;       mov  r0,@scroll_y               ; For testing
-;       li   r0,bird_stage              ; For testing bird
-;       li   r0,kong_stage              ; For testing kong
-;       li   r0,chopper_stage           ; For testing chopper
-;       mov  r0,@next_stage_ptr         ; For testing
-       bl   @unpack_map
-       bl   @initial_scrolling_screen
+       .ifeq test_bird,1
+       li   r0,>988                    ; For testing bird
+       mov  r0,@scroll_y
+       li   r0,bird_stage
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_kong,1
+       li   r0,>4A8                    ; For testing kong
+       mov  r0,@scroll_y
+       li   r0,kong_stage
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_chopper,1
+       li   r0,>088                    ; For testing chopper
+       mov  r0,@scroll_y
+       li   r0,chopper_stage
+       mov  r0,@next_stage_ptr
+       .endif
        bl   @intro_climb
 restart_level:
        bl   @restart_init
@@ -606,7 +620,7 @@ change_scroll_offset_1:
        jgt  change_scroll_offset_2
        andi r1,15
        jne  change_scroll_offset_2
-       li   r1,100
+       mov  @step_points,r1
        bl   @add_score
 change_scroll_offset_2:
        .endproc
@@ -2667,6 +2681,19 @@ display_bonus:
        .endproc
 *// display_bonus
 
+*******************************************************************
+*
+* Display step point
+*
+display_step_point:
+       .proc
+       li   r0,32*14+3
+       mov  @step_points,r1
+       li   r2,3
+       bl   @display_decimal
+       .endproc
+*// display_step_point
+
 *********************************************************************
 *
 * Display decimal number
@@ -3263,8 +3290,8 @@ game_init:
        clr  @score_msw
        li   r0,3
        mov  r0,@lives
-       clr  @level
-;      inc  @level
+       li   r0,start_level
+       mov  r0,@level
        .endproc
 *// game_init
 
@@ -3282,21 +3309,27 @@ level_init:
        li   r1,current_level_data
        li   r2,level_data_size
        bl   @copy
-*      Other
+*      Set ROM bank
        mov  @level_bank_select,r0
        seto *r0
-       seto  @disp_score
-       li   r0,scroll_max              ; start at the bottom of the map
+*      Initial screen
+       li   r0,scroll_max              ; Start at the bottom of the map
        mov  r0,@scroll_y
-       li   r0,3
+       li   r0,3                       ; Progress indicator TODO: per level
        mov  r0,@progress_top_offset
+       seto  @disp_score               ; Score, bonus, step point
        li   r0,10000
        mov  r0,@bonus
        bl   @display_bonus
+       bl   @display_step_point
+       bl   @unpack_map                ; Map
+       bl   @initial_scrolling_screen
+*      Stage
        bl   @base_stage_init
        mov  @stages,r0
        mov  r0,@next_stage_ptr
-       li   r0,climber_position
+*      Place climber
+       li   r0,initial_climber_position
        mov  r0,@climber_pos
        .endproc
 *// level_init
@@ -3333,7 +3366,7 @@ restart_init_1:
        clr  @status
        clr  @scroll_dy
 *      Restare climber
-       li   r0,climber_position
+       li   r0,initial_climber_position
        movb r0,@climber_pos            ; Only reset y
        li   r0,left_anim
        mov  r0,@left_anim_ptr
@@ -3493,7 +3526,8 @@ unpack_map_1:
        li   r2,map_width
 unpack_map_2:
        movb *r3+,*r0+
-       dec  r2
+       movb *r3+,*r0+
+       dect r2
        jne  unpack_map_2
        dec  r4
        jne  unpack_map_1
@@ -3732,6 +3766,8 @@ level1:
        data ROWS1
        data PSTRIP1
        data CSTRIP1-PSTRIP1
+       data MD2
+       data 100
        data stages1
 level2:
        data level_2_bank_select
@@ -3740,6 +3776,8 @@ level2:
        data ROWS2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
+       data MD2
+       data 150
        data stages2
 
 *      Level dependent constants
@@ -3757,6 +3795,10 @@ pattern_strips:
        data PSTRIP1
 color_strip_offset:
        data CSTRIP1-PSTRIP1
+progress_map:
+       data MD2
+step_points:
+       data 100
 stages:
        data stages1
 level_data_size:
