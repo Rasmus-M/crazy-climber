@@ -22,4 +22,11 @@ snd_boing:
        byte 8                          ; Attn step
        data -32                        ; Freq step
 
+snd_chopper:
+       byte W0
+       byte 4                          ; Frames
+       byte 128                        ; Attn start
+       byte -16                        ; Attn step
+       data 0                          ; Freq step
+
        even

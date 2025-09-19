@@ -2102,6 +2102,7 @@ chopper_handler_5:
        clr  @sprite_vx(r3)
        seto @sprite_vy(r3)
 chopper_handler_6:
+       bl   @play_chopper
        .endproc
 *// chopper_handler
 
@@ -3305,6 +3306,8 @@ game_init:
 *
 level_init:
        .proc
+       bl   @mute_sound
+       bl   @clear_sprites_and_animations
 *      Copy level data
        mov  @level,r0
        sla  r0,1
@@ -3346,16 +3349,7 @@ level_init:
 restart_init:
        .proc
        bl   @display_lives
-*      Clear sprites table
-       li   r0,sprites
-       li   r2,sprites_end-sprites
-       bl   @clear
-*      Clear window animations table and pointers
-       li   r0,window_anims
-       li   r2,window_anims_end-window_anims
-       bl   @clear
-       clr  @windows_head_ptr
-       clr  @windows_tail_ptr
+       bl   @clear_sprites_and_animations
 *      Check if climber died
        mov  @status,r0
        jeq  restart_init_1
@@ -3383,6 +3377,25 @@ restart_init_1:
        bl   @update_climber_attrs_right
        .endproc
 *// restart_init
+
+*********************************************************************
+*
+* Clear sprites and animations
+*
+clear_sprites_and_animations:
+       .proc
+*      Clear sprites table
+       li   r0,sprites
+       li   r2,sprites_end-sprites
+       bl   @clear
+*      Clear window animations table and pointers
+       li   r0,window_anims
+       li   r2,window_anims_end-window_anims
+       bl   @clear
+       clr  @windows_head_ptr
+       clr  @windows_tail_ptr
+       .endproc
+*// clear_sprites_and_animations
 
 *********************************************************************
 *

@@ -62,3 +62,14 @@ play_boing:
        .endproc
 *// play_boing
 
+*********************************************************************
+*
+* Play chopper
+*
+play_chopper:
+       .proc
+       li   r0,snd_chopper
+       li   r1,snd_channel_4
+       bl   @play_snd
+       .endproc
+*// play_chopper
