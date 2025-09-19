@@ -63,7 +63,7 @@ test_kong:
 test_chopper:
        equ  0
 start_level:
-       equ  1
+       equ  0                          ; 0 is building 1
 map_width:
        equ  22
 map_height:
@@ -97,7 +97,9 @@ chr_face_last:
 chr_life:
        equ  111
 chr_space:
-       equ  107
+       equ  106
+chr_prog:
+       equ  255
 kong_row:
        equ  >88
 title_bank_select:
@@ -2518,10 +2520,11 @@ display_progress:
        srl  r3,4                       ; One pixel of progress per 16 lines of scrolling
        mov  r3,r4                      ; Save number of pixels
        srl  r3,3                       ; Number of characters from top
-       clr  r1
-       movb @MD2(r3),r1                ; Get character code
+       mov  @progress_map,r1
+       a    r3,r1
+       movb *r1,r1                     ; Get character code
 *      Copy pattern to buffer
-       swpb r1
+       srl  r1,8
        ai   r1,-96
        sla  r1,3
        ai   r1,PAT96
@@ -2531,7 +2534,7 @@ display_progress:
        mov  *r1+,*r0+
        mov  *r1+,*r0+
 *      Copy colors to VDP
-       li   r0,127*8+color_table
+       li   r0,chr_prog*8+color_table
        ai   r1,COL96-PAT96-8
        li   r2,8
        bl   @vmbw
@@ -2543,15 +2546,15 @@ display_progress:
        xor  r1,r0
        movb r0,*r4
 *      Copy pattern to VDP
-       li   r0,127*8+pattern_table
+       li   r0,chr_prog*8+pattern_table
        li   r1,buffer
        li   r2,8
        bl   @vmbw
-       li   r0,127*8+pattern_table_1
+       li   r0,chr_prog*8+pattern_table_1
        li   r1,buffer
        li   r2,8
        bl   @vmbw
-       li   r0,127*8+pattern_table_2
+       li   r0,chr_prog*8+pattern_table_2
        li   r1,buffer
        li   r2,8
        bl   @vmbw
@@ -2569,13 +2572,14 @@ display_progress_0:
 display_progress_1:
        sla  r0,5                       ; * 32
        ai   r0,name_table_0
-       li   r1,>7f00                   ; Char 127
+       li   r1,chr_prog*256            ; Char 255
        bl   @vsbw
        ai   r0,name_table_1-name_table_0
        bl   @vsbw
 *      Restore char below
        ai   r0,32                      ; Next row
-       movb @MD2+1(r3),r1              ; Next character
+       a    @progress_map,r3
+       movb @1(r3),r1                  ; Next character
        bl   @vsbw
        ai   r0,name_table_0-name_table_1
        bl   @vsbw
@@ -2594,7 +2598,7 @@ display_progress_indicator:
        li   r4,2
        li   r0,name_table_0
 display_progress_indicator_1:
-       li   r1,MD2
+       mov  @progress_map,r1
        a    @progress_top_offset,r1
        li   r2,24
 display_progress_indicator_2:
@@ -3322,6 +3326,7 @@ level_init:
        mov  r0,@bonus
        bl   @display_bonus
        bl   @display_step_point
+       bl   @display_progress_indicator
        bl   @unpack_map                ; Map
        bl   @initial_scrolling_screen
 *      Stage
@@ -3766,7 +3771,7 @@ level1:
        data ROWS1
        data PSTRIP1
        data CSTRIP1-PSTRIP1
-       data MD2
+       data progress_map_1
        data 100
        data stages1
 level2:
@@ -3776,7 +3781,7 @@ level2:
        data ROWS2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
-       data MD2
+       data progress_map_2
        data 150
        data stages2
 
@@ -3796,7 +3801,7 @@ pattern_strips:
 color_strip_offset:
        data CSTRIP1-PSTRIP1
 progress_map:
-       data MD2
+       data progress_map_1
 step_points:
        data 100
 stages:
