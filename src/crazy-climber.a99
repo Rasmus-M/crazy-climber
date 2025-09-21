@@ -2639,6 +2639,20 @@ display_score_1:
 
 *******************************************************************
 *
+* Display high score
+*
+display_high_score:
+       .proc
+       mov  @high_scores,r6
+       mov  @high_scores+2,r7
+       li   r0,32*3+2
+       bl   @display_double
+       mov  @score,@disp_score
+       .endproc
+*// display_high_score
+
+*******************************************************************
+*
 * Display bonus
 *
 update_and_display_bonus:
@@ -3281,7 +3295,7 @@ high_score_screen:
        bl   @vsmw
        clr  @frame
        bl   @set_name_table
-       li   r0,6*32+9+name_table_0
+       li   r0,5*32+9+name_table_0
        li   r1,txt_highest_scores
        li   r2,14
        bl   @vmbw
@@ -3289,7 +3303,7 @@ high_score_screen:
        clr   r9
 high_score_screen_1:
        mov  r9,r0
-       sla  r0,5
+       sla  r0,6
        ai   r0,8*32+11
        ai   r0,name_table_0
        mov  r9,r1
@@ -3301,7 +3315,7 @@ high_score_screen_1:
        li   r2,4
        bl   @vmbw
        mov  r9,r0
-       sla  r0,5
+       sla  r0,6
        ai   r0,8*32+15
        mov  *r8+,r6
        mov  *r8+,r7
@@ -3416,6 +3430,8 @@ game_init:
        mov  r0,@lives
        li   r0,start_level
        mov  r0,@level
+*      HIgh score
+       bl   @display_high_score
        .endproc
 *// game_init
 
