@@ -308,11 +308,13 @@ main_loop:
 finished:
        ci   r0,1
        jeq  finished_1
+*      Level completed without chopper pickup
        li   r0,5300
        s    r0,@bonus
        jgt  finished_1
        clr  @bonus
 finished_1:
+*      Level completed with chopper pickup
        bl   @chopper_pickup
        mov  @level,r0
        inc r0
@@ -320,9 +322,12 @@ finished_1:
        mov  r0,@level
        jmp  next_level
 died:
+*      Died
        bl   @fall_sequence
        dec  @lives
        jne  restart_level
+*      Game over
+       bl   @record_high_score
        b    @new_game
 *// main_loop
 
@@ -2437,7 +2442,7 @@ lose_grip_1:
        ai   r0,-spr_anim_size
        mov  r0,@left_anim_ptr
        bl   @update_climber_attrs_left
-       jmp  lose_grip_4
+       jmp  lose_grip_6
 lose_grip_2:
        abs  @right_grip
        jeq  lose_grip_4
@@ -2454,7 +2459,7 @@ lose_grip_3:
        ai   r0,-spr_anim_size
        mov  r0,@right_anim_ptr
        bl   @update_climber_attrs_right
-       jmp  lose_grip_4
+       jmp  lose_grip_6
 lose_grip_4:
        bl   @fall
 lose_grip_6:
@@ -2625,15 +2630,8 @@ display_score:
        jeq  display_score_1
        mov  @score_msw,r6
        mov  @score,r7
-       div  @w_10000,r6
        li   r0,32*6+2
-       mov  r6,r1
-       li   r2,2
-       bl   @display_decimal
-       li   r0,32*6+4
-       mov  r7,r1
-       li   r2,4
-       bl   @display_decimal
+       bl   @display_double
        mov  @score,@disp_score
 display_score_1:
        .endproc
@@ -2683,6 +2681,30 @@ display_step_point:
        bl   @display_decimal
        .endproc
 *// display_step_point
+
+
+*********************************************************************
+*
+* Display 2-word decimal number with 6 digits
+*
+* r0: Screen offset
+* r6: MSW
+* r7: LSW
+*
+display_double:
+       .proc
+       .push r0
+       div  @w_10000,r6
+       mov  r6,r1
+       li   r2,2
+       bl   @display_decimal
+       .pop r0
+       inct r0
+       mov  r7,r1
+       li   r2,4
+       bl   @display_decimal
+       .endproc
+*// display_double
 
 *********************************************************************
 *
@@ -2800,6 +2822,26 @@ rand:
 *
 initial_static_screen:
        .proc
+       bl   @load_static_characters
+*      Name table 0
+       li   r0,name_table_0
+       li   r1,MD1
+       li   r2,>300
+       bl   @vmbw
+*      Name table 1
+       li   r0,name_table_1
+       li   r1,MD1
+       li   r2,>300
+       bl   @vmbw
+       .endproc
+*// initial_static_screen
+
+*********************************************************************
+*
+* Load non-scrolling characters
+*
+load_static_characters:
+       .proc
        seto @title_bank_select
 *      Non-scrolling patterns 1st part
        li   r0,96*8+pattern_table      ; Non-scrolling characters
@@ -2837,18 +2879,8 @@ initial_static_screen:
        li   r1,COL224
        li   r2,32*8
        bl   @vmbw
-*      Name table 0
-       li   r0,name_table_0
-       li   r1,MD1
-       li   r2,>300
-       bl   @vmbw
-*      Name table 1
-       li   r0,name_table_1
-       li   r1,MD1
-       li   r2,>300
-       bl   @vmbw
        .endproc
-*// initial_static_screen
+*// load_static_characters
 
 *********************************************************************
 *
@@ -3034,41 +3066,47 @@ title_screen:
 *      One pattern table
        li   r0,>0400
        bl   @vwtr
+title_screen_1:
 *      Clear screen
-       li   r0,name_table_0
-       clr  r1
-       li   r2,>700
-       bl   @vsmw
+       bl   @clear_screen
+*      Display logo and text
        bl   @title_scroll_logo
        bl   @title_scroll_text
-title_screen_1:
+       li   r2,>8000
+title_screen_2:
+*      Read keyboard
        li   r0,KEY_1
        bl   @check_key
-       jeq  title_screen_2
+       jeq  title_screen_3
        li   r0,keyboard_control
        mov  r0,@control_set
-       jmp  title_screen_4
-title_screen_2:
+       jmp  title_screen_5
+title_screen_3:
        li   r0,KEY_2
        bl   @check_key
-       jeq  title_screen_3
+       jeq  title_screen_4
        li   r0,joystick_control
        mov  r0,@control_set
-       jmp  title_screen_4
-title_screen_3:
-       jmp  title_screen_1
+       jmp  title_screen_5
 title_screen_4:
+       dec  r2
+       jne  title_screen_2
+       bl   @disable_sprites
+       bl   @high_score_screen
+       jmp  title_screen_1
+title_screen_5:
+*      Select name_table_0
        clr  @frame
        bl   @set_name_table
 *      Screen off
        li   r0,>01a2
        bl   @vwtr
        abs  @sprite_dupl_bug
-       jeq  title_screen_5
+       jeq  title_screen_6
 *      3 pattern tables
        li   r0,>0403
        bl   @vwtr
-title_screen_5:
+title_screen_6:
        .endproc
 *// title_screen
 
@@ -3228,6 +3266,101 @@ title_scroll_text_4:
 title_scroll_text_5:
        .endproc
 *// title_scroll_text
+
+*********************************************************************
+*
+* Display high score screen
+*
+high_score_screen:
+       .proc
+       bl   @clear_screen
+       bl   @load_static_characters
+       li   r0,color_table
+       li   r1,>f100
+       li   r2,>800
+       bl   @vsmw
+       clr  @frame
+       bl   @set_name_table
+       li   r0,6*32+9+name_table_0
+       li   r1,txt_highest_scores
+       li   r2,14
+       bl   @vmbw
+       li   r8,high_scores
+       clr   r9
+high_score_screen_1:
+       mov  r9,r0
+       sla  r0,5
+       ai   r0,8*32+11
+       ai   r0,name_table_0
+       mov  r9,r1
+       ai   r1,chr_zero
+       inc  r1
+       swpb r1
+       movb r1,@txt_no1+2
+       li   r1,txt_no1
+       li   r2,4
+       bl   @vmbw
+       mov  r9,r0
+       sla  r0,5
+       ai   r0,8*32+15
+       mov  *r8+,r6
+       mov  *r8+,r7
+       bl   @display_double
+       inc  r9
+       ci   r9,5
+       jne  high_score_screen_1
+       li   r2,>8000
+high_score_screen_2:
+*      Read keyboard
+       li   r0,KEY_1
+       bl   @check_key
+       jne  high_score_screen_3
+       li   r0,KEY_2
+       bl   @check_key
+       jne  high_score_screen_3
+       dec  r2
+       jne  high_score_screen_2
+high_score_screen_3:
+       .endproc
+*// high_score_screen
+
+*********************************************************************
+*
+* Record high score
+*
+record_high_score:
+       .proc
+       li   r0,high_scores
+       li   r2,5
+record_high_score_1:
+       c    @score_msw,*r0+
+       jh   record_high_score_2
+       c    @score,*r0
+       jh   record_high_score_2
+       inct r0
+       dec  r2
+       jne  record_high_score_1
+       jmp  record_high_score_5
+*      New high score
+record_high_score_2:
+       dect r0
+       li   r1,high_scores_2nd_last
+       c    r0,r1
+       jh   record_high_score_4
+       li   r3,high_scores_last
+record_high_score_3:
+       mov  *r1+,*r3+
+       mov  *r1,*r3
+       ai   r1,-6
+       ai   r3,-6
+       c    r1,r0
+       jhe  record_high_score_3
+record_high_score_4:
+       mov  @score_msw,*r0+
+       mov  @score,*r0
+record_high_score_5:
+       .endproc
+*// record_high_score
 
 *********************************************************************
 *
@@ -3519,7 +3652,20 @@ f18a_detect_2:
 
 *********************************************************************
 *
-* Disable sporites
+* Clear screen
+*
+clear_screen
+       .proc
+       li   r0,name_table_0
+       clr  r1
+       li   r2,>700                    ; Clear two names tables
+       bl   @vsmw
+       .endproc
+*// clear_screen
+
+*********************************************************************
+*
+* Disable sprites
 *
 disable_sprites
        .proc
@@ -3528,7 +3674,6 @@ disable_sprites
        bl   @vsbw
        .endproc
 *// disable_sprites
-
 
 *********************************************************************
 *
@@ -3835,6 +3980,21 @@ kong_init_data:
        data kong_handler, >0058, >0448, >0000, >0000, >0000
 chopper_init_data:
        data chopper_handler, >0040, >0000, >0000, >0001, >0002
+
+high_scores:
+       data 1,34464
+       data 0,50000
+       data 0,20000
+high_scores_2nd_last:
+       data 0,10000
+high_scores_last:
+       data 0,5000
+
+txt_highest_scores:
+       byte >e7,>e8,>e6,>e7,>e4,>f2,>f3,>00,>f2,>e2,>ee,>f1,>e4,>f2
+
+txt_no1:
+       byte >ed,>ee,>61,>fd
 
 window_anim_row:
        equ  0
