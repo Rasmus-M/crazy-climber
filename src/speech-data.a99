@@ -34,7 +34,7 @@ speech_ouch:
        BYTE >7B,>C8,>BD,>23,>C6,>BA,>AB,>0D
        BYTE >68,>0C,>98,>F3,>97,>00,>E5,>E6
        BYTE >13,>BE,>F5,>99,>2E,>D1,>8C,>F0
-       BYTE >BC,>7A,>9C,>C9,>16,>00,>00,>00
+       BYTE >BC,>7A,>9C,>C9,>16,>00,>00,>3c
 speech_ouch_end:
        equ  $
 
@@ -73,7 +73,7 @@ speech_oh_no:
        BYTE >24,>3A,>B6,>C9,>F4,>9C,>93,>79
        BYTE >BA,>02,>FF,>27,>8C,>64,>75,>0B
        BYTE >D5,>12,>33,>54,>D9,>29,>0A,>52
-       BYTE >25,>00,>A7,>22,>00
+       BYTE >25,>00,>A7,>22,>1e
 speech_oh_no_end:
        equ  $
 

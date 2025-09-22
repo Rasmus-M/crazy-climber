@@ -3426,11 +3426,12 @@ game_init:
 *      Game variables
        clr  @score
        clr  @score_msw
+       clr  @status
        li   r0,3
        mov  r0,@lives
        li   r0,start_level
        mov  r0,@level
-*      HIgh score
+*      High score
        bl   @display_high_score
        .endproc
 *// game_init
@@ -3461,7 +3462,7 @@ level_init:
 *      Initial screen
        li   r0,scroll_max              ; Start at the bottom of the map
        mov  r0,@scroll_y
-       li   r0,3                       ; Progress indicator TODO: per level
+       li   r0,3                       ; Progress indicator
        mov  r0,@progress_top_offset
        seto  @disp_score               ; Score, bonus, step point
        li   r0,10000
@@ -3547,6 +3548,8 @@ clear_sprites_and_animations:
        bl   @clear
        clr  @windows_head_ptr
        clr  @windows_tail_ptr
+*      No residents
+       clr  @current_residents
        .endproc
 *// clear_sprites_and_animations
 
