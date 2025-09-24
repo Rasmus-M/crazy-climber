@@ -373,8 +373,6 @@ check_int_1:
        b    *r11
 *// check_int
 
-
-
 *********************************************************************
 *
 * Interrupt routine
@@ -3136,40 +3134,25 @@ scroll_to_climber_2:
 *
 title_screen:
        .proc
+title_screen_0:
        bl   @mute_sound
        seto @title_bank_select
 *      One pattern table
        li   r0,>0400
        bl   @vwtr
+*      Title screen loop
 title_screen_1:
-*      Clear screen
-       bl   @clear_screen
-*      Display logo and text
-       bl   @title_scroll_logo
-       bl   @title_scroll_text
-       li   r2,>8000
+       li   r0,3
+       mov  r0,@title_screen_loops
 title_screen_2:
-*      Read keyboard
-       li   r0,KEY_1
-       bl   @check_key
-       jeq  title_screen_3
-       li   r0,keyboard_control
-       mov  r0,@control_set
-       jmp  title_screen_5
-title_screen_3:
-       li   r0,KEY_2
-       bl   @check_key
-       jeq  title_screen_4
-       li   r0,joystick_control
-       mov  r0,@control_set
-       jmp  title_screen_5
-title_screen_4:
-       dec  r2
+       bl   @title_screen_main_cycle
+       abs  @title_screen_done
+       jne  title_screen_3
+       dec  @title_screen_loops
        jne  title_screen_2
-       bl   @disable_sprites
-       bl   @high_score_screen
-       jmp  title_screen_1
-title_screen_5:
+       bl   @demo_mode_screen
+       jmp  title_screen_0
+title_screen_3:
 *      Select name_table_0
        clr  @frame
        bl   @set_name_table
@@ -3177,12 +3160,56 @@ title_screen_5:
        li   r0,>01a2
        bl   @vwtr
        abs  @sprite_dupl_bug
-       jeq  title_screen_6
+       jeq  title_screen_4
 *      3 pattern tables
        li   r0,>0403
        bl   @vwtr
-title_screen_6:
+title_screen_4:
        .endproc
+title_screen_loops:
+       data 0
+title_screen_done:
+       data 0
+*// title_screen
+
+*********************************************************************
+*
+* Display title screen
+*
+title_screen_main_cycle:
+       .proc
+*      Clear screen
+       bl   @clear_screen
+*      Display logo and text
+       bl   @title_scroll_logo
+       bl   @title_scroll_text
+       li   r2,>8000
+title_screen_main_cycle_1:
+*      Read keyboard
+       li   r0,KEY_1
+       bl   @check_key
+       jeq  title_screen_main_cycle_2
+       li   r0,keyboard_control
+       mov  r0,@control_set
+       jmp  title_screen_main_cycle_4
+title_screen_main_cycle_2:
+       li   r0,KEY_2
+       bl   @check_key
+       jeq  title_screen_main_cycle_3
+       li   r0,joystick_control
+       mov  r0,@control_set
+       jmp  title_screen_main_cycle_4
+title_screen_main_cycle_3:
+       dec  r2
+       jne  title_screen_main_cycle_1
+       bl   @disable_sprites
+       bl   @high_score_screen
+       jmp  title_screen_main_cycle_5
+title_screen_main_cycle_4:
+       seto @title_screen_done
+title_screen_main_cycle_5:
+       .endproc
+       data 0
 *// title_screen
 
 *********************************************************************
@@ -3443,6 +3470,18 @@ record_high_score_5:
 *
 demo_mode_screen:
        .proc
+       seto @demo_mode
+       bl   @initial_static_screen
+       bl   @game_init
+       bl   @level_init
+       bl   @restart_init
+       clr  @frame
+demo_loop:
+       bl   @main_loop_body
+       inc  @frame
+       mov  @frame,r0
+       ci   r0,120
+       jne  demo_loop
        .endproc
 *// demo_mode_screen
 
