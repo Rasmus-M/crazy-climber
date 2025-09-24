@@ -260,6 +260,47 @@ restart_level:
 *      Main loop
        clr  @frame
 main_loop:
+       bl   @main_loop_body
+*      Check status
+       mov  @status,r0
+       jgt  finished
+       jlt  died
+*      Loop
+       inc  @frame
+       jmp  main_loop
+*      Main loop terminated
+finished:
+       ci   r0,1
+       jeq  finished_1
+*      Level completed without chopper pickup
+       li   r0,5300
+       s    r0,@bonus
+       jgt  finished_1
+       clr  @bonus
+finished_1:
+*      Level completed with chopper pickup
+       bl   @chopper_pickup
+       mov  @level,r0
+       inc r0
+       andi r0,n_levels-1
+       mov  r0,@level
+       jmp  next_level
+died:
+*      Died
+       bl   @fall_sequence
+       dec  @lives
+       jne  restart_level
+*      Game over
+       bl   @record_high_score
+       b    @new_game
+*// main_loop
+
+*********************************************************************
+*
+* One iteration of the main loop
+*
+main_loop_body:
+       .proc
 *      Wait for vsync
        bl   @vsync
 *      Set name table
@@ -299,39 +340,8 @@ main_loop:
        bl   @update_stage
 *      Check for inactivity
        bl   @check_for_inactivity
-*      Check status
-       mov  @status,r0
-       jgt  finished
-       jlt  died
-*      Loop
-       inc  @frame
-       jmp  main_loop
-*      Main loop terminated
-finished:
-       ci   r0,1
-       jeq  finished_1
-*      Level completed without chopper pickup
-       li   r0,5300
-       s    r0,@bonus
-       jgt  finished_1
-       clr  @bonus
-finished_1:
-*      Level completed with chopper pickup
-       bl   @chopper_pickup
-       mov  @level,r0
-       inc r0
-       andi r0,n_levels-1
-       mov  r0,@level
-       jmp  next_level
-died:
-*      Died
-       bl   @fall_sequence
-       dec  @lives
-       jne  restart_level
-*      Game over
-       bl   @record_high_score
-       b    @new_game
-*// main_loop
+       .endproc
+*// vsync
 
 *********************************************************************
 *
@@ -959,8 +969,13 @@ control_climber_vert:
        b    @control_climber_vert_10   ; Branch to decrement counter
 *      Check keys
 control_climber_vert_check_keys:
+       abs  @demo_mode
+       jne  !
        bl   @check_vert_keys
-       clr  @animation_changed
+       jmp  !!
+!      bl   @demo_vert_keys
+!      clr  @animation_changed
+*      Control climber
        clr  @scroll_dy
 *      Left side
        mov  @left_anim_ptr,r3          ; Get animation pointer
@@ -1187,7 +1202,13 @@ control_climber_horz:
        b    @control_climber_horz_11   ; Skip ahead if so
 *      Check keys
 control_climber_horz_check_keys:
+       abs  @demo_mode
+       jne  !
        bl   @check_horz_keys
+       jmp  !!
+!      bl   @demo_horz_keys
+!      clr  @animation_changed
+*      Control climber
 *      Check for auto movement left
        abs  r1
        jeq  auto_move_3
@@ -3415,6 +3436,41 @@ record_high_score_4:
 record_high_score_5:
        .endproc
 *// record_high_score
+
+*********************************************************************
+*
+* Display demo mode screen
+*
+demo_mode_screen:
+       .proc
+       .endproc
+*// demo_mode_screen
+
+*********************************************************************
+*
+* Demo mode vertical control
+*
+demo_vert_keys:
+       .proc
+       clr  r6
+       clr  r7
+       clr  r8
+       clr  r9
+       .endproc
+*// demo_vert_keys
+
+*********************************************************************
+*
+* Demo mode horizontal control
+*
+demo_horz_keys:
+       .proc
+       clr  r1
+       clr  r2
+       clr  r3
+       clr  r4
+       .endproc
+*// demo_horz_keys
 
 *********************************************************************
 *
