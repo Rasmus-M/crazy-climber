@@ -201,8 +201,10 @@ disp_score:                            ; Currently displayed score (LSW)
        equ  score_msw+2
 bonus:                                 ; Bonus (counts down)
        equ  disp_score+2
-snd_channel_1:                         ; Sound/music player data
+demo_mode:
        equ  bonus+2
+snd_channel_1:                         ; Sound/music player data
+       equ  demo_mode+2
 snd_channel_2:
        equ  snd_channel_1+snd_channel_size
 snd_channel_3:
@@ -953,13 +955,13 @@ check_grip_4:
 control_climber_vert:
        .proc
        mov  @animation_count,r0        ; Is an animation count already taking place?
-       jeq  control_climber_vert_1     ; Proceed if not
+       jeq  control_climber_vert_check_keys ; Proceed if not
        b    @control_climber_vert_10   ; Branch to decrement counter
-control_climber_vert_1:
+*      Check keys
+control_climber_vert_check_keys:
+       bl   @check_vert_keys
        clr  @animation_changed
        clr  @scroll_dy
-       li   r5,control_set
-       mov  @control_set,r5
 *      Left side
        mov  @left_anim_ptr,r3          ; Get animation pointer
 *      Check for left grip
@@ -968,8 +970,7 @@ control_climber_vert_1:
 *      Left grip
        ci   r3,left_anim_last          ; Is it the last animation frame?
        jeq  control_climber_vert_2     ; Skip ahead if so
-       mov  @CTRL_LEFT_DN(r5),r0       ; Check down key
-       bl   @check_key
+       abs  r6                         ; Check down key
        jeq  control_climber_vert_2     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@left_anim_ptr          ; Save new pointer
@@ -984,8 +985,7 @@ control_climber_vert_2:
 *      Right grip
        ci   r3,left_anim_last          ; Is it the last animation frame?
        jeq  control_climber_vert_3     ; Skip ahead if so
-       mov  @CTRL_LEFT_DN(r5),r0       ; Check down key
-       bl   @check_key
+       abs  r6                         ; Check down key
        jeq  control_climber_vert_3     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@left_anim_ptr          ; Save new pointer
@@ -994,8 +994,7 @@ control_climber_vert_2:
 control_climber_vert_3:
        ci   r3,left_anim               ; Is it the first animation frame?
        jeq  control_climber_vert_5     ; Skip ahead if so
-       mov  @CTRL_LEFT_UP(r5),r0       ; Check up key
-       bl   @check_key
+       abs  r7                         ; Check up key
        jeq  control_climber_vert_5     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@left_anim_ptr          ; Save new pointer
@@ -1012,8 +1011,7 @@ control_climber_vert_5:
 *      Right grip
        ci   r3,right_anim_last         ; Is it the last animation frame?
        jeq  control_climber_vert_6     ; Skip ahead if so
-       mov  @CTRL_RIGHT_DN(r5),r0      ; Check down key
-       bl   @check_key
+       abs  r8                         ; Check down key
        jeq  control_climber_vert_6     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@right_anim_ptr         ; Save new pointer
@@ -1028,8 +1026,7 @@ control_climber_vert_6:
 *      Left grip
        ci   r3,right_anim_last         ; Is it the last animation frame?
        jeq  control_climber_vert_7     ; Skip ahead if so
-       mov  @CTRL_RIGHT_DN(r5),r0      ; Check down key
-       bl   @check_key
+       abs  r8                         ; Check down key
        jeq  control_climber_vert_7     ; Move on if not pressed
        ai   r3,spr_anim_size           ; Next frame
        mov  r3,@right_anim_ptr         ; Save new pointer
@@ -1038,8 +1035,7 @@ control_climber_vert_6:
 control_climber_vert_7:
        ci   r3,right_anim              ; Is it the first animation frame?
        jeq  control_climber_vert_9     ; Skip ahead if so
-       mov  @CTRL_RIGHT_UP(r5),r0      ; Check up key
-       bl   @check_key
+       abs  r9                         ; Check up key
        jeq  control_climber_vert_9     ; Move on if not pressed
        ai   r3,-spr_anim_size          ; Previous frame
        mov  r3,@right_anim_ptr         ; Save new pointer
@@ -1056,6 +1052,40 @@ control_climber_vert_10:
 control_climber_vert_11:
        .endproc
 *// control_climber_vert
+
+*********************************************************************
+*
+* Read vertical control keys
+*
+check_vert_keys:
+       .proc
+       mov  @control_set,r5
+       clr  r6                         ; Check if the left joystick is moved left
+       mov  @CTRL_LEFT_DN(r5),r0
+       bl   @check_key
+       jeq  check_vert_keys_1
+       seto r6
+check_vert_keys_1:
+       clr  r7                         ; Check if the left joystick is moved right
+       mov  @CTRL_LEFT_UP(r5),r0
+       bl   @check_key
+       jeq  check_vert_keys_2
+       seto r7
+check_vert_keys_2:
+       clr  r8                         ; Check if the right joystick is moved left
+       mov  @CTRL_RIGHT_DN(r5),r0
+       bl   @check_key
+       jeq  check_vert_keys_3
+       seto r8
+check_vert_keys_3:
+       clr  r9                         ; Check if the right joystick is moved right
+       mov  @CTRL_RIGHT_UP(r5),r0
+       bl   @check_key
+       jeq  check_vert_keys_4
+       seto r9
+check_vert_keys_4:
+       .endproc
+*// check_vert_keys
 
 *********************************************************************
 *
@@ -1153,35 +1183,11 @@ update_climber_attrs_right_1:
 control_climber_horz:
        .proc
        mov  @animation_count,r0        ; Is an animation count already taking place?
-       jeq  control_climber_check_keys
+       jeq  control_climber_horz_check_keys
        b    @control_climber_horz_11   ; Skip ahead if so
 *      Check keys
-control_climber_check_keys:
-       mov  @control_set,r5
-       clr  r1                         ; Check if the left joystick is moved left
-       mov  @CTRL_LEFT_LT(r5),r0
-       bl   @check_key
-       jeq  check_keys_1
-       seto r1
-check_keys_1:
-       clr  r2                         ; Check if the left joystick is moved right
-       mov  @CTRL_LEFT_RT(r5),r0
-       bl   @check_key
-       jeq  check_keys_2
-       seto r2
-check_keys_2:
-       clr  r3                         ; Check if the right joystick is moved left
-       mov  @CTRL_RIGHT_LT(r5),r0
-       bl   @check_key
-       jeq  check_keys_3
-       seto r3
-check_keys_3:
-       clr  r4                         ; Check if the right joystick is moved right
-       mov  @CTRL_RIGHT_RT(r5),r0
-       bl   @check_key
-       jeq  check_keys_4
-       seto r4
-check_keys_4:
+control_climber_horz_check_keys:
+       bl   @check_horz_keys
 *      Check for auto movement left
        abs  r1
        jeq  auto_move_3
@@ -1340,6 +1346,40 @@ control_climber_horz_10:
 control_climber_horz_11:
        .endproc
 *// control_climber_horz
+
+*********************************************************************
+*
+* Read horizontal control keys
+*
+check_horz_keys:
+       .proc
+       mov  @control_set,r5
+       clr  r1                         ; Check if the left joystick is moved left
+       mov  @CTRL_LEFT_LT(r5),r0
+       bl   @check_key
+       jeq  check_horz_keys_1
+       seto r1
+check_horz_keys_1:
+       clr  r2                         ; Check if the left joystick is moved right
+       mov  @CTRL_LEFT_RT(r5),r0
+       bl   @check_key
+       jeq  check_horz_keys_2
+       seto r2
+check_horz_keys_2:
+       clr  r3                         ; Check if the right joystick is moved left
+       mov  @CTRL_RIGHT_LT(r5),r0
+       bl   @check_key
+       jeq  check_horz_keys_3
+       seto r3
+check_horz_keys_3:
+       clr  r4                         ; Check if the right joystick is moved right
+       mov  @CTRL_RIGHT_RT(r5),r0
+       bl   @check_key
+       jeq  check_horz_keys_4
+       seto r4
+check_horz_keys_4:
+       .endproc
+*// check_horz_keys
 
 *********************************************************************
 *
@@ -3424,6 +3464,7 @@ game_init:
        li   r2,64*32
        bl   @vmbw
 *      Game variables
+       clr  @demo_mode
        clr  @score
        clr  @score_msw
        clr  @status
