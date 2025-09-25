@@ -3137,9 +3137,7 @@ title_screen:
 title_screen_0:
        bl   @mute_sound
        seto @title_bank_select
-*      One pattern table
-       li   r0,>0400
-       bl   @vwtr
+       bl   @one_pattern_table
 *      Title screen loop
 title_screen_1:
        li   r0,3
@@ -3151,6 +3149,7 @@ title_screen_2:
        dec  @title_screen_loops
        jne  title_screen_2
        bl   @demo_mode_screen
+       bl   @one_pattern_table
        jmp  title_screen_0
 title_screen_3:
 *      Select name_table_0
@@ -3159,18 +3158,37 @@ title_screen_3:
 *      Screen off
        li   r0,>01a2
        bl   @vwtr
-       abs  @sprite_dupl_bug
-       jeq  title_screen_4
-*      3 pattern tables
-       li   r0,>0403
-       bl   @vwtr
-title_screen_4:
+       bl   @three_pattern_tables
        .endproc
 title_screen_loops:
        data 0
 title_screen_done:
        data 0
 *// title_screen
+
+*********************************************************************
+*
+* Enable 3 pattern tables if required
+*
+one_pattern_table:
+       .proc
+       li   r0,>0400
+       bl   @vwtr
+       .endproc
+
+*********************************************************************
+*
+* Enable 3 pattern tables if required
+*
+three_pattern_tables:
+       .proc
+       abs  @sprite_dupl_bug
+       jeq  three_pattern_tables_1
+*      3 pattern tables
+       li   r0,>0403
+       bl   @vwtr
+three_pattern_tables_1:
+       .endproc
 
 *********************************************************************
 *
@@ -3471,17 +3489,29 @@ record_high_score_5:
 demo_mode_screen:
        .proc
        seto @demo_mode
+       bl   @three_pattern_tables
        bl   @initial_static_screen
        bl   @game_init
        bl   @level_init
+       bl   @intro_climb
        bl   @restart_init
        clr  @frame
 demo_loop:
        bl   @main_loop_body
+       mov  @status,r0
+       jlt  demo_loop_1
+       li   r0,KEY_1
+       bl   @check_key
+       jne  demo_loop_1
+       li   r0,KEY_2
+       bl   @check_key
+       jne  demo_loop_1
        inc  @frame
        mov  @frame,r0
-       ci   r0,120
+       ci   r0,2000
        jne  demo_loop
+demo_loop_1:
+       clr  @demo_mode
        .endproc
 *// demo_mode_screen
 
@@ -3489,26 +3519,51 @@ demo_loop:
 *
 * Demo mode vertical control
 *
+* On return:
+* r6 Left down
+* r7 Left up
+* r8 Right down
+* r9 Right up
+*
 demo_vert_keys:
-       .proc
+       mov  @frame,r0
+       andi r0,8
+       jeq  demo_vert_keys_1
        clr  r6
        clr  r7
        clr  r8
        clr  r9
-       .endproc
+       inc  @frame
+       jmp  demo_vert_keys_2
+demo_vert_keys_1:
+       mov  @frame,r0
+       andi r0,16
+       mov  r0,r7                      ; Left up
+       mov  r0,r8                      ; Right down
+       li   r1,16
+       xor  r1,r0
+       mov  r0,r6                      ; Left down
+       mov  r0,r9                      ; Right up
+demo_vert_keys_2:
+       rt
 *// demo_vert_keys
 
 *********************************************************************
 *
 * Demo mode horizontal control
 *
+* On return:
+* r1 Left left
+* r2 Left right
+* r3 Right left
+* r4 Right right
+*
 demo_horz_keys:
-       .proc
-       clr  r1
-       clr  r2
-       clr  r3
-       clr  r4
-       .endproc
+       clr  r1                         ; Left left
+       clr  r2                         ; Left right
+       clr  r3                         ; Right left
+       clr  r4                         ; Right right
+       rt
 *// demo_horz_keys
 
 *********************************************************************
@@ -3559,7 +3614,6 @@ game_init:
        li   r2,64*32
        bl   @vmbw
 *      Game variables
-       clr  @demo_mode
        clr  @score
        clr  @score_msw
        clr  @status
