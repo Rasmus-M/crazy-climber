@@ -1,0 +1,7 @@
+       aorg >6000
+       bss  >40
+       copy "level-2-graphics.a99"
+       copy "level-4-graphics.a99"
+rom_bank_7_end:
+       equ  $
+       bss  >8000-$

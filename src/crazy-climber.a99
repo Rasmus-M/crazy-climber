@@ -15,6 +15,7 @@
        copy "rom-bank-4.a99"
        copy "rom-bank-5.a99"
        copy "rom-bank-6.a99"
+       copy "rom-bank-7.a99"
 
 **
 * Memory mapped addresses
@@ -71,7 +72,7 @@ map_height:
 scroll_max:
        equ  >0c88
 n_levels:
-       equ  2
+       equ  4
 n_windows:
        equ  12
 n_sprites:
@@ -107,7 +108,11 @@ title_bank_select:
 level_1_bank_select:
        equ  >600a
 level_2_bank_select:
+       equ  >600e
+level_3_bank_select:
        equ  >600c
+level_4_bank_select:
+       equ  >600e
 
 **
 * Scratch pad
@@ -4135,6 +4140,8 @@ keyboard_control:
 levels:
        data level1
        data level2
+       data level3
+       data level4
 level1:
        data level_1_bank_select
        data TCHARS1
@@ -4155,6 +4162,26 @@ level2:
        data progress_map_2
        data 150
        data stages2
+level3:
+       data level_3_bank_select
+       data TCHARS3
+       data RIDX3
+       data ROWS3
+       data PSTRIP3
+       data CSTRIP3-PSTRIP3
+       data progress_map_3
+       data 200
+       data stages3
+level4:
+       data level_4_bank_select
+       data TCHARS4
+       data RIDX4
+       data ROWS4
+       data PSTRIP4
+       data CSTRIP4-PSTRIP4
+       data progress_map_4
+       data 250
+       data stages4
 
 *      Level dependent constants
 current_level_data:
@@ -4182,6 +4209,8 @@ level_data_size:
 
        copy "level-1-stages.a99"
        copy "level-2-stages.a99"
+       copy "level-3-stages.a99"
+       copy "level-4-stages.a99"
 
 bird_init_data:
        data bird_handler, >0020, >0982, >0002, >0001, >0000
