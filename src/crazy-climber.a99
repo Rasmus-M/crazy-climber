@@ -387,6 +387,7 @@ int_routine:
        mov  @wrksp+20,r10
        bl   @module_player
        bl   @speech_player
+       bl   @check_quit
        lwpi wrksp
        rt
 *// int_routine
@@ -1746,7 +1747,7 @@ check_sprite_hit_head_2:
 base_stage_init:
        .proc
        li   r1,head_and_hands_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        li   r1,character_set_residents
        bl   @set_character_set
        clr  @max_residents
@@ -1770,7 +1771,7 @@ one_resident_stage_init:
 bird_stage_init:
        .proc
        li   r1,bird_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        clr  @max_residents
        bl   @allocate_sprite
        mov  r4,r4
@@ -1876,7 +1877,7 @@ two_residents_stage_init:
        .proc
        bl   @mute_sound
        li   r1,head_and_hands_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        li   r0,2
        mov  r0,@max_residents
        .endproc
@@ -1899,7 +1900,7 @@ pre_kong_stage_init:
 kong_stage_init:
        .proc
        li   r1,kong_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        clr  @max_residents
        li   r1,character_set_kong
        bl   @set_character_set
@@ -2048,7 +2049,7 @@ three_residents_stage_init:
        li   r1,character_set_residents
        bl   @set_character_set
        li   r1,head_and_hands_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        li   r0,3
        mov  r0,@max_residents
        .endproc
@@ -2061,7 +2062,7 @@ three_residents_stage_init:
 chopper_stage_init:
        .proc
        li   r1,chopper_patterns
-       bl   @upload_2nd_sprite_patterns
+       bl   @load_sprite_patterns
        clr  @max_residents
        bl   @allocate_sprite
        mov  r4,r4
@@ -3139,12 +3140,11 @@ scroll_to_climber_2:
 *
 title_screen:
        .proc
-title_screen_0:
+title_screen_1:
        bl   @mute_sound
        seto @title_bank_select
        bl   @one_pattern_table
 *      Title screen loop
-title_screen_1:
        li   r0,3
        mov  r0,@title_screen_loops
 title_screen_2:
@@ -3155,7 +3155,7 @@ title_screen_2:
        jne  title_screen_2
        bl   @demo_mode_screen
        bl   @one_pattern_table
-       jmp  title_screen_0
+       jmp  title_screen_1
 title_screen_3:
 *      Select name_table_0
        clr  @frame
@@ -3208,6 +3208,7 @@ title_screen_main_cycle:
        bl   @title_scroll_text
        li   r2,>8000
 title_screen_main_cycle_1:
+       bl   @check_int
 *      Read keyboard
        li   r0,KEY_1
        bl   @check_key
@@ -3252,6 +3253,7 @@ title_scroll_logo:
 title_scroll_logo_1:
        bl   @vsync
        bl   @set_name_table
+       bl   @int_routine
 *      Display sprites
        li   r0,sprite_attr_table
        bl   @vwad
@@ -3339,6 +3341,7 @@ title_scroll_text:
 title_scroll_text_1:
        bl   @vsync
        bl   @set_name_table
+       bl   @int_routine
 *      Calculate VDP RAM destination offset
        mov  @frame,r4
        inv  r4
@@ -3436,6 +3439,7 @@ high_score_screen_1:
        jne  high_score_screen_1
        li   r2,>8000
 high_score_screen_2:
+       bl   @check_int
 *      Read keyboard
        li   r0,KEY_1
        bl   @check_key
@@ -3754,7 +3758,7 @@ clear_sprites_and_animations:
 *
 * r1: Set to load
 *
-upload_2nd_sprite_patterns:
+load_sprite_patterns:
        .proc
        li   r0,sprite_pattern_table + (40 * 32)
        bl   @vwad
@@ -3764,24 +3768,7 @@ upload_2nd_sprite_patterns:
        li   r2,24*32/8
        bl   @vdp_copy
        .endproc
-sprite_pattern_sets:
-       equ  $
-head_and_hands_patterns:
-       equ  0
-       data SPR40                      ; Head and hands
-chopper_patterns:
-       equ  1
-       data SPR64                      ; Chopper
-bird_patterns:
-       equ  2
-       data SPR84                      ; Bird
-kong_patterns:
-       equ  3
-       data SPR108                     ; Kong
-balloon_patterns:
-       equ  4
-;      data SPR124                     ; Balloon
-*// upload_2nd_sprite_patterns
+*// load_sprite_patterns
 
 *********************************************************************
 *
@@ -4023,8 +4010,33 @@ check_key:
        rt
 *// check_key
 
+***************************************************************************
+*
+* Check quit
+*
+check_quit:
+       clr  r1                         ; Test column 0
+       li   r12,>0024                  ; Address for column selection
+       ldcr r1,3                       ; Select column
+       li   r12,>0006                  ; Address to read rows
+       stcr r1,8
+       andi r1,>1100
+       jeq  quit
+*      Return
+       rt
+*      Quit
+quit:
+       clr  @>83c4                     ; Reset user ISR address
+       seto @>6000                     ; Select first ROM bank
+       blwp @>0000
+*// check_quit
+
+***************************************************************************
+*
 lower_memory_max:
        equ  $
+
+
 
 *********************************************************************
 *
@@ -4282,6 +4294,27 @@ character_set_kong:
        data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
        data 16*16                      ; cpu_offset_to_extra_scroll_chars
 
+sprite_pattern_sets:
+       equ  $
+head_and_hands_patterns:
+       equ  0
+       data SPR40                      ; Head and hands
+chopper_patterns:
+       equ  1
+       data SPR64                      ; Chopper
+bird_patterns:
+       equ  2
+       data SPR84                      ; Bird
+kong_patterns:
+       equ  3
+       data SPR108                     ; Kong
+balloon_patterns:
+       equ  4
+       data SPR124                     ; Balloon
+girder_patterns:
+       equ  4
+       data SPR134                     ; Girders and dumbbells
+
 sprite_attributes_overlay:
        byte >ad,>a8,0,>09              ; Bottom, left
        byte >ad,>b8,0,>09              ; Bottom, right
@@ -4350,6 +4383,8 @@ map_buffer:
 
        data -1
 
+***************************************************************************
+*
 upper_memory_max:
        equ  $
 
