@@ -278,10 +278,8 @@ finished:
        ci   r0,1
        jeq  finished_1
 *      Level completed without chopper pickup
-       li   r0,5300
-       s    r0,@bonus
-       jgt  finished_1
-       clr  @bonus
+       li   r0,3000
+       mov  r0,@bonus
 finished_1:
 *      Level completed with chopper pickup
        bl   @chopper_pickup
@@ -3050,7 +3048,7 @@ chopper_pickup:
        li   r0,completed_module
        bl   @play_module
 chopper_pickup_0:
-       li   r8,>70
+       li   r8,>90
 chopper_pickup_1:
        li   r9,3
 chopper_pickup_2:
@@ -3077,6 +3075,8 @@ chopper_pickup_4:
        inc  @frame
        dec  r8
        jne  chopper_pickup_1
+       mov  @bonus,r1
+       bl   @add_score
        bl   @disable_sprites
        .endproc
 *// chopper_pickup
@@ -3664,8 +3664,7 @@ level_init:
        li   r0,3                       ; Progress indicator
        mov  r0,@progress_top_offset
        seto  @disp_score               ; Score, bonus, step point
-       li   r0,10000
-       mov  r0,@bonus
+       mov  @bonus_points,@bonus
        bl   @display_bonus
        bl   @display_step_point
        bl   @display_progress_indicator
@@ -4163,6 +4162,7 @@ level1:
        data CSTRIP1-PSTRIP1
        data progress_map_1
        data 100
+       data 10000
        data stages1
 level2:
        data level_2_bank_select
@@ -4173,6 +4173,7 @@ level2:
        data CSTRIP2-PSTRIP2
        data progress_map_2
        data 150
+       data 20000
        data stages2
 level3:
        data level_3_bank_select
@@ -4183,6 +4184,7 @@ level3:
        data CSTRIP3-PSTRIP3
        data progress_map_3
        data 200
+       data 30000
        data stages3
 level4:
        data level_4_bank_select
@@ -4193,6 +4195,7 @@ level4:
        data CSTRIP4-PSTRIP4
        data progress_map_4
        data 250
+       data 40000
        data stages4
 
 *      Level dependent constants
@@ -4214,6 +4217,8 @@ progress_map:
        data progress_map_1
 step_points:
        data 100
+bonus_points:
+       data 10000
 stages:
        data stages1
 level_data_size:
