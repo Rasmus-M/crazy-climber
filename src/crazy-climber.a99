@@ -1737,7 +1737,6 @@ check_sprite_hit_head_2:
        rt
 *// check_sprite_hit_head
 
-
 *********************************************************************
 *
 * Base stage init
@@ -1746,7 +1745,7 @@ base_stage_init:
        .proc
        li   r1,head_and_hands_patterns
        bl   @load_sprite_patterns
-       li   r1,character_set_residents
+       li   r1,character_set_door
        bl   @set_character_set
        clr  @max_residents
        .endproc
@@ -1754,12 +1753,38 @@ base_stage_init:
 
 *********************************************************************
 *
+* Copy door to map
+*
+* r0: Source address
+* r1: Destination address in map
+*
+copy_door_to_map:
+       li   r0,door_map
+       li   r1,map_buffer+(418*map_width)+8
+       li   r2,8                       ; Number of rows to copy
+copy_door_to_map_1:
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       ai   r1,map_width-5
+       dec  r2
+       jne  copy_door_to_map_1
+       rt
+*// copy_door_to_map
+
+*********************************************************************
+*
 * One resident stage init
 *
 one_resident_stage_init:
+       .proc
+       li   r1,character_set_residents
+       bl   @set_character_set
        li   r0,1
        mov  r0,@max_residents
-       rt
+       .endproc
 *// one_resident_stage_init
 
 *********************************************************************
@@ -3687,6 +3712,7 @@ level_init:
        mov  r0,@next_stage_ptr
        .endif
        bl   @unpack_map                ; Map
+       bl   @copy_door_to_map
        bl   @initial_scrolling_screen
 *      Place climber
        li   r0,initial_climber_position
@@ -4059,14 +4085,14 @@ lower_memory_max:
 *
 
 b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5
-       byte >23
+       byte >21
 b_window_open_top:                     ; Original window open top char
        byte chr_window_open_top
 b_window_open_bottom:                  ; Original window open bottom char
        byte chr_window_open_bottom
 b_window_left_bottom_closed:           ; Original Window left bottom closed char
        byte chr_window_left_bottom_closed
-b_window_right_bottom_closed:   ; Original Window right bottom closed char
+b_window_right_bottom_closed:          ; Original Window right bottom closed char
        byte chr_window_right_bottom_closed
 b_face_first:
        byte chr_face_first
@@ -4279,31 +4305,40 @@ window_anims_end:
        data -1
 
 base_scroll_chars:
-       data 49
+       data 0
 extra_scroll_chars:
-       data 16
+       data 0
 vdp_base_of_extra_scroll_chars:        ; index of first extra char * 8
-       data 49*8
+       data 0
 cpu_offset_to_extra_scroll_chars:      ; gap from last base char * 16
        data 0
 
+base_tscs:
+       equ  47
+
 character_set_residents:
-       data 49                         ; base_scroll_chars
+       data base_tscs                  ; base_scroll_chars
        data 16                         ; extra_scroll_chars
-       data 49*8                       ; vdp_base_of_extra_scroll_chars
+       data 47*8                       ; vdp_base_of_extra_scroll_chars
        data 0                          ; cpu_offset_to_extra_scroll_chars
 
-character_set_kong:
-       data 49                         ; base_scroll_chars
-       data 28                         ; extra_scroll_chars
-       data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
+character_set_door:
+       data base_tscs                  ; base_scroll_chars
+       data 17                         ; extra_scroll_chars
+       data (base_tscs+16)*8           ; vdp_base_of_extra_scroll_chars
        data 16*16                      ; cpu_offset_to_extra_scroll_chars
 
+character_set_kong:
+       data base_tscs                  ; base_scroll_chars
+       data 28                         ; extra_scroll_chars
+       data (base_tscs+16+17)*8        ; vdp_base_of_extra_scroll_chars
+       data (16+17)*16                 ; cpu_offset_to_extra_scroll_chars
+
 character_set_sign:
-       data 49                         ; base_scroll_chars
+       data base_tscs                  ; base_scroll_chars
        data 24                         ; extra_scroll_chars
-       data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
-       data 16*16                      ; cpu_offset_to_extra_scroll_chars
+       data (base_tscs+16+17)*8        ; vdp_base_of_extra_scroll_chars
+       data (16+17)*16                 ; cpu_offset_to_extra_scroll_chars
 
 sprite_pattern_sets:
        equ  $
