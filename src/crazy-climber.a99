@@ -4299,6 +4299,12 @@ character_set_kong:
        data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
        data 16*16                      ; cpu_offset_to_extra_scroll_chars
 
+character_set_sign:
+       data 49                         ; base_scroll_chars
+       data 24                         ; extra_scroll_chars
+       data (49+16)*8                  ; vdp_base_of_extra_scroll_chars
+       data 16*16                      ; cpu_offset_to_extra_scroll_chars
+
 sprite_pattern_sets:
        equ  $
 head_and_hands_patterns:
@@ -4317,8 +4323,11 @@ balloon_patterns:
        equ  4
        data SPR124                     ; Balloon
 girder_patterns:
-       equ  4
+       equ  5
        data SPR134                     ; Girders and dumbbells
+spark_patterns:
+       equ  6
+       data SPR152                     ; Sign sparks
 
 sprite_attributes_overlay:
        byte >ad,>a8,0,>09              ; Bottom, left

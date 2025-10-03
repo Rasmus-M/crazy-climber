@@ -67,34 +67,34 @@ TCHARS1:
        BYTE >19,>05                    ; #3E Face right 4 -> Window open bottom
        BYTE >05,>18                    ; #3F Window open bottom -> Face left 4 (1/4)
        BYTE >05,>19                    ; #40 Window open bottom -> Face right 4
-       BYTE >1A,>00                    ; #41
-       BYTE >1B,>00                    ; #42
-       BYTE >1C,>00                    ; #43
-       BYTE >1D,>00                    ; #44
-       BYTE >1E,>1A                    ; #45
-       BYTE >1F,>1B                    ; #46
-       BYTE >20,>1C                    ; #47
-       BYTE >21,>1D                    ; #48
-       BYTE >22,>1E                    ; #49
-       BYTE >23,>1F                    ; #4A
-       BYTE >24,>20                    ; #4B
-       BYTE >25,>21                    ; #4C
-       BYTE >26,>22                    ; #4D
-       BYTE >27,>23                    ; #4E
-       BYTE >28,>24                    ; #4F
-       BYTE >29,>25                    ; #50
-       BYTE >2A,>26                    ; #51
-       BYTE >2B,>27                    ; #52
-       BYTE >2C,>28                    ; #53
-       BYTE >2D,>29                    ; #54
-       BYTE >2E,>2A                    ; #55
-       BYTE >2F,>2B                    ; #56
-       BYTE >30,>2C                    ; #57
-       BYTE >31,>2D                    ; #58
-       BYTE >01,>2E                    ; #59
-       BYTE >01,>2F                    ; #5A
-       BYTE >01,>30                    ; #5B
-       BYTE >01,>31                    ; #5C
+       BYTE >1A,>00                    ; #41 Kong -> Sky/glass
+       BYTE >1B,>00                    ; #42 Kong -> Sky/glass
+       BYTE >1C,>00                    ; #43 Kong -> Sky/glass
+       BYTE >1D,>00                    ; #44 Kong -> Sky/glass
+       BYTE >1E,>1A                    ; #45 Kong -> Kong
+       BYTE >1F,>1B                    ; #46 Kong -> Kong
+       BYTE >20,>1C                    ; #47 Kong -> Kong
+       BYTE >21,>1D                    ; #48 Kong -> Kong
+       BYTE >22,>1E                    ; #49 Kong -> Kong
+       BYTE >23,>1F                    ; #4A Kong -> Kong
+       BYTE >24,>20                    ; #4B Kong -> Kong
+       BYTE >25,>21                    ; #4C Kong -> Kong
+       BYTE >26,>22                    ; #4D Kong -> Kong
+       BYTE >27,>23                    ; #4E Kong -> Kong
+       BYTE >28,>24                    ; #4F Kong -> Kong
+       BYTE >29,>25                    ; #50 Kong -> Kong
+       BYTE >2A,>26                    ; #51 Kong -> Kong
+       BYTE >2B,>27                    ; #52 Kong -> Kong
+       BYTE >2C,>28                    ; #53 Kong -> Kong
+       BYTE >2D,>29                    ; #54 Kong -> Kong
+       BYTE >2E,>2A                    ; #55 Kong -> Kong
+       BYTE >2F,>2B                    ; #56 Kong -> Kong
+       BYTE >30,>2C                    ; #57 Kong -> Kong
+       BYTE >31,>2D                    ; #58 Kong -> Kong
+       BYTE >01,>2E                    ; #59 Wall -> Kong
+       BYTE >01,>2F                    ; #5A Wall -> Kong
+       BYTE >01,>30                    ; #5B Wall -> Kong
+       BYTE >01,>31                    ; #5C Wall -> Kong
 ****************************************
 * Transition Map Data                   
 ****************************************
@@ -287,62 +287,62 @@ PSTRIP1:
        DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3F - 05 Face left 4 (1/4)
        DATA >0000,>0000,>0000,>E0B0    ; #40 - 19 Window open bottom
        DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #40 - 05 Face right 4
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #41 - 00 
-       DATA >0000,>0000,>0000,>0101    ; #41 - 1A Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #42 - 00 
-       DATA >030F,>1F3F,>77FB,>FDFD    ; #42 - 1B Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #43 - 00 
-       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #43 - 1C Sky/glass
-       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #44 - 00 
-       DATA >0000,>0000,>0000,>8080    ; #44 - 1D Sky/glass
-       DATA >0000,>0000,>0000,>0101    ; #45 - 1A 
-       DATA >0303,>0707,>2F87,>A773    ; #45 - 1E 
-       DATA >030F,>1F3F,>77FB,>FDFD    ; #46 - 1B 
-       DATA >60F8,>FC86,>0301,>0101    ; #46 - 1F
-       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #47 - 1C 
-       DATA >061F,>3F61,>C080,>8080    ; #47 - 20
-       DATA >0000,>0000,>0000,>8080    ; #48 - 1D 
-       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #48 - 21 
-       DATA >0303,>0707,>2F87,>A773    ; #49 - 1E 
-       DATA >8EAF,>AC98,>C87C,>6707    ; #49 - 22 
-       DATA >60F8,>FC86,>0301,>0101    ; #4A - 1F
-       DATA >7F3E,>3C7E,>7F3F,>1E20    ; #4A - 23
-       DATA >061F,>3F61,>C080,>8080    ; #4B - 20
-       DATA >FE7C,>3C7E,>FEFC,>7804    ; #4B - 24
-       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #4C - 21 
-       DATA >71F5,>3519,>133E,>E6E0    ; #4C - 25 
-       DATA >8EAF,>AC98,>C87C,>6707    ; #4D - 22 
-       DATA >030D,>1E0F,>1F2F,>1F07    ; #4D - 26 
-       DATA >7F3E,>3C7E,>7F3F,>1E20    ; #4E - 23
-       DATA >4078,>8E63,>90CC,>8300    ; #4E - 27 
-       DATA >FE7C,>3C7E,>FEFC,>7804    ; #4F - 24
-       DATA >021E,>71C6,>0933,>C100    ; #4F - 28 
-       DATA >71F5,>3519,>133E,>E6E0    ; #50 - 25 
-       DATA >C0B0,>78F0,>F8F4,>F8E0    ; #50 - 29 
-       DATA >030D,>1E0F,>1F2F,>1F07    ; #51 - 26 
-       DATA >0F0F,>0F0F,>0707,>0703    ; #51 - 2A 
-       DATA >4078,>8E63,>90CC,>8300    ; #52 - 27 
-       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #52 - 2B 
-       DATA >021E,>71C6,>0933,>C100    ; #53 - 28 
-       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #53 - 2C 
-       DATA >C0B0,>78F0,>F8F4,>F8E0    ; #54 - 29 
-       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #54 - 2D 
-       DATA >0F0F,>0F0F,>0707,>0703    ; #55 - 2A 
-       DATA >0100,>1F3F,>3E07,>100F    ; #55 - 2E 
-       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #56 - 2B 
-       DATA >83E7,>FFFF,>07C1,>60F0    ; #56 - 2F 
-       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #57 - 2C 
-       DATA >C1E7,>FFFF,>E083,>060F    ; #57 - 30 
-       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #58 - 2D 
-       DATA >8000,>F8FC,>7CE0,>08F0    ; #58 - 31 
-       DATA >0100,>1F3F,>3E07,>100F    ; #59 - 2E Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #59 - 01 
-       DATA >83E7,>FFFF,>07C1,>60F0    ; #5A - 2F Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5A - 01 
-       DATA >C1E7,>FFFF,>E083,>060F    ; #5B - 30 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5B - 01 
-       DATA >8000,>F8FC,>7CE0,>08F0    ; #5C - 31 Wall
-       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5C - 01 
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #41 - 00 Sky/glass
+       DATA >0000,>0000,>0000,>0101    ; #41 - 1A Kong
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #42 - 00 Sky/glass
+       DATA >030F,>1F3F,>77FB,>FDFD    ; #42 - 1B Kong
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #43 - 00 Sky/glass
+       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #43 - 1C Kong
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #44 - 00 Sky/glass
+       DATA >0000,>0000,>0000,>8080    ; #44 - 1D Kong
+       DATA >0000,>0000,>0000,>0101    ; #45 - 1A Kong
+       DATA >0303,>0707,>2F87,>A773    ; #45 - 1E Kong
+       DATA >030F,>1F3F,>77FB,>FDFD    ; #46 - 1B Kong
+       DATA >60F8,>FC86,>0301,>0101    ; #46 - 1F Kong
+       DATA >C0F0,>F8FC,>EEDF,>BFBF    ; #47 - 1C Kong
+       DATA >061F,>3F61,>C080,>8080    ; #47 - 20 Kong
+       DATA >0000,>0000,>0000,>8080    ; #48 - 1D Kong
+       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #48 - 21 Kong
+       DATA >0303,>0707,>2F87,>A773    ; #49 - 1E Kong
+       DATA >8EAF,>AC98,>C87C,>6707    ; #49 - 22 Kong
+       DATA >60F8,>FC86,>0301,>0101    ; #4A - 1F Kong
+       DATA >7F3E,>3C7E,>7F3F,>1E20    ; #4A - 23 Kong
+       DATA >061F,>3F61,>C080,>8080    ; #4B - 20 Kong
+       DATA >FE7C,>3C7E,>FEFC,>7804    ; #4B - 24 Kong
+       DATA >C0C0,>E0E0,>F4E1,>E5CE    ; #4C - 21 Kong
+       DATA >71F5,>3519,>133E,>E6E0    ; #4C - 25 Kong
+       DATA >8EAF,>AC98,>C87C,>6707    ; #4D - 22 Kong
+       DATA >030D,>1E0F,>1F2F,>1F07    ; #4D - 26 Kong
+       DATA >7F3E,>3C7E,>7F3F,>1E20    ; #4E - 23 Kong
+       DATA >4078,>8E63,>90CC,>8300    ; #4E - 27 Kong
+       DATA >FE7C,>3C7E,>FEFC,>7804    ; #4F - 24 Kong
+       DATA >021E,>71C6,>0933,>C100    ; #4F - 28 Kong
+       DATA >71F5,>3519,>133E,>E6E0    ; #50 - 25 Kong
+       DATA >C0B0,>78F0,>F8F4,>F8E0    ; #50 - 29 Kong
+       DATA >030D,>1E0F,>1F2F,>1F07    ; #51 - 26 Kong
+       DATA >0F0F,>0F0F,>0707,>0703    ; #51 - 2A Kong
+       DATA >4078,>8E63,>90CC,>8300    ; #52 - 27 Kong
+       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #52 - 2B Kong
+       DATA >021E,>71C6,>0933,>C100    ; #53 - 28 Kong
+       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #53 - 2C Kong
+       DATA >C0B0,>78F0,>F8F4,>F8E0    ; #54 - 29 Kong
+       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #54 - 2D Kong
+       DATA >0F0F,>0F0F,>0707,>0703    ; #55 - 2A Kong
+       DATA >0100,>1F3F,>3E07,>100F    ; #55 - 2E Kong
+       DATA >FFFF,>FFBF,>FFFF,>FFFE    ; #56 - 2B Kong
+       DATA >83E7,>FFFF,>07C1,>60F0    ; #56 - 2F Kong
+       DATA >FFFF,>FFFD,>FFFF,>FF7F    ; #57 - 2C Kong
+       DATA >C1E7,>FFFF,>E083,>060F    ; #57 - 30 Kong
+       DATA >F0F0,>F0F0,>E0E0,>E0C0    ; #58 - 2D Kong
+       DATA >8000,>F8FC,>7CE0,>08F0    ; #58 - 31 Kong
+       DATA >0100,>1F3F,>3E07,>100F    ; #59 - 2E Kong
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #59 - 01 Wall
+       DATA >83E7,>FFFF,>07C1,>60F0    ; #5A - 2F Kong
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5A - 01 Wall
+       DATA >C1E7,>FFFF,>E083,>060F    ; #5B - 30 Kong
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5B - 01 Wall
+       DATA >8000,>F8FC,>7CE0,>08F0    ; #5C - 31 Kong
+       DATA >FFEF,>FD7F,>FFF7,>FEBF    ; #5C - 01 Wall
 ****************************************
 * Scrolled Character Colors             
 ****************************************
@@ -477,59 +477,59 @@ CSTRIP1:
        DATA >1010,>B0BA,>BABA,>BABA    ; #3F - 05 Face left 4 (1/4)
        DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #40 - 19 Window open bottom
        DATA >1010,>B0BA,>BABA,>BABA    ; #40 - 05 Face right 4
-       DATA >7171,>7171,>7171,>7171    ; #41 - 00 
-       DATA >7777,>7777,>7777,>9797    ; #41 - 1A Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #42 - 00 
-       DATA >9797,>9797,>9B9B,>9B9B    ; #42 - 1B Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #43 - 00 
-       DATA >9797,>9797,>9B9B,>9B9B    ; #43 - 1C Sky/glass
-       DATA >7171,>7171,>7171,>7171    ; #44 - 00 
-       DATA >7777,>7777,>7777,>9797    ; #44 - 1D Sky/glass
-       DATA >7777,>7777,>7777,>9797    ; #45 - 1A 
-       DATA >9797,>B7B7,>B7B8,>B8B8    ; #45 - 1E 
-       DATA >9797,>9797,>9B9B,>9B9B    ; #46 - 1B 
-       DATA >B9B9,>B9B9,>B8B8,>9898    ; #46 - 1F
-       DATA >9797,>9797,>9B9B,>9B9B    ; #47 - 1C 
-       DATA >B9B9,>B9B9,>B8B8,>9898    ; #47 - 20
-       DATA >7777,>7777,>7777,>9797    ; #48 - 1D 
-       DATA >9797,>B7B7,>B7B8,>B8B8    ; #48 - 21 
-       DATA >9797,>B7B7,>B7B8,>B8B8    ; #49 - 1E 
-       DATA >8A8A,>8A8A,>8A8A,>8787    ; #49 - 22 
-       DATA >B9B9,>B9B9,>B8B8,>9898    ; #4A - 1F
-       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4A - 23
-       DATA >B9B9,>B9B9,>B8B8,>9898    ; #4B - 20
-       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4B - 24
-       DATA >9797,>B7B7,>B7B8,>B8B8    ; #4C - 21 
-       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4C - 25 
-       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4D - 22 
-       DATA >6767,>6767,>6767,>6767    ; #4D - 26 
-       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4E - 23
-       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4E - 27 
-       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4F - 24
-       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4F - 28 
-       DATA >8A8A,>8A8A,>8A8A,>8787    ; #50 - 25 
-       DATA >6767,>6767,>6767,>6767    ; #50 - 29 
-       DATA >6767,>6767,>6767,>6767    ; #51 - 26 
-       DATA >A7A7,>A7A7,>A7A7,>A797    ; #51 - 2A 
-       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #52 - 27 
-       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #52 - 2B 
-       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #53 - 28 
-       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #53 - 2C 
-       DATA >6767,>6767,>6767,>6767    ; #54 - 29 
-       DATA >A7A7,>A7A7,>A7A7,>A797    ; #54 - 2D 
-       DATA >A7A7,>A7A7,>A7A7,>A797    ; #55 - 2A 
-       DATA >9777,>9797,>9797,>9797    ; #55 - 2E 
-       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #56 - 2B 
-       DATA >9A9A,>9797,>9797,>9797    ; #56 - 2F 
-       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #57 - 2C 
-       DATA >9A9A,>9797,>9797,>9797    ; #57 - 30 
-       DATA >A7A7,>A7A7,>A7A7,>A797    ; #58 - 2D 
-       DATA >9777,>9797,>9797,>9797    ; #58 - 31 
-       DATA >9777,>9797,>9797,>9797    ; #59 - 2E Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #59 - 01 
-       DATA >9A9A,>9797,>9797,>9797    ; #5A - 2F Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5A - 01 
-       DATA >9A9A,>9797,>9797,>9797    ; #5B - 30 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5B - 01 
-       DATA >9777,>9797,>9797,>9797    ; #5C - 31 Wall
-       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5C - 01 
+       DATA >7171,>7171,>7171,>7171    ; #41 - 00 Sky/glass
+       DATA >7777,>7777,>7777,>9797    ; #41 - 1A Kong
+       DATA >7171,>7171,>7171,>7171    ; #42 - 00 Sky/glass
+       DATA >9797,>9797,>9B9B,>9B9B    ; #42 - 1B Kong
+       DATA >7171,>7171,>7171,>7171    ; #43 - 00 Sky/glass
+       DATA >9797,>9797,>9B9B,>9B9B    ; #43 - 1C Kong
+       DATA >7171,>7171,>7171,>7171    ; #44 - 00 Sky/glass
+       DATA >7777,>7777,>7777,>9797    ; #44 - 1D Kong
+       DATA >7777,>7777,>7777,>9797    ; #45 - 1A Kong
+       DATA >9797,>B7B7,>B7B8,>B8B8    ; #45 - 1E Kong
+       DATA >9797,>9797,>9B9B,>9B9B    ; #46 - 1B Kong
+       DATA >B9B9,>B9B9,>B8B8,>9898    ; #46 - 1F Kong
+       DATA >9797,>9797,>9B9B,>9B9B    ; #47 - 1C Kong
+       DATA >B9B9,>B9B9,>B8B8,>9898    ; #47 - 20 Kong
+       DATA >7777,>7777,>7777,>9797    ; #48 - 1D Kong
+       DATA >9797,>B7B7,>B7B8,>B8B8    ; #48 - 21 Kong
+       DATA >9797,>B7B7,>B7B8,>B8B8    ; #49 - 1E Kong
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #49 - 22 Kong
+       DATA >B9B9,>B9B9,>B8B8,>9898    ; #4A - 1F Kong
+       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4A - 23 Kong
+       DATA >B9B9,>B9B9,>B8B8,>9898    ; #4B - 20 Kong
+       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4B - 24 Kong
+       DATA >9797,>B7B7,>B7B8,>B8B8    ; #4C - 21 Kong
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4C - 25 Kong
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #4D - 22 Kong
+       DATA >6767,>6767,>6767,>6767    ; #4D - 26 Kong
+       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4E - 23 Kong
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4E - 27 Kong
+       DATA >8A9A,>6A6A,>6A6A,>6A8A    ; #4F - 24 Kong
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #4F - 28 Kong
+       DATA >8A8A,>8A8A,>8A8A,>8787    ; #50 - 25 Kong
+       DATA >6767,>6767,>6767,>6767    ; #50 - 29 Kong
+       DATA >6767,>6767,>6767,>6767    ; #51 - 26 Kong
+       DATA >A7A7,>A7A7,>A7A7,>A797    ; #51 - 2A Kong
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #52 - 27 Kong
+       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #52 - 2B Kong
+       DATA >8A8A,>8A8A,>8A8A,>8A6A    ; #53 - 28 Kong
+       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #53 - 2C Kong
+       DATA >6767,>6767,>6767,>6767    ; #54 - 29 Kong
+       DATA >A7A7,>A7A7,>A7A7,>A797    ; #54 - 2D Kong
+       DATA >A7A7,>A7A7,>A7A7,>A797    ; #55 - 2A Kong
+       DATA >9777,>9797,>9797,>9797    ; #55 - 2E Kong
+       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #56 - 2B Kong
+       DATA >9A9A,>9797,>9797,>9797    ; #56 - 2F Kong
+       DATA >A7A7,>A7A8,>A7A7,>A7A9    ; #57 - 2C Kong
+       DATA >9A9A,>9797,>9797,>9797    ; #57 - 30 Kong
+       DATA >A7A7,>A7A7,>A7A7,>A797    ; #58 - 2D Kong
+       DATA >9777,>9797,>9797,>9797    ; #58 - 31 Kong
+       DATA >9777,>9797,>9797,>9797    ; #59 - 2E Kong
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #59 - 01 Wall
+       DATA >9A9A,>9797,>9797,>9797    ; #5A - 2F Kong
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5A - 01 Wall
+       DATA >9A9A,>9797,>9797,>9797    ; #5B - 30 Kong
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5B - 01 Wall
+       DATA >9777,>9797,>9797,>9797    ; #5C - 31 Kong
+       DATA >BBBA,>BABA,>BBBA,>BABA    ; #5C - 01 Wall

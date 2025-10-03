@@ -64,6 +64,30 @@ TCHARS2:
        BYTE >19,>05                    ; #3E Face right 4 -> Window open bottom
        BYTE >05,>18                    ; #3F Window open bottom -> Face left 4 (1/4)
        BYTE >05,>19                    ; #40 Window open bottom -> Face right 4
+       BYTE >1A,>01                    ; #41 Sign00 -> Wall
+       BYTE >1B,>01                    ; #42 Sign10 -> Wall
+       BYTE >1C,>02                    ; #43 Sign20 -> Wall 2
+       BYTE >1D,>01                    ; #44 Sign30 -> Wall
+       BYTE >1E,>01                    ; #45 Sign40 -> Wall
+       BYTE >1F,>02                    ; #46 Sign50 -> Wall 2
+       BYTE >20,>05                    ; #47 Sign60 -> Window open bottom
+       BYTE >21,>05                    ; #48 Sign70 -> Window open bottom
+       BYTE >22,>1A                    ; #49 Sign01 -> Sign00
+       BYTE >23,>1B                    ; #4A Sign11 -> Sign10
+       BYTE >24,>1C                    ; #4B Sign21 -> Sign20
+       BYTE >25,>1D                    ; #4C Sign31 -> Sign30
+       BYTE >26,>1E                    ; #4D Sign41 -> Sign40
+       BYTE >27,>1F                    ; #4E Sign51 -> Sign50
+       BYTE >28,>20                    ; #4F Sign61 -> Sign60
+       BYTE >29,>21                    ; #50 Sign71 -> Sign70
+       BYTE >00,>22                    ; #51 Sky/glass -> Sign01
+       BYTE >00,>23                    ; #52 Sky/glass -> Sign11
+       BYTE >00,>24                    ; #53 Sky/glass -> Sign21
+       BYTE >00,>25                    ; #54 Sky/glass -> Sign31
+       BYTE >00,>26                    ; #55 Sky/glass -> Sign41
+       BYTE >02,>27                    ; #56 Wall 2 -> Sign51
+       BYTE >04,>28                    ; #57 Window open top -> Sign61
+       BYTE >04,>29                    ; #58 Window open top -> Sign71
 ****************************************
 * Transition Map Data                   
 ****************************************
@@ -138,131 +162,179 @@ PSTRIP2:
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01 - 00 Sky/glass
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #01 - 04 Window open top
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #02 - 04 Window open top
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #02 - 01 Wall
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #02 - 01 Wall
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #03 - 04 Window open top
        DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #03 - 02 Wall 2
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #04 - 04 Window open top
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #04 - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #05 - 01 Wall
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #05 - 01 Wall
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #04 - 05 Window open bottom
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #05 - 01 Wall
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #05 - 01 Wall
        DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #06 - 02 Wall 2
        DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #06 - 02 Wall 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #07 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #07 - 05 Window open bottom
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #07 - 04 Window open top
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #08 - 00 Sky/glass
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #08 - 01 Wall
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #08 - 01 Wall
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #09 - 00 Sky/glass
        DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #09 - 02 Wall 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #0A - 01 Wall
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #0A - 01 Wall
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0A - 04 Window open top
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #0B - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #0B - 05 Window open bottom
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0B - 00 Sky/glass
        DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #0C - 02 Wall 2
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0C - 00 Sky/glass
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #0D - 01 Wall
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #0D - 01 Wall
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0D - 00 Sky/glass
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #0E - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #0E - 01 Wall
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #0E - 05 Window open bottom
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #0E - 01 Wall
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #0F - 00 Sky/glass
        DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #0F - 03 Glass reflection
        DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #10 - 03 Glass reflection
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #10 - 00 Sky/glass
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #11 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #11 - 05 Window open bottom
        DATA >7F00,>FFFF,>FFFF,>FFFF    ; #11 - 06 Window left closed 1
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #12 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #12 - 05 Window open bottom
        DATA >FE00,>FFFF,>FFFF,>FFFF    ; #12 - 07 Window right closed 1
        DATA >7F00,>FFFF,>FFFF,>FFFF    ; #13 - 06 Window left closed 1
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #13 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #13 - 05 Window open bottom
        DATA >FE00,>FFFF,>FFFF,>FFFF    ; #14 - 07 Window right closed 1
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #14 - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #15 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #14 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #15 - 05 Window open bottom
        DATA >7F7F,>7E00,>FFFF,>FFFF    ; #15 - 08 Window left closed 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #16 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #16 - 05 Window open bottom
        DATA >FEFE,>FE00,>FFFF,>FFFF    ; #16 - 09 Window right closed 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #17 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #17 - 05 Window open bottom
        DATA >7F7F,>7E7F,>7B00,>FFFF    ; #17 - 0A Window left closed 3
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #18 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #18 - 05 Window open bottom
        DATA >FEFE,>EEDE,>BE00,>FFFF    ; #18 - 0B Window right closed 3
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #19 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #19 - 05 Window open bottom
        DATA >7F7F,>7F7D,>7B77,>6F00    ; #19 - 0C Window left closed 4
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1A - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1A - 05 Window open bottom
        DATA >FEFE,>EEDE,>BE7E,>FE00    ; #1A - 0D Window right closed 4
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1B - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1B - 05 Window open bottom
        DATA >007F,>7F7D,>7B77,>6E7F    ; #1B - 0E Window left closed 5
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1C - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1C - 05 Window open bottom
        DATA >00FE,>EEDE,>BEFE,>FEFE    ; #1C - 0F Window right closed 5
        DATA >7F7F,>7E00,>FFFF,>FFFF    ; #1D - 08 Window left closed 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1D - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1D - 05 Window open bottom
        DATA >FEFE,>FE00,>FFFF,>FFFF    ; #1E - 09 Window right closed 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1E - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1E - 05 Window open bottom
        DATA >7F7F,>7E7F,>7B00,>FFFF    ; #1F - 0A Window left closed 3
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #1F - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #1F - 05 Window open bottom
        DATA >FEFE,>EEDE,>BE00,>FFFF    ; #20 - 0B Window right closed 3
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #20 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #20 - 05 Window open bottom
        DATA >7F7F,>7F7D,>7B77,>6F00    ; #21 - 0C Window left closed 4
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #21 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #21 - 05 Window open bottom
        DATA >FEFE,>EEDE,>BE7E,>FE00    ; #22 - 0D Window right closed 4
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #22 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #22 - 05 Window open bottom
        DATA >007F,>7F7D,>7B77,>6E7F    ; #23 - 0E Window left closed 5
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #23 - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #23 - 10 Window left bottom closed
        DATA >00FE,>EEDE,>BEFE,>FEFE    ; #24 - 0F Window right closed 5
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #24 - 11 Window right bottom closed
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #25 - 10 Window left bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #24 - 11 Window right bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #25 - 10 Window left bottom closed
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #25 - 04 Window open top
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #26 - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #26 - 11 Window right bottom closed
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #26 - 04 Window open top
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #27 - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #27 - 10 Window left bottom closed
        DATA >7F00,>FFFF,>FFFF,>FFFF    ; #27 - 06 Window left closed 1
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #28 - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #28 - 11 Window right bottom closed
        DATA >FE00,>FFFF,>FFFF,>FFFF    ; #28 - 07 Window right closed 1
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #29 - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #29 - 10 Window left bottom closed
        DATA >7F7F,>7E00,>FFFF,>FFFF    ; #29 - 08 Window left closed 2
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #2A - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #2A - 11 Window right bottom closed
        DATA >FEFE,>FE00,>FFFF,>FFFF    ; #2A - 09 Window right closed 2
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #2B - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #2B - 10 Window left bottom closed
        DATA >7F7F,>7E7F,>7B00,>FFFF    ; #2B - 0A Window left closed 3
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #2C - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #2C - 11 Window right bottom closed
        DATA >FEFE,>EEDE,>BE00,>FFFF    ; #2C - 0B Window right closed 3
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #2D - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #2D - 10 Window left bottom closed
        DATA >7F7F,>7F7D,>7B77,>6F00    ; #2D - 0C Window left closed 4
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #2E - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #2E - 11 Window right bottom closed
        DATA >FEFE,>EEDE,>BE7E,>FE00    ; #2E - 0D Window right closed 4
-       DATA >7F00,>FFFF,>55FF,>FFFF    ; #2F - 10 Window left bottom closed
+       DATA >7F00,>FFEF,>55FD,>DFFF    ; #2F - 10 Window left bottom closed
        DATA >007F,>7F7D,>7B77,>6E7F    ; #2F - 0E Window left closed 5
-       DATA >FE00,>FFFF,>55FF,>FFFF    ; #30 - 11 Window right bottom closed
+       DATA >FE00,>FFEF,>55FD,>DFFF    ; #30 - 11 Window right bottom closed
        DATA >00FE,>EEDE,>BEFE,>FEFE    ; #30 - 0F Window right closed 5
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #31 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #31 - 05 Window open bottom
        DATA >0F1B,>333E,>1718,>0F07    ; #31 - 12 Face left 1 (full)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #32 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #32 - 05 Window open bottom
        DATA >E0B0,>98F8,>D030,>E0C0    ; #32 - 13 Face right 1
        DATA >0F1B,>333E,>1718,>0F07    ; #33 - 12 Face left 1 (full)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #33 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #33 - 05 Window open bottom
        DATA >E0B0,>98F8,>D030,>E0C0    ; #34 - 13 Face right 1
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #34 - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #35 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #34 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #35 - 05 Window open bottom
        DATA >0000,>0F1B,>333E,>1718    ; #35 - 14 Face left 2 (3/4)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #36 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #36 - 05 Window open bottom
        DATA >0000,>E0B0,>98F8,>D030    ; #36 - 15 Face right 2
        DATA >0000,>0F1B,>333E,>1718    ; #37 - 14 Face left 2 (3/4)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #37 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #37 - 05 Window open bottom
        DATA >0000,>E0B0,>98F8,>D030    ; #38 - 15 Face right 2
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #38 - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #39 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #38 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #39 - 05 Window open bottom
        DATA >0000,>0000,>0F1B,>333E    ; #39 - 16 Face left 3 (1/2)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3A - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3A - 05 Window open bottom
        DATA >0000,>0000,>E0B0,>98F8    ; #3A - 17 Face right 3
        DATA >0000,>0000,>0F1B,>333E    ; #3B - 16 Face left 3 (1/2)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3B - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3B - 05 Window open bottom
        DATA >0000,>0000,>E0B0,>98F8    ; #3C - 17 Face right 3
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3C - 05 Window open bottom
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3D - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3C - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3D - 05 Window open bottom
        DATA >0000,>0000,>0000,>0F1B    ; #3D - 18 Face left 4 (1/4)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3E - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3E - 05 Window open bottom
        DATA >0000,>0000,>0000,>E0B0    ; #3E - 19 Face right 4
        DATA >0000,>0000,>0000,>0F1B    ; #3F - 18 Face left 4 (1/4)
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #3F - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #3F - 05 Window open bottom
        DATA >0000,>0000,>0000,>E0B0    ; #40 - 19 Face right 4
-       DATA >FFFF,>FFFF,>AAFF,>FFFF    ; #40 - 05 Window open bottom
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #40 - 05 Window open bottom
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #41 - 01 Wall
+       DATA >CCCC,>0000,>6171,>797D    ; #41 - 1A Sign00
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #42 - 01 Wall
+       DATA >CCCC,>0000,>B0B3,>87B6    ; #42 - 1B Sign10
+       DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #43 - 02 Wall 2
+       DATA >CCCC,>0000,>0CCC,>EC2D    ; #43 - 1C Sign20
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #44 - 01 Wall
+       DATA >CCCC,>0000,>1B1B,>039B    ; #44 - 1D Sign30
+       DATA >FFEF,>FD7F,>AAF7,>FEBF    ; #45 - 01 Wall
+       DATA >CCCC,>0000,>0000,>0666    ; #45 - 1E Sign40
+       DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #46 - 02 Wall 2
+       DATA >CCCC,>0000,>0206,>6F6F    ; #46 - 1F Sign50
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #47 - 05 Window open bottom
+       DATA >CCCC,>0000,>001E,>B3B0    ; #47 - 20 Sign60
+       DATA >FFFF,>FFEF,>AAFD,>DFFF    ; #48 - 05 Window open bottom
+       DATA >CCCC,>0000,>0000,>6666    ; #48 - 21 Sign70
+       DATA >CCCC,>0000,>6171,>797D    ; #49 - 1A Sign00
+       DATA >6F67,>6361,>0000,>3333    ; #49 - 22 Sign01
+       DATA >CCCC,>0000,>B0B3,>87B6    ; #4A - 1B Sign10
+       DATA >B6B6,>B7B3,>0000,>3333    ; #4A - 23 Sign11
+       DATA >CCCC,>0000,>0CCC,>EC2D    ; #4B - 1C Sign20
+       DATA >0F2C,>ECCC,>0000,>3333    ; #4B - 24 Sign21
+       DATA >CCCC,>0000,>1B1B,>039B    ; #4C - 1D Sign30
+       DATA >DBDB,>DBDB,>0000,>3333    ; #4C - 25 Sign31
+       DATA >CCCC,>0000,>0000,>0666    ; #4D - 1E Sign40
+       DATA >F616,>F763,>0000,>3333    ; #4D - 26 Sign41
+       DATA >CCCC,>0000,>0206,>6F6F    ; #4E - 1F Sign50
+       DATA >6666,>E7E3,>0000,>CCCC    ; #4E - 27 Sign51
+       DATA >CCCC,>0000,>001E,>B3B0    ; #4F - 20 Sign60
+       DATA >1E83,>B31E,>0000,>3333    ; #4F - 28 Sign61
+       DATA >CCCC,>0000,>0000,>6666    ; #50 - 21 Sign70
+       DATA >6666,>7E3E,>0000,>3333    ; #50 - 29 Sign71
+       DATA >6F67,>6361,>0000,>3333    ; #51 - 22 Sign01
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #51 - 00 Sky/glass
+       DATA >B6B6,>B7B3,>0000,>3333    ; #52 - 23 Sign11
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #52 - 00 Sky/glass
+       DATA >0F2C,>ECCC,>0000,>3333    ; #53 - 24 Sign21
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #53 - 00 Sky/glass
+       DATA >DBDB,>DBDB,>0000,>3333    ; #54 - 25 Sign31
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #54 - 00 Sky/glass
+       DATA >F616,>F763,>0000,>3333    ; #55 - 26 Sign41
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #55 - 00 Sky/glass
+       DATA >6666,>E7E3,>0000,>CCCC    ; #56 - 27 Sign51
+       DATA >3C3C,>3C3C,>3C3C,>3C3C    ; #56 - 02 Wall 2
+       DATA >1E83,>B31E,>0000,>3333    ; #57 - 28 Sign61
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #57 - 04 Window open top
+       DATA >6666,>7E3E,>0000,>3333    ; #58 - 29 Sign71
+       DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #58 - 04 Window open top
 ****************************************
 * Scrolled Character Colors             
 ****************************************
@@ -272,31 +344,31 @@ CSTRIP2:
        DATA >7171,>7171,>7171,>7171    ; #01 - 00 Sky/glass
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #01 - 04 Window open top
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #02 - 04 Window open top
-       DATA >BABB,>BABA,>41BB,>BABA    ; #02 - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #02 - 01 Wall
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #03 - 04 Window open top
        DATA >4B4B,>4B4B,>414B,>4B4B    ; #03 - 02 Wall 2
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #04 - 04 Window open top
        DATA >1010,>B0BA,>41BA,>BABA    ; #04 - 05 Window open bottom
-       DATA >BABB,>BABA,>41BB,>BABA    ; #05 - 01 Wall
-       DATA >BABB,>BABA,>41BB,>BABA    ; #05 - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #05 - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #05 - 01 Wall
        DATA >4B4B,>4B4B,>414B,>4B4B    ; #06 - 02 Wall 2
        DATA >4B4B,>4B4B,>414B,>4B4B    ; #06 - 02 Wall 2
        DATA >1010,>B0BA,>41BA,>BABA    ; #07 - 05 Window open bottom
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #07 - 04 Window open top
        DATA >7171,>7171,>7171,>7171    ; #08 - 00 Sky/glass
-       DATA >BABB,>BABA,>41BB,>BABA    ; #08 - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #08 - 01 Wall
        DATA >7171,>7171,>7171,>7171    ; #09 - 00 Sky/glass
        DATA >4B4B,>4B4B,>414B,>4B4B    ; #09 - 02 Wall 2
-       DATA >BABB,>BABA,>41BB,>BABA    ; #0A - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #0A - 01 Wall
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #0A - 04 Window open top
        DATA >1010,>B0BA,>41BA,>BABA    ; #0B - 05 Window open bottom
        DATA >7171,>7171,>7171,>7171    ; #0B - 00 Sky/glass
        DATA >4B4B,>4B4B,>414B,>4B4B    ; #0C - 02 Wall 2
        DATA >7171,>7171,>7171,>7171    ; #0C - 00 Sky/glass
-       DATA >BABB,>BABA,>41BB,>BABA    ; #0D - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #0D - 01 Wall
        DATA >7171,>7171,>7171,>7171    ; #0D - 00 Sky/glass
        DATA >1010,>B0BA,>41BA,>BABA    ; #0E - 05 Window open bottom
-       DATA >BABB,>BABA,>41BB,>BABA    ; #0E - 01 Wall
+       DATA >BABA,>BABA,>41BA,>BABA    ; #0E - 01 Wall
        DATA >7171,>7171,>7171,>7171    ; #0F - 00 Sky/glass
        DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #0F - 03 Glass reflection
        DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #10 - 03 Glass reflection
@@ -397,3 +469,51 @@ CSTRIP2:
        DATA >1010,>B0BA,>41BA,>BABA    ; #3F - 05 Window open bottom
        DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #40 - 19 Face right 4
        DATA >1010,>B0BA,>41BA,>BABA    ; #40 - 05 Window open bottom
+       DATA >BABA,>BABA,>41BA,>BABA    ; #41 - 01 Wall
+       DATA >8D8D,>CDCD,>BDBD,>BDFD    ; #41 - 1A Sign00
+       DATA >BABA,>BABA,>41BA,>BABA    ; #42 - 01 Wall
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #42 - 1B Sign10
+       DATA >4B4B,>4B4B,>414B,>4B4B    ; #43 - 02 Wall 2
+       DATA >8D8D,>CDCD,>BDBD,>BDFD    ; #43 - 1C Sign20
+       DATA >BABA,>BABA,>41BA,>BABA    ; #44 - 01 Wall
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #44 - 1D Sign30
+       DATA >BABA,>BABA,>41BA,>BABA    ; #45 - 01 Wall
+       DATA >8D8D,>CDCD,>CDCD,>BDFD    ; #45 - 1E Sign40
+       DATA >4B4B,>4B4B,>414B,>4B4B    ; #46 - 02 Wall 2
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #46 - 1F Sign50
+       DATA >1010,>B0BA,>41BA,>BABA    ; #47 - 05 Window open bottom
+       DATA >8D8D,>CDCD,>CDBD,>BDFD    ; #47 - 20 Sign60
+       DATA >1010,>B0BA,>41BA,>BABA    ; #48 - 05 Window open bottom
+       DATA >4D4D,>CDCD,>CDCD,>BDFD    ; #48 - 21 Sign70
+       DATA >8D8D,>CDCD,>BDBD,>BDFD    ; #49 - 1A Sign00
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #49 - 22 Sign01
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #4A - 1B Sign10
+       DATA >BDBD,>ADAD,>CD0D,>8D8D    ; #4A - 23 Sign11
+       DATA >8D8D,>CDCD,>BDBD,>BDFD    ; #4B - 1C Sign20
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #4B - 24 Sign21
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #4C - 1D Sign30
+       DATA >BDBD,>ADAD,>CD8D,>8D8D    ; #4C - 25 Sign31
+       DATA >8D8D,>CDCD,>CDCD,>BDFD    ; #4D - 1E Sign40
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #4D - 26 Sign41
+       DATA >4D4D,>CDCD,>BDBD,>BDFD    ; #4E - 1F Sign50
+       DATA >BDBD,>ADAD,>CDCD,>8D8D    ; #4E - 27 Sign51
+       DATA >8D8D,>CDCD,>CDBD,>BDFD    ; #4F - 20 Sign60
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #4F - 28 Sign61
+       DATA >4D4D,>CDCD,>CDCD,>BDFD    ; #50 - 21 Sign70
+       DATA >BDBD,>ADAD,>CDCD,>8D8D    ; #50 - 29 Sign71
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #51 - 22 Sign01
+       DATA >7171,>7171,>7171,>7171    ; #51 - 00 Sky/glass
+       DATA >BDBD,>ADAD,>CD0D,>8D8D    ; #52 - 23 Sign11
+       DATA >7171,>7171,>7171,>7171    ; #52 - 00 Sky/glass
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #53 - 24 Sign21
+       DATA >7171,>7171,>7171,>7171    ; #53 - 00 Sky/glass
+       DATA >BDBD,>ADAD,>CD8D,>8D8D    ; #54 - 25 Sign31
+       DATA >7171,>7171,>7171,>7171    ; #54 - 00 Sky/glass
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #55 - 26 Sign41
+       DATA >7171,>7171,>7171,>7171    ; #55 - 00 Sky/glass
+       DATA >BDBD,>ADAD,>CDCD,>8D8D    ; #56 - 27 Sign51
+       DATA >4B4B,>4B4B,>414B,>4B4B    ; #56 - 02 Wall 2
+       DATA >BDBD,>ADAD,>CDCD,>4D4D    ; #57 - 28 Sign61
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #57 - 04 Window open top
+       DATA >BDBD,>ADAD,>CDCD,>8D8D    ; #58 - 29 Sign71
+       DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #58 - 04 Window open top
