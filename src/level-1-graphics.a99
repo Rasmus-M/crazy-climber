@@ -298,34 +298,34 @@ PSTRIP1:
        DATA >0000,>0000,>0000,>E0B0    ; #3E - 19 Face right 4
        DATA >FFFF,>FFEF,>7FFD,>DFFF    ; #3E - 05 Window open bottom
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #3F - 04 Window open top
-       DATA >1D15,>1D15,>150A,>0A0A    ; #3F - 32 Door sign
+       DATA >0063,>F794,>94F4,>F497    ; #3F - 32 Door sign
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #40 - 04 Window open top
-       DATA >D51D,>1515,>D5EE,>8AEE    ; #40 - 33 Door sign
+       DATA >0025,>BDBD,>2525,>A5A5    ; #40 - 33 Door sign
        DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #41 - 02 Wall 2
-       DATA >C302,>9A02,>C377,>4545    ; #41 - 34 Door sign
+       DATA >00C3,>C704,>B4B4,>04C7    ; #41 - 34 Door sign
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #42 - 04 Window open top
-       DATA >BB2A,>2B2A,>BA27,>2222    ; #42 - 35 Door sign
+       DATA >0019,>BDA5,>2525,>A5BD    ; #42 - 35 Door sign
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #43 - 04 Window open top
-       DATA >B8A8,>38A0,>A060,>5050    ; #43 - 36 Door sign
-       DATA >1D15,>1D15,>150A,>0A0A    ; #44 - 32 Door sign
-       DATA >0A0E,>0000,>0000,>0000    ; #44 - 37 Door sign
-       DATA >D51D,>1515,>D5EE,>8AEE    ; #45 - 33 Door sign
-       DATA >2AEA,>0000,>0000,>0000    ; #45 - 38 Door sign
-       DATA >C302,>9A02,>C377,>4545    ; #46 - 34 Door sign
-       DATA >4577,>7E7E,>3C3C,>7E7E    ; #46 - 39 Door sign
-       DATA >BB2A,>2B2A,>BA27,>2222    ; #47 - 35 Door sign
-       DATA >223A,>0000,>0000,>0000    ; #47 - 3A Door sign
-       DATA >B8A8,>38A0,>A060,>5050    ; #48 - 36 Door sign
-       DATA >5060,>0000,>0000,>0000    ; #48 - 3B Door sign
-       DATA >0A0E,>0000,>0000,>0000    ; #49 - 37 Door sign
+       DATA >00CE,>EF29,>29EF,>CE48    ; #43 - 36 Door sign
+       DATA >0063,>F794,>94F4,>F497    ; #44 - 32 Door sign
+       DATA >9300,>0000,>0000,>0000    ; #44 - 37 Door sign
+       DATA >0025,>BDBD,>2525,>A5A5    ; #45 - 33 Door sign
+       DATA >2500,>0000,>0000,>0000    ; #45 - 38 Door sign
+       DATA >00C3,>C704,>B4B4,>04C7    ; #46 - 34 Door sign
+       DATA >C300,>7E7E,>3C3C,>7E7E    ; #46 - 39 Door sign
+       DATA >0019,>BDA5,>2525,>A5BD    ; #47 - 35 Door sign
+       DATA >1900,>0000,>0000,>0000    ; #47 - 3A Door sign
+       DATA >00CE,>EF29,>29EF,>CE48    ; #48 - 36 Door sign
+       DATA >2800,>0000,>0000,>0000    ; #48 - 3B Door sign
+       DATA >9300,>0000,>0000,>0000    ; #49 - 37 Door sign
        DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #49 - 03 Glass reflection
-       DATA >2AEA,>0000,>0000,>0000    ; #4A - 38 Door sign
+       DATA >2500,>0000,>0000,>0000    ; #4A - 38 Door sign
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4A - 00 Sky/glass
-       DATA >4577,>7E7E,>3C3C,>7E7E    ; #4B - 39 Door sign
+       DATA >C300,>7E7E,>3C3C,>7E7E    ; #4B - 39 Door sign
        DATA >3C3C,>7E7E,>3C3C,>7E7E    ; #4B - 02 Wall 2
-       DATA >223A,>0000,>0000,>0000    ; #4C - 3A Door sign
+       DATA >1900,>0000,>0000,>0000    ; #4C - 3A Door sign
        DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #4C - 03 Glass reflection
-       DATA >5060,>0000,>0000,>0000    ; #4D - 3B Door sign
+       DATA >2800,>0000,>0000,>0000    ; #4D - 3B Door sign
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4D - 00 Sky/glass
        DATA >FFF6,>EDDB,>BFEF,>DFBF    ; #4E - 03 Glass reflection
        DATA >FFFF,>FFFF,>FFFF,>FFFF    ; #4E - 00 Sky/glass
@@ -518,34 +518,34 @@ CSTRIP1:
        DATA >D1D1,>D1D1,>D1D1,>D1D1    ; #3E - 19 Face right 4
        DATA >1010,>B0BA,>BABA,>BABA    ; #3E - 05 Window open bottom
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #3F - 04 Window open top
-       DATA >A4A4,>A4A4,>A484,>8484    ; #3F - 32 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #3F - 32 Door sign
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #40 - 04 Window open top
-       DATA >A4A4,>A4A4,>A484,>8484    ; #40 - 33 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #40 - 33 Door sign
        DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #41 - 02 Wall 2
-       DATA >A4A4,>A4A4,>A484,>8484    ; #41 - 34 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #41 - 34 Door sign
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #42 - 04 Window open top
-       DATA >A4A4,>A4A4,>A484,>8484    ; #42 - 35 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #42 - 35 Door sign
        DATA >1B1B,>1B1B,>1B1B,>1B1B    ; #43 - 04 Window open top
-       DATA >A4A4,>A4A4,>A484,>8484    ; #43 - 36 Door sign
-       DATA >A4A4,>A4A4,>A484,>8484    ; #44 - 32 Door sign
-       DATA >8484,>6767,>6767,>6767    ; #44 - 37 Door sign
-       DATA >A4A4,>A4A4,>A484,>8484    ; #45 - 33 Door sign
-       DATA >8484,>6767,>6767,>6767    ; #45 - 38 Door sign
-       DATA >A4A4,>A4A4,>A484,>8484    ; #46 - 34 Door sign
-       DATA >8484,>6B6B,>6B6B,>6B6B    ; #46 - 39 Door sign
-       DATA >A4A4,>A4A4,>A484,>8484    ; #47 - 35 Door sign
-       DATA >8484,>6767,>6767,>6767    ; #47 - 3A Door sign
-       DATA >A4A4,>A4A4,>A484,>8484    ; #48 - 36 Door sign
-       DATA >8484,>6767,>6767,>6767    ; #48 - 3B Door sign
-       DATA >8484,>6767,>6767,>6767    ; #49 - 37 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #43 - 36 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #44 - 32 Door sign
+       DATA >E1F1,>6767,>6767,>6767    ; #44 - 37 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #45 - 33 Door sign
+       DATA >E181,>6767,>6767,>6767    ; #45 - 38 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #46 - 34 Door sign
+       DATA >E1F1,>6B6B,>6B6B,>6B6B    ; #46 - 39 Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #47 - 35 Door sign
+       DATA >E181,>6767,>6767,>6767    ; #47 - 3A Door sign
+       DATA >F1F1,>F1F1,>F1F1,>E1E1    ; #48 - 36 Door sign
+       DATA >E181,>6767,>6767,>6767    ; #48 - 3B Door sign
+       DATA >E1F1,>6767,>6767,>6767    ; #49 - 37 Door sign
        DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #49 - 03 Glass reflection
-       DATA >8484,>6767,>6767,>6767    ; #4A - 38 Door sign
+       DATA >E181,>6767,>6767,>6767    ; #4A - 38 Door sign
        DATA >7171,>7171,>7171,>7171    ; #4A - 00 Sky/glass
-       DATA >8484,>6B6B,>6B6B,>6B6B    ; #4B - 39 Door sign
+       DATA >E1F1,>6B6B,>6B6B,>6B6B    ; #4B - 39 Door sign
        DATA >6B6B,>6B6B,>6B6B,>6B6B    ; #4B - 02 Wall 2
-       DATA >8484,>6767,>6767,>6767    ; #4C - 3A Door sign
+       DATA >E181,>6767,>6767,>6767    ; #4C - 3A Door sign
        DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #4C - 03 Glass reflection
-       DATA >8484,>6767,>6767,>6767    ; #4D - 3B Door sign
+       DATA >E181,>6767,>6767,>6767    ; #4D - 3B Door sign
        DATA >7171,>7171,>7171,>7171    ; #4D - 00 Sky/glass
        DATA >7B7F,>7F7F,>7F7F,>7F7F    ; #4E - 03 Glass reflection
        DATA >7171,>7171,>7171,>7171    ; #4E - 00 Sky/glass

@@ -16,6 +16,7 @@
        copy "rom-bank-5.a99"
        copy "rom-bank-6.a99"
        copy "rom-bank-7.a99"
+       copy "rom-bank-8.a99"
 
 **
 * Memory mapped addresses
@@ -108,11 +109,11 @@ title_bank_select:
 level_1_bank_select:
        equ  >600a
 level_2_bank_select:
-       equ  >600e
-level_3_bank_select:
        equ  >600c
-level_4_bank_select:
+level_3_bank_select:
        equ  >600e
+level_4_bank_select:
+       equ  >6010
 
 **
 * Scratch pad
@@ -468,11 +469,13 @@ update_pattern_table:
        a    @vdp_base_of_extra_scroll_chars,r0
        a    @cpu_offset_to_extra_scroll_chars,r1
        mov  @extra_scroll_chars,r2
+       jeq  update_pattern_table_1
        bl   @vm8bw0
+update_pattern_table_1:
        bl   @check_int
 *      Only copy next to table 2 and 3 on original VDP
        abs  @sprite_dupl_bug
-       jeq  update_pattern_table_1
+       jeq  update_pattern_table_4
 *      Copy patterns 2nd part
        mov  r4,r0                      ; Base patterns
        ai   r0,>800
@@ -485,7 +488,9 @@ update_pattern_table:
        a    @vdp_base_of_extra_scroll_chars,r0
        a    @cpu_offset_to_extra_scroll_chars,r1
        mov  @extra_scroll_chars,r2
+       jeq  update_pattern_table_2
        bl   @vm8bw0
+update_pattern_table_2:
        bl   @check_int
 *      Copy patterns 3rd part
        mov   r4,r0                     ; Base patterns
@@ -499,9 +504,11 @@ update_pattern_table:
        a    @vdp_base_of_extra_scroll_chars,r0
        a    @cpu_offset_to_extra_scroll_chars,r1
        mov  @extra_scroll_chars,r2
+       jeq  update_pattern_table_3
        bl   @vm8bw0
+update_pattern_table_3:
        bl   @check_int
-update_pattern_table_1:
+update_pattern_table_4:
 *      Copy colors
        mov  r4,r0                      ; Base patterns
        ai   r0,color_table
@@ -515,7 +522,9 @@ update_pattern_table_1:
        a    @vdp_base_of_extra_scroll_chars,r0
        a    @cpu_offset_to_extra_scroll_chars,r1
        mov  @extra_scroll_chars,r2
+       jeq  update_pattern_table_5
        bl   @vm8bw0
+update_pattern_table_5:
        bl   @check_int
        .endproc
 *// update_pattern_table
@@ -1739,13 +1748,25 @@ check_sprite_hit_head_2:
 
 *********************************************************************
 *
-* Base stage init
+* Door stage init
 *
-base_stage_init:
+door_stage_init:
        .proc
        li   r1,head_and_hands_patterns
        bl   @load_sprite_patterns
        li   r1,character_set_door
+       bl   @set_character_set
+       clr  @max_residents
+       .endproc
+*// door_stage_init
+
+*********************************************************************
+*
+* Base stage init
+*
+base_stage_init:
+       .proc
+       li   r1,character_set_base
        bl   @set_character_set
        clr  @max_residents
        .endproc
@@ -1759,7 +1780,7 @@ base_stage_init:
 * r1: Destination address in map
 *
 copy_door_to_map:
-       li   r0,door_map
+       mov  @door_map,r0
        li   r1,map_buffer+(418*map_width)+8
        li   r2,8                       ; Number of rows to copy
 copy_door_to_map_1:
@@ -3009,7 +3030,7 @@ initial_scrolling_screen:
 *
 intro_climb:
        .proc
-       bl   @base_stage_init
+       bl   @door_stage_init
        li   r0,intro_module
        bl   @play_module
        li   r0,>9da8
@@ -3680,7 +3701,7 @@ level_init:
        mov  @level_bank_select,r0
        seto *r0
 *      Stage
-       bl   @base_stage_init
+       bl   @door_stage_init
        mov  @stages,r0
        mov  r0,@next_stage_ptr
 *      Initial screen
@@ -4184,6 +4205,7 @@ level1:
        data TCHARS1
        data RIDX1
        data ROWS1
+       data door_map_1
        data PSTRIP1
        data CSTRIP1-PSTRIP1
        data progress_map_1
@@ -4195,6 +4217,7 @@ level2:
        data TCHARS2
        data RIDX2
        data ROWS2
+       data door_map_2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
        data progress_map_2
@@ -4206,6 +4229,7 @@ level3:
        data TCHARS3
        data RIDX3
        data ROWS3
+       data door_map_3
        data PSTRIP3
        data CSTRIP3-PSTRIP3
        data progress_map_3
@@ -4217,6 +4241,7 @@ level4:
        data TCHARS4
        data RIDX4
        data ROWS4
+       data door_map_4
        data PSTRIP4
        data CSTRIP4-PSTRIP4
        data progress_map_4
@@ -4235,6 +4260,8 @@ map_row_index:
        data RIDX1
 map_rows:
        data ROWS1
+door_map:
+       data door_map_1
 pattern_strips:
        data PSTRIP1
 color_strip_offset:
@@ -4316,10 +4343,10 @@ cpu_offset_to_extra_scroll_chars:      ; gap from last base char * 16
 base_tscs:
        equ  47
 
-character_set_residents:
+character_set_base:
        data base_tscs                  ; base_scroll_chars
-       data 16                         ; extra_scroll_chars
-       data 47*8                       ; vdp_base_of_extra_scroll_chars
+       data 0                          ; extra_scroll_chars
+       data 0                          ; vdp_base_of_extra_scroll_chars
        data 0                          ; cpu_offset_to_extra_scroll_chars
 
 character_set_door:
@@ -4327,6 +4354,12 @@ character_set_door:
        data 17                         ; extra_scroll_chars
        data (base_tscs+16)*8           ; vdp_base_of_extra_scroll_chars
        data 16*16                      ; cpu_offset_to_extra_scroll_chars
+
+character_set_residents:
+       data base_tscs                  ; base_scroll_chars
+       data 16                         ; extra_scroll_chars
+       data 47*8                       ; vdp_base_of_extra_scroll_chars
+       data 0                          ; cpu_offset_to_extra_scroll_chars
 
 character_set_kong:
        data base_tscs                  ; base_scroll_chars

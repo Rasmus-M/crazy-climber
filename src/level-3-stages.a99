@@ -1,5 +1,7 @@
 stages3:
        equ  $
+       data >0c50                      ; scroll y
+       data base_stage_init            ; init
        data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
        data >0080                      ; scroll y
