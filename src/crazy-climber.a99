@@ -471,11 +471,11 @@ update_pattern_table:
        mov  @extra_scroll_chars,r2
        jeq  update_pattern_table_1
        bl   @vm8bw0
-update_pattern_table_1:
        bl   @check_int
+update_pattern_table_1:
 *      Only copy next to table 2 and 3 on original VDP
        abs  @sprite_dupl_bug
-       jeq  update_pattern_table_4
+       jeq  update_pattern_table_3
 *      Copy patterns 2nd part
        mov  r4,r0                      ; Base patterns
        ai   r0,>800
@@ -490,8 +490,8 @@ update_pattern_table_1:
        mov  @extra_scroll_chars,r2
        jeq  update_pattern_table_2
        bl   @vm8bw0
-update_pattern_table_2:
        bl   @check_int
+update_pattern_table_2:
 *      Copy patterns 3rd part
        mov   r4,r0                     ; Base patterns
        ai    r0,>1000
@@ -506,14 +506,13 @@ update_pattern_table_2:
        mov  @extra_scroll_chars,r2
        jeq  update_pattern_table_3
        bl   @vm8bw0
-update_pattern_table_3:
        bl   @check_int
-update_pattern_table_4:
+update_pattern_table_3:
 *      Copy colors
        mov  r4,r0                      ; Base patterns
        ai   r0,color_table
        mov  r5,r1
-       a    @color_strip_offset,r1           ; Add offset between patterns and colors
+       a    @color_strip_offset,r1     ; Add offset between patterns and colors
        mov  @base_scroll_chars,r2      ; Number of patterns
        bl   @vm8bw8
        bl   @check_int
@@ -522,10 +521,10 @@ update_pattern_table_4:
        a    @vdp_base_of_extra_scroll_chars,r0
        a    @cpu_offset_to_extra_scroll_chars,r1
        mov  @extra_scroll_chars,r2
-       jeq  update_pattern_table_5
+       jeq  update_pattern_table_4
        bl   @vm8bw0
-update_pattern_table_5:
        bl   @check_int
+update_pattern_table_4:
        .endproc
 *// update_pattern_table
 
@@ -3058,29 +3057,9 @@ intro_climb_3:
        jne  intro_climb_2
        dec  r8
        jne  intro_climb_1
-*      Say go for it
-       li   r0,speech_go_for_it_idx
-       bl   @speak
+       li   r0,120                     ; Trigger speech
+       mov  r0,@inactivity_count
        .endproc
-intro_climb_data:
-       data left_anim, 0, right_anim, 0, >0000
-       data left_anim_1, 0, right_anim_1, 0, >0400
-       data left_anim_2, 0, right_anim_2, 0, >0400
-       data left_anim_3, 0, right_anim_3, 0, >0400
-       data left_anim_4, 0, right_anim_4, 0, >0400
-       data left_anim_4, 0, right_anim_4, 1, >0000
-       data left_anim_4, 0, right_anim_3, 1, >0000
-       data left_anim_4, 0, right_anim_2, 1, >0000
-       data left_anim_4, 0, right_anim_1, 1, >0000
-       data left_anim_4, 0, right_anim, 1, >0000
-       data left_anim_4, 0, right_anim, 0, >0000
-       data left_anim_4, 1, right_anim, 0, >0000
-       data left_anim_3, 1, right_anim, 0, >0000
-       data left_anim_2, 1, right_anim, 0, >0000
-       data left_anim_1, 1, right_anim, 0, >0000
-       data left_anim, 1, right_anim, 0, >0000
-intro_climb_data_end:
-       equ  $
 *// intro_climb
 
 *********************************************************************
@@ -4082,8 +4061,6 @@ quit:
 lower_memory_max:
        equ  $
 
-
-
 *********************************************************************
 *
 *      Upper memory
@@ -4194,6 +4171,26 @@ joystick_control:
 keyboard_control:
        data KEY_D, KEY_E, KEY_K, KEY_I
        data KEY_S, KEY_F, KEY_J, KEY_L
+
+intro_climb_data:
+       data left_anim, 0, right_anim, 0, >0000
+       data left_anim_1, 0, right_anim_1, 0, >0400
+       data left_anim_2, 0, right_anim_2, 0, >0400
+       data left_anim_3, 0, right_anim_3, 0, >0400
+       data left_anim_4, 0, right_anim_4, 0, >0400
+       data left_anim_4, 0, right_anim_4, 1, >0000
+       data left_anim_4, 0, right_anim_3, 1, >0000
+       data left_anim_4, 0, right_anim_2, 1, >0000
+       data left_anim_4, 0, right_anim_1, 1, >0000
+       data left_anim_4, 0, right_anim, 1, >0000
+       data left_anim_4, 0, right_anim, 0, >0000
+       data left_anim_4, 1, right_anim, 0, >0000
+       data left_anim_3, 1, right_anim, 0, >0000
+       data left_anim_2, 1, right_anim, 0, >0000
+       data left_anim_1, 1, right_anim, 0, >0000
+       data left_anim, 1, right_anim, 0, >0000
+intro_climb_data_end:
+       equ  $
 
 levels:
        data level1
