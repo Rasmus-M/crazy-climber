@@ -3536,15 +3536,17 @@ demo_loop:
        jlt  demo_loop_1
        li   r0,KEY_1
        bl   @check_key
-       jne  demo_loop_1
+       jne  demo_loop_2
        li   r0,KEY_2
        bl   @check_key
-       jne  demo_loop_1
+       jne  demo_loop_2
        inc  @frame
        mov  @frame,r0
        ci   r0,2000
        jne  demo_loop
 demo_loop_1:
+       bl   @fall_sequence
+demo_loop_2:
        clr  @demo_mode
        .endproc
 *// demo_mode_screen
@@ -3561,6 +3563,8 @@ demo_loop_1:
 *
 demo_vert_keys:
        mov  @frame,r0
+       ci   r0,16
+       jlt  demo_vert_keys_2
        andi r0,8
        jeq  demo_vert_keys_1
        clr  r6
