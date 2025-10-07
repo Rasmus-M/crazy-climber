@@ -55,7 +55,7 @@ name_table_1:                          ; Name table base 1 (>0B)
 sprite_attr_table:                     ; Sprite attribute table
        equ  >3000
 
-*      Constants
+*      For testing
 falling_enabled:
        equ  1
 test_bird:
@@ -65,13 +65,18 @@ test_kong:
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is building 1
+       equ  1                          ; 0 is building 1
+*      Constants
 map_width:
        equ  22
 map_height:
        equ  425
 scroll_max:
        equ  >0c88
+building_left:
+       equ >40
+building_right:
+       equ >c8
 n_levels:
        equ  4
 n_windows:
@@ -1773,29 +1778,6 @@ base_stage_init:
 
 *********************************************************************
 *
-* Copy door to map
-*
-* r0: Source address
-* r1: Destination address in map
-*
-copy_door_to_map:
-       mov  @door_map,r0
-       li   r1,map_buffer+(418*map_width)+8
-       li   r2,8                       ; Number of rows to copy
-copy_door_to_map_1:
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       ai   r1,map_width-5
-       dec  r2
-       jne  copy_door_to_map_1
-       rt
-*// copy_door_to_map
-
-*********************************************************************
-*
 * One resident stage init
 *
 one_resident_stage_init:
@@ -1806,6 +1788,93 @@ one_resident_stage_init:
        mov  r0,@max_residents
        .endproc
 *// one_resident_stage_init
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+create_girder:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_girder_1
+       li   r3,girders_init_data
+       mov  *r3+,@sprite_handler(r4)
+       mov  *r3+,r2
+       bl   @rand_max
+       ai   r0,building_left
+       mov  r0,@sprite_x(r4)
+       mov  *r3+,@sprite_y(r4)
+       mov  *r3+,@sprite_vx(r4)
+       mov  *r3+,@sprite_vy(r4)
+       mov  *r3+,@sprite_count(r4)
+       bl   @rand
+       andi r0,1
+       mov  r0,@sprite_ax(r4)          ; Type
+create_girder_1:
+       .endproc
+*// girders_stage_init
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+girders_stage_init:
+       .proc
+       li   r1,girder_dumbbell_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_base
+       bl   @set_character_set
+       clr  @max_residents
+       bl   @create_girder
+       bl   @create_girder
+       .endproc
+*// girders_stage_init
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+girder_handler:
+       .proc
+       mov  @sprite_y(r3),r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0
+       swpb r0
+       movb r0,*r15
+       mov  @sprite_count(r3),r2
+       sla  r2,2
+       mov  @sprite_ax(r3),r0
+       jne  girder_handler_1
+       ai   r2,>0ea0
+       jmp  girder_handler_2
+girder_handler_1:
+       ai   r2,>08d0
+girder_handler_2:
+       swpb r2
+       movb r2,*r15
+       swpb r2
+       movb r2,*r15
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       mov  @sprite_count(r3),r0
+       inc  r0
+       ci   r0,6
+       jlt  girder_handler_3
+       clr  r0
+girder_handler_3:
+       mov  r0,@sprite_count(r3)
+       mov  @sprite_y(r3),r0
+       ci   r0,>00c0
+       jlt  girder_handler_4
+       clr  *r3
+       .push r3
+       bl   @create_girder
+       .pop r3
+girder_handler_4:
+       .endproc
+*// girder_handler
 
 *********************************************************************
 *
@@ -2056,26 +2125,6 @@ kong_x:
 
 *********************************************************************
 *
-* Copy Kong to map
-*
-* r0: Source address
-* r1: Destination address in map
-*
-copy_kong_to_map:
-       li   r2,7                       ; Number of rows to copy
-copy_kong_to_map_1:
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       movb *r0+,*r1+
-       ai   r1,map_width-4
-       dec  r2
-       jne  copy_kong_to_map_1
-       rt
-*// copy_kong_to_map
-
-*********************************************************************
-*
 * Three residents stage init
 *
 three_residents_stage_init:
@@ -2156,9 +2205,9 @@ chopper_handler_0:
        jne  chopper_handler_6
 *      Boundary check
        mov  @sprite_x(r3),r0
-       ci   r0,>40
+       ci   r0,building_left
        jl   !
-       ci   r0,>d8
+       ci   r0,building_right+16
        jh   !
        jmp  chopper_handler_1
 !      neg  @sprite_vx(r3)
@@ -2203,6 +2252,49 @@ chopper_handler_6:
        bl   @play_chopper
        .endproc
 *// chopper_handler
+
+*********************************************************************
+*
+* Copy door to map
+*
+* r0: Source address
+* r1: Destination address in map
+*
+copy_door_to_map:
+       mov  @door_map,r0
+       li   r1,map_buffer+(418*map_width)+8
+       li   r2,8                       ; Number of rows to copy
+copy_door_to_map_1:
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       ai   r1,map_width-5
+       dec  r2
+       jne  copy_door_to_map_1
+       rt
+*// copy_door_to_map
+
+*********************************************************************
+*
+* Copy Kong to map
+*
+* r0: Source address
+* r1: Destination address in map
+*
+copy_kong_to_map:
+       li   r2,7                       ; Number of rows to copy
+copy_kong_to_map_1:
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       ai   r1,map_width-4
+       dec  r2
+       jne  copy_kong_to_map_1
+       rt
+*// copy_kong_to_map
 
 *********************************************************************
 *
@@ -4101,9 +4193,9 @@ b_face_first:
 b_face_last:
        byte chr_face_last
 b_building_left:
-       byte >40
+       byte building_left
 b_building_right:
-       byte >c8
+       byte building_right
 b_life:
        byte chr_life
 b_space:
@@ -4283,12 +4375,14 @@ level_data_size:
        copy "level-3-stages.a99"
        copy "level-4-stages.a99"
 
+girders_init_data:
+       data girder_handler,>0090,->0010,>0000,>0002,>0000
 bird_init_data:
-       data bird_handler, >0020, >0982, >0002, >0001, >0000
+       data bird_handler,>0020,>0982,>0002,>0001,>0000
 kong_init_data:
-       data kong_handler, >0058, >0448, >0000, >0000, >0000
+       data kong_handler,>0058,>0448,>0000,>0000,>0000
 chopper_init_data:
-       data chopper_handler, >0040, >0000, >0000, >0001, >0002
+       data chopper_handler,>0040,>0000,>0000,>0001,>0002
 
 high_scores:
        data 1,34464
@@ -4391,7 +4485,7 @@ kong_patterns:
 balloon_patterns:
        equ  4
        data SPR124                     ; Balloon
-girder_patterns:
+girder_dumbbell_patterns:
        equ  5
        data SPR134                     ; Girders and dumbbells
 spark_patterns:
