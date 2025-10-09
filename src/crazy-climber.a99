@@ -1706,6 +1706,7 @@ bird_dropping_handler:
 *      Update sprite
 bird_dropping_handler_2:
        a    @sprite_vy(r3),@sprite_y(r3)
+       s    @scroll_dy,@sprite_y(r3)
        mov  @sprite_y(r3),r0
        ci   r0,>00c0
        jl   bird_dropping_handler_4
@@ -1810,7 +1811,14 @@ create_girder:
        mov  *r3+,@sprite_count(r4)
        bl   @rand
        andi r0,1
-       mov  r0,@sprite_ax(r4)          ; Type
+       jne  create_girder_2
+       li   r0,>0ea0
+       jmp  create_girder_3
+create_girder_2:
+       li   r0,>08d0
+       neg  @sprite_vx(r4)
+create_girder_3:
+       mov  r0,@sprite_ax(r4)          ; Color and pattern
 create_girder_1:
        .endproc
 *// girders_stage_init
@@ -1837,27 +1845,32 @@ girders_stage_init:
 *
 girder_handler:
        .proc
+*      Display sprite
        mov  @sprite_y(r3),r1
        swpb r1
        movb r1,*r15
        mov  @sprite_x(r3),r0
        swpb r0
        movb r0,*r15
-       mov  @sprite_count(r3),r2
+       mov  @sprite_count(r3),r2       ; Animation frame
        sla  r2,2
-       mov  @sprite_ax(r3),r0
-       jne  girder_handler_1
-       ai   r2,>0ea0
-       jmp  girder_handler_2
-girder_handler_1:
-       ai   r2,>08d0
-girder_handler_2:
+       a   @sprite_ax(r3),r2           ; Color and pattern
        swpb r2
-       movb r2,*r15
+       movb r2,*r15                    ; Pattern
        swpb r2
-       movb r2,*r15
+       movb r2,*r15                    ; Color
+*      Check for collision with climber
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  girder_handler_5
+*      Hit
+       bl   @lose_grip
+       jmp  girder_handler_4
+*      Update sprite
+girder_handler_5:
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
+       s    @scroll_dy,@sprite_y(r3)
        mov  @sprite_count(r3),r0
        inc  r0
        ci   r0,6
@@ -4376,7 +4389,7 @@ level_data_size:
        copy "level-4-stages.a99"
 
 girders_init_data:
-       data girder_handler,>0090,->0010,>0000,>0002,>0000
+       data girder_handler,>0090,->0010,>0001,>0002,>0000
 bird_init_data:
        data bird_handler,>0020,>0982,>0002,>0001,>0000
 kong_init_data:
