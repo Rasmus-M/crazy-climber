@@ -872,7 +872,7 @@ create_windows_7b:
        li   r2,12                      ; Y coord between 0 and 11
        c    @window_anim_type(r3),@w_window_anim_type_resident
        jne  create_windows_7c
-       ai   r2,-5                      ; Only add residents above climber
+       ai   r2,-6                      ; Only add residents above climber
 create_windows_7c:
        bl   @rand_max                  ; Y coord in r1
        ai   r4,-12                     ; Y coord of top window row on screen
