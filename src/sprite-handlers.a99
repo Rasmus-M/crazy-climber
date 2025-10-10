@@ -1,0 +1,598 @@
+*********************************************************************
+*
+* Resident person handler
+*
+* r3: sprite structure
+*
+resident_handler:
+       .proc
+       mov  @sprite_count(r3),r0       ; Init?
+       jne  resident_handler_1         ; Jump if not
+       li   r0,24
+       mov  r0,@sprite_count(r3)
+resident_handler_1:
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       bl   @window_screen_coords
+       mov  r1,r1
+       jlt  resident_handler_3
+       dec  r1
+       swpb r1
+       movb r1,*r15
+       swpb r0
+       movb r0,*r15
+       li   r0,spr_resident*256
+       movb r0,*r15
+       li   r0,>0f00                   ; White
+       movb r0,*r15
+       c    @sprite_count(r3),@resident_handler_drop
+       jne  resident_handler_2
+       bl   @create_plant
+resident_handler_2:
+       dec  @sprite_count(r3)
+       jne  resident_handler_3
+       clr  @sprite_handler(r3)        ; Handler done
+resident_handler_3:
+       .endproc
+resident_handler_drop:
+       data 16
+*// resident_handler
+
+*********************************************************************
+*
+* Dropping plant handler
+*
+* r3: sprite structure
+*
+plant_handler:
+       .proc
+*      Display sprite
+       mov  @sprite_y(r3),r1
+       srl  r1,4
+       dec  r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0
+       srl  r0,4
+       swpb r0
+       movb r0,*r15
+       li   r2,spr_plant_1*256
+       movb r2,*r15
+       li   r2,>0c00                   ; Green
+       movb r2,*r15
+*      Check for collision with climber
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  plant_handler_1
+*      Hit
+       mov  r1,r1                      ; X offset from climber
+       jlt  !
+       li   r2,->0008
+       jmp  !!
+!      li   r2,>0008
+!      mov  r2,@sprite_vx(r3)
+       mov  @sprite_vy(r3),r2
+       neg  r2                         ; Reverse y velocity
+       sra  r2,1
+       mov  r2,@sprite_vy(r3)
+       a    r2,@sprite_y(r3)           ; Prevent double hit
+       .push r3
+       bl   @lose_grip
+       bl   @play_boing
+       .pop  r3
+       li   r0,8
+       mov  r0,@sprite_count(r3)
+       seto @speech_reserved
+*      Update sprite
+plant_handler_1:
+       a    @sprite_ax(r3),@sprite_vx(r3)
+       a    @sprite_ay(r3),@sprite_vy(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       mov  @scroll_dy,r0
+       sla  r0,4
+       s    r0,@sprite_y(r3)
+       c    @sprite_y(r3),@plant_bottom_screen
+       jl   plant_handler_2
+       clr  @sprite_handler(r3)
+plant_handler_2:
+       dec  @sprite_count(r3)
+       jne  plant_handler_3
+       clr  @speech_reserved
+       li   r0,speech_ouch_idx
+       bl   @speak
+plant_handler_3:
+       .endproc
+plant_bottom_screen:
+       data 194 * 16;
+*// plant_handler
+
+*********************************************************************
+*
+* Bird handler
+*
+bird_handler:
+       .proc
+*      Remove
+       mov  @status,r0
+       jne  bird_handler_1
+       c    @w_8,@bird_rounds
+       jeq  bird_handler_1
+       mov  @scroll_y,r0
+       c    r0,@two_residents_stage_1
+       jgt  bird_handler_2
+bird_handler_1:
+       clr  @sprite_handler(r3)
+       bl   @mute_sound
+       jmp  bird_handler_10
+bird_handler_2:
+*      Draw
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       clr  r4
+       mov  @sprite_count(r3),r5
+       srl  r5,2
+       div  @w_6,r4
+       sla  r5,1
+       mov  @sprite_vx(r3),r2
+       jlt  bird_handler_3
+       mov  @bird_right(r5),r4
+       jmp  bird_handler_4
+bird_handler_3:
+       mov  @bird_left(r5),r4
+bird_handler_4:
+       bl   @draw_big_sprite
+*      Move
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       a    @scroll_dy,@sprite_y(r3)
+*      X boundaries
+       mov  @sprite_x(r3),r0
+       ci   r0,>20
+       jl   bird_handler_5
+       ci   r0,>e0
+       jle  bird_handler_6
+bird_handler_5:
+       neg  @sprite_vx(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+       inc  @bird_rounds
+bird_handler_6
+*      Y boundaries
+       mov  @sprite_y(r3),r0
+       s    @scroll_y,r0
+       jlt  bird_handler_7
+       ci   r0,>18
+       jle  bird_handler_8
+bird_handler_7:
+       neg  @sprite_vy(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+bird_handler_8:
+*      Drop
+       mov  @bird_droppings,r0
+       ci   r0,2
+       jhe  bird_handler_9
+       bl   @rand
+       ci   r0,>f400
+       jl   bird_handler_9
+       bl   @create_bird_dropping
+bird_handler_9:
+       inc  @sprite_count(r3)
+bird_handler_10:
+       .endproc
+bird_droppings:
+       data 0
+bird_rounds:
+       data 0
+*// bird_handler
+
+*********************************************************************
+*
+* Bird dropping handler
+*
+bird_dropping_handler:
+       .proc
+*      Display sprite
+       mov  @sprite_y(r3),r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0
+       swpb r0
+       movb r0,*r15
+       mov  @sprite_count(r3),r2
+       movb r2,*r15
+       swpb r2
+       movb r2,*r15
+*      Check for collision with climber
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  bird_dropping_handler_2
+*      Hit
+       bl   @fall
+       jmp  bird_dropping_handler_3
+*      Update sprite
+bird_dropping_handler_2:
+       a    @sprite_vy(r3),@sprite_y(r3)
+       s    @scroll_dy,@sprite_y(r3)
+       mov  @sprite_y(r3),r0
+       ci   r0,>00c0
+       jl   bird_dropping_handler_4
+bird_dropping_handler_3:
+       clr  *r3
+       dec  @bird_droppings
+bird_dropping_handler_4:
+       .endproc
+*// bird_dropping_handler
+
+*********************************************************************
+*
+* Kong handler
+*
+kong_handler:
+       .proc
+       mov  @scroll_y,r0
+       s    @three_residents_stage_1,r0
+       ci   r0,8
+       jgt  kong_handler_1
+       clr  @sprite_handler(r3)
+       jmp  kong_handler_3
+kong_handler_1:
+       mov  @sprite_count(r3),r0
+       andi r0,>001c
+       swpb r0
+       ai   r0,>a000
+       movb r0,@kong+4
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       li   r4,kong
+       bl   @draw_big_sprite
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       mov  @sprite_ay(r3),r4          ; Side 0 or 2
+       mov  @kong_arms(r4),r4          ; Arms base
+       mov  @sprite_ax(r3),r5          ; Arms 0-3
+       sla  r5,1
+       a    r5,r4
+       mov  *r4,r4
+       bl   @draw_big_sprite
+*      Animate
+       inc  @sprite_count(r3)
+*      Animate arms
+       mov  @sprite_count(r3),r0
+       andi r0,>0007
+       jne  kong_handler_3
+       li   r2,4
+       bl   @rand_max
+       mov  r0,@sprite_ax(r3)          ; Current arms
+*      Change side
+       mov  @sprite_count(r3),r1
+       andi r1,>003f
+       jne  kong_handler_3
+       mov  @sprite_count(r3),r1
+       andi r1,>0040
+       srl  r1,5
+       mov  @kong_x(r1),@sprite_x(r3)
+       mov  r1,@sprite_ay(r3)          ; Side
+       jne  kong_handler_2
+*      Remove right kong, draw left kong
+       li   r0,kong_map_undraw
+       li   r1,map_buffer+(kong_row*map_width)+14
+       bl   @copy_kong_to_map
+       li   r0,kong_map
+       li   r1,map_buffer+(kong_row*map_width)+3
+       bl   @copy_kong_to_map
+       jmp  kong_handler_3
+kong_handler_2:
+*      Remove left kong, draw right kong
+       li   r0,kong_map_undraw
+       li   r1,map_buffer+(kong_row*map_width)+3
+       bl   @copy_kong_to_map
+       li   r0,kong_map
+       li   r1,map_buffer+(kong_row*map_width)+14
+       bl   @copy_kong_to_map
+kong_handler_3:
+*      Check for collision with climber
+       c    @sprite_ax(r3),@w_3        ; Arm should be extended
+       jne  kong_handler_4
+       mov   @scroll_y,r0
+       ci   r0,>03F0
+       jhe  kong_handler_4
+       ci   r0,>03D0
+       jl   kong_handler_4
+       bl   @climber_column
+       mov  @sprite_ay(r3),r1          ; Side 0 or 2
+       srl  r1,1                       ; 0 or 1
+       inct r1                         ; 3 or 4
+       c    r0,r1                      ; Compare to climber column
+       jne  kong_handler_4
+       bl   @fall
+kong_handler_4:
+       .endproc
+kong_x:
+       data >0058, >00b0
+*// kong_handler
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+girder_handler:
+       .proc
+*      Display sprite
+       mov  @sprite_y(r3),r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0
+       swpb r0
+       movb r0,*r15
+       mov  @sprite_count(r3),r2       ; Animation frame
+       sla  r2,2
+       a   @sprite_ax(r3),r2           ; Color and pattern
+       swpb r2
+       movb r2,*r15                    ; Pattern
+       swpb r2
+       movb r2,*r15                    ; Color
+*      Check for collision with climber
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  girder_handler_5
+*      Hit
+       bl   @lose_grip
+       jmp  girder_handler_4
+*      Update sprite
+girder_handler_5:
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+       s    @scroll_dy,@sprite_y(r3)
+       mov  @sprite_count(r3),r0
+       inc  r0
+       ci   r0,6
+       jlt  girder_handler_3
+       clr  r0
+girder_handler_3:
+       mov  r0,@sprite_count(r3)
+       mov  @sprite_y(r3),r0
+       ci   r0,>00c0
+       jlt  girder_handler_4
+       clr  *r3
+       .push r3
+       bl   @create_girder
+       .pop r3
+girder_handler_4:
+       .endproc
+*// girder_handler
+
+*********************************************************************
+*
+* Chopper handler
+*
+chopper_handler:
+       .proc
+       mov  @sprite_count(r3),r4
+       ci   r4,480                     ; Give up?
+       jne  chopper_handler_0
+       inc  @status                    ; Yes, give up
+       inc  @sprite_count(r3)
+       jmp  chopper_handler_4
+chopper_handler_0:
+       mov  @sprite_x(r3),r0           ; Position of middle of landing gear
+       mov  @sprite_y(r3),r1
+       andi r4,1
+       sla  r4,1
+       mov  @sprite_vx(r3),r2
+       jlt  !
+       mov  @chopper_right(r4),r4
+       ai   r0,->30
+       jmp  !!
+!      mov  @chopper_left(r4),r4
+       ai   r0,->10
+!      bl   @draw_big_sprite
+*      Move
+       inc  @sprite_count(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+*      Skip the rest if it's the end sequence
+       mov  @status,r0
+       jlt  chopper_handler_5
+       jne  chopper_handler_6
+*      Boundary check
+       mov  @sprite_x(r3),r0
+       ci   r0,building_left
+       jl   !
+       ci   r0,building_right+16
+       jh   !
+       jmp  chopper_handler_1
+!      neg  @sprite_vx(r3)
+       a    @sprite_vx(r3),@sprite_x(r3)
+chopper_handler_1:
+       mov  @sprite_y(r3),r0
+       jlt  !
+       ci   r0,>54
+       jh   !
+       jmp  chopper_handler_2
+!      neg  @sprite_vy(r3)
+       a    @sprite_vy(r3),@sprite_y(r3)
+chopper_handler_2:
+*      Check for collision with climber
+       c    @scroll_y,@w_8
+       jne  chopper_handler_6
+       mov  @sprite_y(r3),r0
+       ci   r0,>50
+       jlt  chopper_handler_6
+       mov  @left_anim_ptr,r0
+       ci   r0,left_anim
+       jeq  chopper_handler_3
+       mov  @right_anim_ptr,r0
+       ci   r0,right_anim
+       jne  chopper_handler_6
+chopper_handler_3:
+       mov  @sprite_x(r3),r0
+       mov  @climber_pos,r1           ; TODO: Improve location of hand
+       andi r1,>00ff
+       ai   r1,>10
+       s    r1,r0
+       abs  r0
+       ci   r0,>10
+       jgt  chopper_handler_6
+*      Pickup
+chopper_handler_4:
+       inc  @status
+chopper_handler_5:
+       clr  @sprite_vx(r3)
+       seto @sprite_vy(r3)
+chopper_handler_6:
+       bl   @play_chopper
+       .endproc
+*// chopper_handler
+
+*********************************************************************
+*
+* Create plant
+*
+* r3 points to sprite structure of resident (must be preserved)
+*
+create_plant:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_plant_1
+       li   r0,plant_handler
+       mov  r0,@sprite_handler(r4)     ; sprite_handler
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       bl   @window_screen_coords
+       sla  r0,4
+       mov  r0,@sprite_x(r4)           ; sprite_x
+       sla  r1,4
+       mov  r1,@sprite_y(r4)           ; sprite_y
+       clr  @sprite_vx(r4)
+       clr  @sprite_vy(r4)
+       clr  @sprite_ax(r4)
+       li   r0,>0003
+       mov  r0,@sprite_ay(r4)
+       clr  @sprite_count(r4)          ; sprite_count
+create_plant_1:
+       .endproc
+*// create_plant
+
+*********************************************************************
+*
+* Create resident
+*
+* r3 points to window structure (must be preserved)
+*
+create_resident:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_resident_1
+       li   r0,resident_handler
+       mov  r0,@sprite_handler(r4)     ; sprite_handler
+       mov  @window_anim_row(r3),@sprite_y(r4)   ; sprite_y
+       mov  @window_anim_col(r3),@sprite_x(r4)   ; sprite_x
+       clr  @sprite_count(r4)          ; sprite_count
+create_resident_1:
+       .endproc
+*// create_resident
+
+*********************************************************************
+*
+* Create bird dropping
+*
+* r3: Bird sprite
+*
+create_bird_dropping:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_bird_dropping_1
+       li   r0,bird_dropping_handler
+       mov  r0,@sprite_handler(r4)
+       mov  @sprite_x(r3),r0
+       ai   r0,16
+       mov r0,@sprite_x(r4)
+       mov  @sprite_y(r3),r0
+       s    @scroll_y,r0
+       ai   r0,16
+       mov  r0,@sprite_y(r4)
+       clr  @sprite_vx(r4)
+       mov  @w_4,@sprite_vy(r4)
+       bl   @rand
+       jlt  create_bird_dropping_2
+       li   r0,>9405                   ; Pattern and color
+       jmp  create_bird_dropping_3
+create_bird_dropping_2:
+       li   r0,>980e                   ; Pattern and color
+create_bird_dropping_3:
+       mov  r0,@sprite_count(r4)
+       inc  @bird_droppings
+create_bird_dropping_1:
+       .endproc
+*// create_bird_dropping
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+create_girder:
+       .proc
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  create_girder_1
+       li   r3,girders_init_data
+       mov  *r3+,@sprite_handler(r4)
+       mov  *r3+,r2
+       bl   @rand_max
+       ai   r0,building_left
+       mov  r0,@sprite_x(r4)
+       mov  *r3+,@sprite_y(r4)
+       mov  *r3+,@sprite_vx(r4)
+       mov  *r3+,@sprite_vy(r4)
+       mov  *r3+,@sprite_count(r4)
+       bl   @rand
+       andi r0,1
+       jne  create_girder_2
+       li   r0,>0ea0
+       jmp  create_girder_3
+create_girder_2:
+       li   r0,>08d0
+       neg  @sprite_vx(r4)
+create_girder_3:
+       mov  r0,@sprite_ax(r4)          ; Color and pattern
+create_girder_1:
+       .endproc
+*// girders_stage_init
+
+*********************************************************************
+*
+* Check if sprite hit head of climber
+*
+* r0 MSB: sprite x in screen coordinates
+* r1 MSB: sprite y in screen coordinates
+*
+* On return r2 is not zero if hit. r1 is x offset from climber.
+*
+check_sprite_hit_head:
+       mov  @climber_pos,r2
+       sb   r1,r2                      ; Climber y - plant y
+       jlt  check_sprite_hit_head_2
+       cb   r2,@b_12
+       jgt  check_sprite_hit_head_2
+       swpb r2
+       abs  @left_wide
+       jeq  check_sprite_hit_head_1
+       ai   r2,>0800
+check_sprite_hit_head_1:
+       sb   r0,r2                      ; Climber x - plant x
+       mov  r2,r1
+       abs  r2
+       cb   r2,@b_8
+       jgt  check_sprite_hit_head_2
+*      Hit
+       seto r2
+       rt
+*      Not hit
+check_sprite_hit_head_2:
+       clr  r2
+       rt
+*// check_sprite_hit_head
+

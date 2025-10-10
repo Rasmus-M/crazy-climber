@@ -1,0 +1,205 @@
+*********************************************************************
+*
+* Door stage init
+*
+door_stage_init:
+       .proc
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_door
+       bl   @set_character_set
+       clr  @max_residents
+       .endproc
+*// door_stage_init
+
+*********************************************************************
+*
+* Base stage init
+*
+base_stage_init:
+       .proc
+       li   r1,character_set_base
+       bl   @set_character_set
+       clr  @max_residents
+       .endproc
+*// base_stage_init
+
+*********************************************************************
+*
+* One resident stage init
+*
+one_resident_stage_init:
+       .proc
+       li   r1,character_set_residents
+       bl   @set_character_set
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r0,1
+       mov  r0,@max_residents
+       .endproc
+*// one_resident_stage_init
+
+*********************************************************************
+*
+* Two residents stage init
+*
+two_residents_stage_init:
+       .proc
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r0,2
+       mov  r0,@max_residents
+       .endproc
+*// two_residents_stage_init
+
+*********************************************************************
+*
+* Three residents stage init
+*
+three_residents_stage_init:
+       .proc
+       li   r1,character_set_residents
+       bl   @set_character_set
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r0,3
+       mov  r0,@max_residents
+       .endproc
+*// three_residents_stage_init
+
+*********************************************************************
+*
+* Griders and dumbbells stage init
+*
+girders_stage_init:
+       .proc
+       li   r1,girder_dumbbell_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_base
+       bl   @set_character_set
+       clr  @max_residents
+       bl   @create_girder
+       bl   @create_girder
+       .endproc
+*// girders_stage_init
+
+*********************************************************************
+*
+* Bird stage init
+*
+bird_stage_init:
+       .proc
+       li   r1,bird_patterns
+       bl   @load_sprite_patterns
+       clr  @max_residents
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  bird_stage_init_1
+       li   r0,bird_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_vx(r4)
+       mov  *r0+,@sprite_vy(r4)
+       mov  *r0+,@sprite_count(r4)
+       clr  @bird_droppings
+       clr  @bird_rounds
+       li   r0,bird_module
+       bl   @play_module
+bird_stage_init_1:
+       .endproc
+*// bird_stage_init
+
+*********************************************************************
+*
+* Post bird stage init
+*
+post_bird_stage_init:
+       .proc
+       bl   @mute_sound
+       .endproc
+*// post_bird_stage_init
+
+*********************************************************************
+*
+* Pre kong stage init
+*
+pre_kong_stage_init:
+*      Stop residents before changing character set
+       clr  @max_residents
+       rt
+*// pre_kong_stage_init
+
+*********************************************************************
+*
+* Kong stage init
+*
+kong_stage_init:
+       .proc
+       li   r1,kong_patterns
+       bl   @load_sprite_patterns
+       clr  @max_residents
+       li   r1,character_set_kong
+       bl   @set_character_set
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  kong_stage_init_1
+       li   r0,kong_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_count(r4)
+       mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
+       mov  *r0+,@sprite_ay(r4)        ; Used to store current side (left = 0, right <> 0)
+       li   r0,kong_map
+       li   r1,map_buffer+(kong_row*map_width)+3
+       bl   @copy_kong_to_map
+       li   r0,kong_module
+       bl   @play_module
+kong_stage_init_1:
+       .endproc
+*// kong_stage_init
+
+*********************************************************************
+*
+* Post kong stage init
+*
+post_kong_stage_init:
+       .proc
+       bl   @mute_sound
+*      Undraw kong
+       li   r0,kong_map_undraw
+       li   r1,map_buffer+(kong_row*map_width)+14
+       bl   @copy_kong_to_map
+       li   r0,kong_map_undraw
+       li   r1,map_buffer+(kong_row*map_width)+3
+       bl   @copy_kong_to_map
+       .endproc
+*// post_kong_stage_init
+
+*********************************************************************
+*
+* Chopper stage init
+*
+chopper_stage_init:
+       .proc
+       li   r1,chopper_patterns
+       bl   @load_sprite_patterns
+       clr  @max_residents
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  chopper_stage_init_1
+       li   r0,chopper_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_count(r4)
+       mov  *r0+,@sprite_vx(r4)
+       mov  *r0+,@sprite_vy(r4)
+chopper_stage_init_1:
+       .endproc
+*// chopper_stage_init
+
+

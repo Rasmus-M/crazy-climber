@@ -1,224 +1,223 @@
 progress_map_1:
 * -- Map Row 0 --
-       BYTE >6A                        ;
+       BYTE >76                        ;
 * -- Map Row 1 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 2 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 3 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 4 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 5 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 6 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 7 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 8 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 9 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 10 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 11 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 12 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 13 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 14 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 15 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 16 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 17 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 18 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 19 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 20 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 21 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 22 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 23 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 24 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 25 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 26 --
-       BYTE >6B                        ;
+       BYTE >78                        ;
 
 progress_map_2:
 * -- Map Row 0 --
-    BYTE >6A                           ;
+       BYTE >76                        ;
 * -- Map Row 1 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 2 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 3 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 4 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 5 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 6 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 7 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 8 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 9 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 10 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 11 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 12 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 13 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 14 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 15 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 16 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 17 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 18 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 19 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 20 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 21 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 22 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 23 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 24 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 25 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 26 --
-       BYTE >6B                        ;
+       BYTE >7C                        ;
 
 progress_map_3:
 * -- Map Row 0 --
-       BYTE >6A                        ;
+       BYTE >76                        ;
 * -- Map Row 1 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 2 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 3 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 4 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 5 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 6 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 7 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 8 --
-       BYTE >73                        ;
+       BYTE >7B                        ;
 * -- Map Row 9 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 10 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 11 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 12 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 13 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 14 --
-       BYTE >72                        ;
+       BYTE >7A                        ;
 * -- Map Row 15 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 16 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 17 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 18 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 19 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 20 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 21 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 22 --
-       BYTE >71                        ;
+       BYTE >79                        ;
 * -- Map Row 23 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 24 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 25 --
-       BYTE >70                        ;
+       BYTE >78                        ;
 * -- Map Row 26 --
-       BYTE >6B                        ;
-* == Map #5 ==
+       BYTE >78                        ;
 
 progress_map_4:
 * -- Map Row 0 --
-       BYTE >6A                        ;
+       BYTE >76                        ;
 * -- Map Row 1 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 2 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 3 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 4 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 5 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 6 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 7 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 8 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 9 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 10 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 11 --
-       BYTE >76                        ;
+       BYTE >7E                        ;
 * -- Map Row 12 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 13 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 14 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 15 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 16 --
-       BYTE >77                        ;
+       BYTE >7F                        ;
 * -- Map Row 17 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 18 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 19 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 20 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 21 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 22 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 23 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 24 --
-       BYTE >75                        ;
+       BYTE >7D                        ;
 * -- Map Row 25 --
-       BYTE >74                        ;
+       BYTE >7C                        ;
 * -- Map Row 26 --
-       BYTE >6B                        ;
+       BYTE >7C                        ;
