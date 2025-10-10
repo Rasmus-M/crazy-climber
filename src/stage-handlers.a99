@@ -140,6 +140,20 @@ kong_stage_init_1:
 
 *********************************************************************
 *
+* Sign stage init
+*
+sign_stage_init:
+       .proc
+       li   r1,spark_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_sign
+       bl   @set_character_set
+sign_stage_init_1:
+       .endproc
+*//  sign_stage_init
+
+*********************************************************************
+*
 * Chopper stage init
 *
 chopper_stage_init:
