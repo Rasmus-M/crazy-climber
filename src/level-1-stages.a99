@@ -10,21 +10,12 @@ one_resident_stage_1:
 bird_stage_1:
        data >0980                      ; scroll y
        data bird_stage_init            ; init
-post_bird_stage_1:
-       data >0790                      ; scroll y
-       data post_bird_stage_init       ; init
 two_residents_stage_1:
        data >0780                      ; scroll y
        data two_residents_stage_init   ; init
-pre_kong_stage_1:
-       data >0500                      ; scroll y
-       data pre_kong_stage_init        ; init
 kong_stage_1:
        data >04A0                      ; scroll y
        data kong_stage_init            ; init
-post_kong_stage_1:
-       data >03a0                      ; scroll y
-       data post_kong_stage_init       ; init
 three_residents_stage_1:
        data >0390                      ; scroll y
        data three_residents_stage_init ; init

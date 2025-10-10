@@ -57,7 +57,7 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 falling_enabled:
-       equ  0
+       equ  1
 test_bird:
        equ  0
 test_kong:
@@ -107,8 +107,12 @@ chr_space:
        equ  118
 chr_prog:
        equ  255
-kong_row:
+kong_row_1_3:
        equ  >0088
+sign_row_2:
+       equ  >0090
+sign_row_4:
+       equ  >0150
 door_row:
        equ  >019a
 title_bank_select:
@@ -550,6 +554,8 @@ update_stage:
        mov  *r0+,r1                    ; Init routine
        jeq  update_stage_1
        .push r0
+       clr  @max_residents
+       bl   @mute_sound
        bl   *r1                        ; Execute init routine
        .pop r0
 update_stage_1:
@@ -1529,6 +1535,32 @@ copy_kong_to_map_1:
        jne  copy_kong_to_map_1
        rt
 *// copy_kong_to_map
+
+*********************************************************************
+*
+* Copy sign to map
+*
+copy_sign_to_map:
+       mov  @sign_map,r0
+       mov  @sign_row,r1
+       mpy  @w_map_width,r1
+       mov  r2,r1
+       ai   r1,8
+       li   r2,3                       ; Number of rows to copy
+copy_sign_to_map_1:
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       movb *r0+,*r1+
+       ai   r1,map_width-8
+       dec  r2
+       jne  copy_sign_to_map_1
+       rt
+*// copy_sign_to_map
 
 *********************************************************************
 *
@@ -3552,6 +3584,7 @@ level1:
        data ROWS1
        data door_map_1
        data kong_map_undraw_1
+       data kong_row_1_3
        data PSTRIP1
        data CSTRIP1-PSTRIP1
        data progress_map_1
@@ -3565,6 +3598,7 @@ level2:
        data ROWS2
        data door_map_2
        data sign_map_2
+       data sign_row_2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
        data progress_map_2
@@ -3578,6 +3612,7 @@ level3:
        data ROWS3
        data door_map_3
        data kong_map_undraw_3
+       data kong_row_1_3
        data PSTRIP3
        data CSTRIP3-PSTRIP3
        data progress_map_3
@@ -3591,6 +3626,7 @@ level4:
        data ROWS4
        data door_map_4
        data sign_map_4
+       data sign_row_4
        data PSTRIP4
        data CSTRIP4-PSTRIP4
        data progress_map_4
@@ -3615,6 +3651,10 @@ kong_map_undraw:
        equ  $
 sign_map:
        data kong_map_undraw_1
+sign_row:
+       equ  $
+kong_row:
+       data  kong_row_1_3
 pattern_strips:
        data PSTRIP1
 color_strip_offset:

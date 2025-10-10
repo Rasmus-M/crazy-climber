@@ -20,7 +20,6 @@ base_stage_init:
        .proc
        li   r1,character_set_base
        bl   @set_character_set
-       clr  @max_residents
        .endproc
 *// base_stage_init
 
@@ -79,7 +78,6 @@ girders_stage_init:
        bl   @load_sprite_patterns
        li   r1,character_set_base
        bl   @set_character_set
-       clr  @max_residents
        bl   @create_girder
        bl   @create_girder
        .endproc
@@ -93,7 +91,6 @@ bird_stage_init:
        .proc
        li   r1,bird_patterns
        bl   @load_sprite_patterns
-       clr  @max_residents
        bl   @allocate_sprite
        mov  r4,r4
        jeq  bird_stage_init_1
@@ -114,33 +111,12 @@ bird_stage_init_1:
 
 *********************************************************************
 *
-* Post bird stage init
-*
-post_bird_stage_init:
-       .proc
-       bl   @mute_sound
-       .endproc
-*// post_bird_stage_init
-
-*********************************************************************
-*
-* Pre kong stage init
-*
-pre_kong_stage_init:
-*      Stop residents before changing character set
-       clr  @max_residents
-       rt
-*// pre_kong_stage_init
-
-*********************************************************************
-*
 * Kong stage init
 *
 kong_stage_init:
        .proc
        li   r1,kong_patterns
        bl   @load_sprite_patterns
-       clr  @max_residents
        li   r1,character_set_kong
        bl   @set_character_set
        bl   @allocate_sprite
@@ -154,7 +130,7 @@ kong_stage_init:
        mov  *r0+,@sprite_ax(r4)        ; Used to store current arms
        mov  *r0+,@sprite_ay(r4)        ; Used to store current side (left = 0, right <> 0)
        li   r0,kong_map
-       li   r1,map_buffer+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row_1_3*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_module
        bl   @play_module
@@ -164,30 +140,12 @@ kong_stage_init_1:
 
 *********************************************************************
 *
-* Post kong stage init
-*
-post_kong_stage_init:
-       .proc
-       bl   @mute_sound
-*      Undraw kong
-       mov  @kong_map_undraw,r0
-       li   r1,map_buffer+(kong_row*map_width)+14
-       bl   @copy_kong_to_map
-       mov  @kong_map_undraw,r0
-       li   r1,map_buffer+(kong_row*map_width)+3
-       bl   @copy_kong_to_map
-       .endproc
-*// post_kong_stage_init
-
-*********************************************************************
-*
 * Chopper stage init
 *
 chopper_stage_init:
        .proc
        li   r1,chopper_patterns
        bl   @load_sprite_patterns
-       clr  @max_residents
        bl   @allocate_sprite
        mov  r4,r4
        jeq  chopper_stage_init_1

@@ -207,7 +207,7 @@ bird_dropping_handler:
        mov  r2,r2
        jeq  bird_dropping_handler_2
 *      Hit
-       bl   @fall
+       bl   @lose_grip
        jmp  bird_dropping_handler_3
 *      Update sprite
 bird_dropping_handler_2:
@@ -275,19 +275,19 @@ kong_handler_1:
        jne  kong_handler_2
 *      Remove right kong, draw left kong
        mov  @kong_map_undraw,r0
-       li   r1,map_buffer+(kong_row*map_width)+14
+       li   r1,map_buffer+(kong_row_1_3*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,map_buffer+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row_1_3*map_width)+3
        bl   @copy_kong_to_map
        jmp  kong_handler_3
 kong_handler_2:
 *      Remove left kong, draw right kong
        mov  @kong_map_undraw,r0
-       li   r1,map_buffer+(kong_row*map_width)+3
+       li   r1,map_buffer+(kong_row_1_3*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_map
-       li   r1,map_buffer+(kong_row*map_width)+14
+       li   r1,map_buffer+(kong_row_1_3*map_width)+14
        bl   @copy_kong_to_map
 kong_handler_3:
 *      Check for collision with climber
@@ -304,7 +304,7 @@ kong_handler_3:
        inct r1                         ; 3 or 4
        c    r0,r1                      ; Compare to climber column
        jne  kong_handler_4
-       bl   @fall
+       bl   @lose_grip
 kong_handler_4:
        .endproc
 kong_x:
