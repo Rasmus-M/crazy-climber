@@ -61,11 +61,11 @@ falling_enabled:
 test_bird:
        equ  0
 test_kong:
-       equ  1
+       equ  0
 test_chopper:
        equ  0
 start_level:
-       equ  2                          ; 0 is building 1
+       equ  0                          ; 0 is building 1
 *      Constants
 map_width:
        equ  22
@@ -108,7 +108,9 @@ chr_space:
 chr_prog:
        equ  255
 kong_row:
-       equ  >88
+       equ  >0088
+door_row:
+       equ  >019a
 title_bank_select:
        equ  >6008
 level_1_bank_select:
@@ -1494,7 +1496,7 @@ handle_other_sprites_2:
 *
 copy_door_to_map:
        mov  @door_map,r0
-       li   r1,map_buffer+(418*map_width)+8
+       li   r1,map_buffer+(door_row*map_width)+8
        li   r2,8                       ; Number of rows to copy
 copy_door_to_map_1:
        movb *r0+,*r1+
@@ -3568,7 +3570,7 @@ level2:
        data progress_map_2
        data 150
        data 20000
-       data stages2
+       data stages_2
 level3:
        data level_3_bank_select
        data TCHARS3
@@ -3581,7 +3583,7 @@ level3:
        data progress_map_3
        data 200
        data 30000
-       data stages3
+       data stages_3
 level4:
        data level_4_bank_select
        data TCHARS4
@@ -3594,7 +3596,7 @@ level4:
        data progress_map_4
        data 250
        data 40000
-       data stages4
+       data stages_4
 
 *      Level dependent 'constants'
 current_level_data:

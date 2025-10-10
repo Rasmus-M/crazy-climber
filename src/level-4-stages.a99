@@ -1,9 +1,12 @@
-stages4:
+stages_4:
        equ  $
-       data >0c50                      ; scroll y
+base_stage_4:
+       data >0c10                      ; scroll y
        data base_stage_init            ; init
-       data >0b00                      ; scroll y
+one_resident_stage_4:
+       data >0ac0                      ; scroll y
        data one_resident_stage_init    ; init
+chopper_stage_4:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
 *      End marker

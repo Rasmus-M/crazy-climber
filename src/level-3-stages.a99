@@ -1,9 +1,10 @@
-stages3:
+stages_3:
        equ  $
-       data >0c50                      ; scroll y
+base_stage_3:
+       data >0c10                      ; scroll y
        data base_stage_init            ; init
 one_resident_stage_3:
-       data >0b00                      ; scroll y
+       data >0ac0                      ; scroll y
        data one_resident_stage_init    ; init
 pre_kong_stage_3:
        data >0500                      ; scroll y
