@@ -2128,6 +2128,19 @@ display_step_point:
        .endproc
 *// display_step_point
 
+*******************************************************************
+*
+* Display level
+*
+display_level:
+       .proc
+       li   r0,32*10+4
+       mov  @level,r1
+       inc  r1
+       li   r2,1
+       bl   @display_decimal
+       .endproc
+*// display_level
 
 *********************************************************************
 *
@@ -2171,6 +2184,7 @@ display_decimal:
        sla  r3,1
        ai   r3,w_10000
        dec  r2
+       jeq  display_decimal_2
 display_decimal_1:
        clr  r0
        div  *r3+,r0
@@ -2180,6 +2194,7 @@ display_decimal_1:
        movb r0,*r5+
        dec  r2
        jne  display_decimal_1
+display_decimal_2:
        ai   r1,chr_zero
        swpb r1
        movb r1,*r15
@@ -3016,6 +3031,7 @@ level_init:
        mov  r0,@scroll_y
        li   r0,3                       ; Progress indicator
        mov  r0,@progress_top_offset
+       bl   @display_level             ; Level
        seto  @disp_score               ; Score, bonus, step point
        mov  @bonus_points,@bonus
        bl   @display_bonus
