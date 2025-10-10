@@ -304,7 +304,7 @@ MD6    BYTE >50,>51,>52,>53            ;
        BYTE >68,>69,>6A,>6B            ;
 * -- Map Row 7 --
        BYTE >0E,>0E,>0E,>0E            ;
-kong_map_undraw:
+kong_map_undraw_1:
 * -- Map Row 8 --
        BYTE >00,>00,>00,>00            ;
 * -- Map Row 9 --
@@ -319,6 +319,21 @@ kong_map_undraw:
        BYTE >00,>00,>00,>00            ;
 * -- Map Row 14 --
        BYTE >0A,>0A,>0A,>0A            ;
+kong_map_undraw_3:
+* -- Map Row 8 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 9 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 10 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 11 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 12 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 13 --
+       BYTE >00,>00,>00,>00            ;
+* -- Map Row 14 --
+       BYTE >09,>09,>09,>09            ;
 * == Map #7 ==   
 MC7    DATA 0   ;
 MS7    DATA >0005,>0007,>0023          ; Width, Height, Size

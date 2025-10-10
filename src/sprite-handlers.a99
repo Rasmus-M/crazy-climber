@@ -274,7 +274,7 @@ kong_handler_1:
        mov  r1,@sprite_ay(r3)          ; Side
        jne  kong_handler_2
 *      Remove right kong, draw left kong
-       li   r0,kong_map_undraw
+       mov  @kong_map_undraw,r0
        li   r1,map_buffer+(kong_row*map_width)+14
        bl   @copy_kong_to_map
        li   r0,kong_map
@@ -283,7 +283,7 @@ kong_handler_1:
        jmp  kong_handler_3
 kong_handler_2:
 *      Remove left kong, draw right kong
-       li   r0,kong_map_undraw
+       mov  @kong_map_undraw,r0
        li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        li   r0,kong_map

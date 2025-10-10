@@ -170,10 +170,10 @@ post_kong_stage_init:
        .proc
        bl   @mute_sound
 *      Undraw kong
-       li   r0,kong_map_undraw
+       mov  @kong_map_undraw,r0
        li   r1,map_buffer+(kong_row*map_width)+14
        bl   @copy_kong_to_map
-       li   r0,kong_map_undraw
+       mov  @kong_map_undraw,r0
        li   r1,map_buffer+(kong_row*map_width)+3
        bl   @copy_kong_to_map
        .endproc

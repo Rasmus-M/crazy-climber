@@ -2,8 +2,22 @@ stages3:
        equ  $
        data >0c50                      ; scroll y
        data base_stage_init            ; init
+one_resident_stage_3:
        data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
+pre_kong_stage_3:
+       data >0500                      ; scroll y
+       data pre_kong_stage_init        ; init
+kong_stage_3:
+       data >04A0                      ; scroll y
+       data kong_stage_init            ; init
+post_kong_stage_3:
+       data >03a0                      ; scroll y
+       data post_kong_stage_init       ; init
+three_residents_stage_3:
+       data >0390                      ; scroll y
+       data three_residents_stage_init ; init
+chopper_stage_3:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
 *      End marker

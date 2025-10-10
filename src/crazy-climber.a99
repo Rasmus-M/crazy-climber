@@ -61,18 +61,18 @@ falling_enabled:
 test_bird:
        equ  0
 test_kong:
-       equ  0
+       equ  1
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is building 1
+       equ  2                          ; 0 is building 1
 *      Constants
 map_width:
        equ  22
 map_height:
-       equ  425
+       equ  418
 scroll_max:
-       equ  >0c88
+       equ  >0c48
 building_left:
        equ >40
 building_right:
@@ -3254,6 +3254,7 @@ unpack_map:
        li   r0,map_buffer              ; Destination
        mov  @map_row_index,r1          ; Source index
        mov  @w_map_height,r4
+       dec  r4
 unpack_map_1:
        clr  r2
        movb *r1+,r2                    ; Map row index
@@ -3548,6 +3549,7 @@ level1:
        data RIDX1
        data ROWS1
        data door_map_1
+       data kong_map_undraw_1
        data PSTRIP1
        data CSTRIP1-PSTRIP1
        data progress_map_1
@@ -3560,6 +3562,7 @@ level2:
        data RIDX2
        data ROWS2
        data door_map_2
+       data sign_map_2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
        data progress_map_2
@@ -3572,6 +3575,7 @@ level3:
        data RIDX3
        data ROWS3
        data door_map_3
+       data kong_map_undraw_3
        data PSTRIP3
        data CSTRIP3-PSTRIP3
        data progress_map_3
@@ -3584,6 +3588,7 @@ level4:
        data RIDX4
        data ROWS4
        data door_map_4
+       data sign_map_4
        data PSTRIP4
        data CSTRIP4-PSTRIP4
        data progress_map_4
@@ -3591,7 +3596,7 @@ level4:
        data 40000
        data stages4
 
-*      Level dependent constants
+*      Level dependent 'constants'
 current_level_data:
        equ  $
 level_bank_select:
@@ -3604,6 +3609,10 @@ map_rows:
        data ROWS1
 door_map:
        data door_map_1
+kong_map_undraw:
+       equ  $
+sign_map:
+       data kong_map_undraw_1
 pattern_strips:
        data PSTRIP1
 color_strip_offset:
@@ -3805,7 +3814,7 @@ big_sprite_color:
        copy "speech-data.a99"
 
 map_buffer:
-       bss  >2486
+       bss  map_width*(map_height-1)
 
        data -1
 
