@@ -148,7 +148,7 @@ sign_stage_init:
        bl   @load_sprite_patterns
        li   r1,character_set_sign
        bl   @set_character_set
-sign_stage_init_1:
+       bl   @copy_sign_to_map
        .endproc
 *//  sign_stage_init
 

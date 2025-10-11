@@ -14,7 +14,7 @@ two_residents_stage_1:
        data >0780                      ; scroll y
        data two_residents_stage_init   ; init
 kong_stage_1:
-       data >04A0                      ; scroll y
+       data (kong_row_1_3*8)+>60       ; scroll y
        data kong_stage_init            ; init
 three_residents_stage_1:
        data >0390                      ; scroll y

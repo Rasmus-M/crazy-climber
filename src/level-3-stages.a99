@@ -7,7 +7,7 @@ one_resident_stage_3:
        data >0ac0                      ; scroll y
        data one_resident_stage_init    ; init
 kong_stage_3:
-       data >04A0                      ; scroll y
+       data (kong_row_1_3*8)+>60       ; scroll y
        data kong_stage_init            ; init
 three_residents_stage_3:
        data >0390                      ; scroll y

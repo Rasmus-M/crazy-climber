@@ -9,6 +9,12 @@ girders_stage_2:
 one_resident_stage_2:
        data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
+sign_stage_2:
+       data (sign_row_2+2)*8           ; >490
+       data sign_stage_init
+three_resident_stage_2:
+       data (sign_row_2-24)*8          ; >420
+       data three_residents_stage_init
 chopper_stage_2:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
