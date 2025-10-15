@@ -9,14 +9,14 @@
        def   start
 
        copy "macros.a99"
-       copy "sound-defs.a99"
-       copy "speech-defs.a99"
+       copy "audio/sound-defs.a99"
+       copy "audio/speech-defs.a99"
 
-       copy "rom-bank-4.a99"
-       copy "rom-bank-5.a99"
-       copy "rom-bank-6.a99"
-       copy "rom-bank-7.a99"
-       copy "rom-bank-8.a99"
+       copy "rom-banks/rom-bank-4.a99"
+       copy "rom-banks/rom-bank-5.a99"
+       copy "rom-banks/rom-bank-6.a99"
+       copy "rom-banks/rom-bank-7.a99"
+       copy "rom-banks/rom-bank-8.a99"
 
 **
 * Memory mapped addresses
@@ -3711,11 +3711,10 @@ stages:
        data stages_1
 level_data_size:
        equ  $-current_level_data
-
-       copy "level-1-stages.a99"
-       copy "level-2-stages.a99"
-       copy "level-3-stages.a99"
-       copy "level-4-stages.a99"
+       copy "levels/level-1-stages.a99"
+       copy "levels/level-2-stages.a99"
+       copy "levels/level-3-stages.a99"
+       copy "levels/level-4-stages.a99"
 
 girders_init_data:
        data girder_handler,>0090,->0010,>0001,>0002,>0000
@@ -3886,17 +3885,17 @@ big_sprite_color:
 *
 *      Data includes
 *
-       copy "progress-map.a99"
-       copy "sprite-patterns.a99"
-       copy "map-animations.a99"
-       copy "sprite-animations.a99"
-       copy "sound-fx.a99"
-       copy "title-music.a99"
-       copy "intro-music.a99"
-       copy "bird-music.a99"
-       copy "kong-music.a99"
-       copy "completed-music.a99"
-       copy "speech-data.a99"
+       copy "graphics/progress-map.a99"
+       copy "graphics/sprite-patterns.a99"
+       copy "graphics/map-animations.a99"
+       copy "graphics/sprite-animations.a99"
+       copy "audio/sound-fx.a99"
+       copy "audio/title-music.a99"
+       copy "audio/intro-music.a99"
+       copy "audio/bird-music.a99"
+       copy "audio/kong-music.a99"
+       copy "audio/completed-music.a99"
+       copy "audio/speech-data.a99"
 
 map_buffer:
        bss  map_width*(map_height-1)

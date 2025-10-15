@@ -1,8 +1,0 @@
-       aorg >6000
-       bss  >40
-       copy "title-graphics.a99"
-       copy "title-sprites.a99"
-       copy "main-screen.a99"
-rom_bank_4_end:
-       equ  $
-       bss  >8000-$
