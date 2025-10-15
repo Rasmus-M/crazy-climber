@@ -2543,6 +2543,8 @@ title_screen:
        .proc
 title_screen_1:
        bl   @mute_sound
+       li   r0,title2_module
+       bl   @play_module
        seto @title_bank_select
        bl   @one_pattern_table
 *      Title screen loop
@@ -2606,6 +2608,7 @@ title_screen_main_cycle:
        bl   @clear_screen
 *      Display logo and text
        bl   @title_scroll_logo
+       bl   @check_int
        bl   @title_scroll_text
        li   r2,>8000
 title_screen_main_cycle_1:
@@ -2675,6 +2678,7 @@ title_scroll_logo_2:
        jne  title_scroll_logo_2
        li   r1,>d000
        movb r1,*r15
+       bl   @check_int
 *      Calculate VDP RAM destination offset
        mov  @frame,r4
        inv  r4
@@ -2690,6 +2694,7 @@ title_scroll_logo_2:
        mov  r5,r1
        mov  @L_TCHNUM,r2
        bl   @vm8bw8
+       bl   @check_int
 *      Copy colors
        li   r0,color_table
        a    r4,r0
@@ -2697,6 +2702,7 @@ title_scroll_logo_2:
        ai   r1,L_CSTRIP-L_PSTRIP
        mov  @L_TCHNUM,r2
        bl   @vm8bw8
+       bl   @check_int
 *      Copy name table
        mov  @frame,r0
        inv  r0
@@ -2719,10 +2725,12 @@ title_scroll_logo_4:
        bl   @vm8bw
 *      Change scroll offset
 title_scroll_logo_5:
+       bl   @check_int
        dec  @scroll_y
        jlt  title_scroll_logo_6
        inc  @frame
        jmp  title_scroll_logo_1
+*      Equalize the two name tables
 title_scroll_logo_6:
        li   r0,name_table_0
        li   r1,L_MAP_HIGH+32
@@ -2758,6 +2766,7 @@ title_scroll_text_1:
        mov  r5,r1
        mov  @T_TCHNUM,r2
        bl   @vm8bw8
+       bl   @check_int
 *      Copy colors
        li   r0,58*8+color_table
        a    r4,r0
@@ -2765,6 +2774,7 @@ title_scroll_text_1:
        ai   r1,T_CSTRIP-T_PSTRIP
        mov  @T_TCHNUM,r2
        bl   @vm8bw8
+       bl   @check_int
 *      Copy name table
        mov  @frame,r0
        inv  r0
@@ -2784,6 +2794,7 @@ title_scroll_text_3:
        srl  r2,3
        jeq  title_scroll_text_4
        bl   @vm8bw
+       bl   @check_int
 *      Change scroll offset
 title_scroll_text_4:
        inct @scroll_y
@@ -2803,11 +2814,14 @@ title_scroll_text_5:
 high_score_screen:
        .proc
        bl   @clear_screen
+       bl   @check_int
        bl   @load_static_characters
+       bl   @check_int
        li   r0,color_table
        li   r1,>f100
        li   r2,>800
        bl   @vsmw
+       bl   @check_int
        clr  @frame
        bl   @set_name_table
        li   r0,5*32+9+name_table_0
@@ -3267,20 +3281,39 @@ f18a_detect_2:
 *
 * Clear screen
 *
-clear_screen
+clear_screen:
        .proc
        li   r0,name_table_0
-       clr  r1
-       li   r2,>700                    ; Clear two names tables
-       bl   @vsmw
+       bl   @clear_name_table
+       bl   @check_int
+       li   r0,name_table_1
+       bl   @clear_name_table
        .endproc
 *// clear_screen
 
 *********************************************************************
 *
+* Clear name table
+*
+clear_name_table:
+       .proc
+       bl   @vwad
+       li   r2,>300/4
+clear_name_table_1:
+       clr  *r15
+       clr  *r15
+       clr  *r15
+       clr  *r15
+       dec  r2
+       jne  clear_name_table_1
+       .endproc
+*// clear_name_table
+
+*********************************************************************
+*
 * Disable sprites
 *
-disable_sprites
+disable_sprites:
        .proc
        li   r0,sprite_attr_table
        li   r1,>d000
@@ -3703,10 +3736,10 @@ high_scores_last:
        data 0,5000
 
 txt_highest_scores:
-       byte >e7,>e8,>e6,>e7,>e4,>f2,>f3,>00,>f2,>e2,>ee,>f1,>e4,>f2
+       byte >f1,>f2,>f0,>f1,>ef,>f8,>f9,>00,>f8,>ee,>f5,>f7,>ef,>f8
 
 txt_no1:
-       byte >ed,>ee,>61,>fd
+       byte >f4,>f5,>6d,>00
 
 window_anim_row:
        equ  0
@@ -3858,6 +3891,7 @@ big_sprite_color:
        copy "map-animations.a99"
        copy "sprite-animations.a99"
        copy "sound-fx.a99"
+       copy "title-music.a99"
        copy "intro-music.a99"
        copy "bird-music.a99"
        copy "kong-music.a99"
