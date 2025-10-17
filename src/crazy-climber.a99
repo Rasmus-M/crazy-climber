@@ -67,7 +67,7 @@ test_sign:
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is building 1
+       equ  0                          ; 0 is the first building
 *      Constants
 map_width:
        equ  22
@@ -3722,6 +3722,12 @@ bird_init_data:
        data bird_handler,>0020,>0982,>0002,>0001,>0000
 kong_init_data:
        data kong_handler,>0058,>0448,>0000,>0000,>0000
+sparking_sign_init_data_2:
+       data sparking_sign_handler,>0070,>0480,>0000,sparking_sign_patterns_left,-8
+       data sparking_sign_handler,>00c0,>0480,>0006,sparking_sign_patterns_right,8
+sparking_sign_init_data_4:
+       data sparking_sign_handler,>0070,>0a80,>0000,sparking_sign_patterns_left,-8
+       data sparking_sign_handler,>00c0,>0a80,>0006,sparking_sign_patterns_right,8
 chopper_init_data:
        data chopper_handler,>0040,>0000,>0000,>0001,>0002
 
@@ -3829,9 +3835,12 @@ balloon_patterns:
 girder_dumbbell_patterns:
        equ  5
        data SPR134                     ; Girders and dumbbells
-spark_patterns:
+sign_patterns:
        equ  6
-       data SPR152                     ; Sign sparks
+       data SPR152                     ; Dropping sign
+spark_patterns:
+       equ  7
+       data SPR160                     ; Sign sparks
 
 sprite_attributes_overlay:
        byte >ad,>a8,0,>09              ; Bottom, left

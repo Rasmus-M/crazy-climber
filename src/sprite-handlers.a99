@@ -119,7 +119,8 @@ bird_handler:
        c    @w_8,@bird_rounds
        jeq  bird_handler_1
        mov  @scroll_y,r0
-       c    r0,@two_residents_stage_1
+       mov  @next_stage_ptr,r1
+       c    r0,*r1
        jgt  bird_handler_2
 bird_handler_1:
        clr  @sprite_handler(r3)
@@ -230,7 +231,8 @@ bird_dropping_handler_4:
 kong_handler:
        .proc
        mov  @scroll_y,r0
-       s    @three_residents_stage_1,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
        ci   r0,8
        jgt  kong_handler_1
        clr  @sprite_handler(r3)
@@ -310,6 +312,89 @@ kong_handler_4:
 kong_x:
        data >0058, >00b0
 *// kong_handler
+
+*********************************************************************
+*
+* Sparking sign handler
+*
+sparking_sign_handler:
+       .proc
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
+       ci   r0,8
+       jgt  sparking_sign_handler_1
+       clr  @sprite_handler(r3)
+       jmp  sparking_sign_handler_5
+sparking_sign_handler_1:
+*      Display sprite
+       mov  @sprite_count(r3),r2       ; y
+       andi r2,15
+       bl   @rand
+       andi r0,7
+       ci   r0,2
+       jl   sparking_sign_handler_2
+*      Display a normal spark
+       mov  @sprite_y(r3),r1
+       s    @scroll_y,r1
+       swpb r1
+       ab   @sparking_sign_y_offsets(r2),r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0           ; x
+       swpb r0
+       movb r0,*r15
+       mov  @sprite_ax(r3),r4          ; Pattern
+       a    r2,r4
+       movb *r4,*r15
+       movb @sparking_sign_colors(r2),*r15    ; Color
+       jmp  sparking_sign_handler_3
+sparking_sign_handler_2:
+*      Display a spark ball
+       mov  r0,r4
+       mov  @sprite_y(r3),r1
+       s    @scroll_y,r1
+       swpb r1
+       movb r1,*r15
+       mov  @sprite_x(r3),r0           ; x
+       a    @sprite_ay(r3),r0          ; Add offset
+       swpb r0
+       movb r0,*r15
+       sla  r4,1
+       mov  @spark_balls(r4),r4
+       movb r4,*r15
+       swpb r4
+       movb r4,*r15
+*      Check for collision with climber
+sparking_sign_handler_3:
+       bl   @check_sprite_hit_head
+       mov  r2,r2
+       jeq  sparking_sign_handler_4
+*      Hit
+       li   r0,speech_ouch_idx
+       bl   @speak
+       inc  @spark_hits
+       c    @spark_hits,@w_10
+       jlt  sparking_sign_handler_5
+       bl   @lose_grip
+       jmp  sparking_sign_handler_5
+*      Update sprite
+sparking_sign_handler_4:
+       inc  @sprite_count(r3)
+sparking_sign_handler_5:
+       .endproc
+sparking_sign_patterns_left:
+       byte >a0,>a4,>a8,>ac,>b0,>b4,>b8,>bc,>c0,>bc,>b8,>b4,>b0,>ac,>a8,>a4
+sparking_sign_patterns_right:
+       byte >c4,>c8,>cc,>d0,>d4,>d8,>dc,>e0,>e4,>e0,>dc,>d8,>d4,>d0,>cc,>c8
+sparking_sign_y_offsets:
+       byte -16,-16,-16,-16,0,0,0,0,0,0,0,0,0,-16,-16,-16
+sparking_sign_colors:
+       byte 7,15,4,5,15,7,5,4,7,15,14,15,7,4,5,7
+spark_balls:
+       byte >e8,>08,>ec,>0b
+spark_hits:
+       data 0
+*// sparking_sign_handler
 
 *********************************************************************
 *

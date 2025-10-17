@@ -7,10 +7,10 @@ one_resident_stage_4:
        data >0ac0                      ; scroll y
        data one_resident_stage_init    ; init
 sign_stage_4:
-       data (sign_row_4+2)*8           ; >490
-       data sign_stage_init
+       data (sign_row_4+2)*8           ; >A90
+       data sparking_sign_stage_init_level_4
 three_resident_stage_4:
-       data (sign_row_4-24)*8          ; >420
+       data (sign_row_4-24)*8          ; >A20
        data three_residents_stage_init
 chopper_stage_4:
        data >0080                      ; scroll y

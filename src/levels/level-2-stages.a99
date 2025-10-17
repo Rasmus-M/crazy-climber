@@ -11,7 +11,7 @@ one_resident_stage_2:
        data one_resident_stage_init    ; init
 sign_stage_2:
        data (sign_row_2+2)*8           ; >490
-       data sign_stage_init
+       data sparking_sign_stage_init_level_2
 three_resident_stage_2:
        data (sign_row_2-24)*8          ; >420
        data three_residents_stage_init
