@@ -64,10 +64,13 @@ test_kong:
        equ  0
 test_sign:
        equ  0
+test_balloon:
+       equ  1
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is the first building
+       equ  1                          ; 0 is the first building
+
 *      Constants
 map_width:
        equ  22
@@ -3106,6 +3109,12 @@ level_init:
        li   r0,sign_stage_2
        mov  r0,@next_stage_ptr
        .endif
+       .ifeq test_balloon,1
+       li   r0,>280                    ; For testing balloon
+       mov  r0,@scroll_y
+       li   r0,balloon_stage_2
+       mov  r0,@next_stage_ptr
+       .endif
        .ifeq test_chopper,1
        li   r0,>088                    ; For testing chopper
        mov  r0,@scroll_y
@@ -3716,21 +3725,6 @@ level_data_size:
        copy "levels/level-3-stages.a99"
        copy "levels/level-4-stages.a99"
 
-girders_init_data:
-       data girder_handler,>0090,->0010,>0001,>0002,>0000
-bird_init_data:
-       data bird_handler,>0020,>0982,>0002,>0001,>0000
-kong_init_data:
-       data kong_handler,>0058,>0448,>0000,>0000,>0000
-sparking_sign_init_data_2:
-       data sparking_sign_handler,>0070,>0480,>0000,sparking_sign_patterns_left,-8
-       data sparking_sign_handler,>00c0,>0480,>0006,sparking_sign_patterns_right,8
-sparking_sign_init_data_4:
-       data sparking_sign_handler,>0070,>0a80,>0000,sparking_sign_patterns_left,-8
-       data sparking_sign_handler,>00c0,>0a80,>0006,sparking_sign_patterns_right,8
-chopper_init_data:
-       data chopper_handler,>0040,>0000,>0000,>0001,>0002
-
 high_scores:
        data 1,34464
        data 0,50000
@@ -3829,13 +3823,13 @@ bird_patterns:
 kong_patterns:
        equ  3
        data SPR108                     ; Kong
-balloon_patterns:
+balloon_girder_patterns:
        equ  4
        data SPR124                     ; Balloon
-girder_dumbbell_patterns:
+girder_patterns:
        equ  5
        data SPR134                     ; Girders and dumbbells
-sign_patterns:
+dropping_sign_patterns:
        equ  6
        data SPR152                     ; Dropping sign
 spark_patterns:
@@ -3877,18 +3871,6 @@ sprites:
        bss  n_sprites*sprite_size
 sprites_end:
        equ  $
-
-big_sprite_n_sprites:
-       equ  0
-* Followed by n times little sprites
-big_sprite_dy:
-       equ  0                          ; Y offset from last little sprite
-big_sprite_dx:
-       equ  1                          ; Y offset from last little sprite
-big_sprite_pattern:
-       equ  2
-big_sprite_color:
-       equ  3
 
 *********************************************************************
 *

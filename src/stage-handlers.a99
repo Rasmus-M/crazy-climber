@@ -16,6 +16,7 @@ door_stage_init:
 *
 * Base stage init
 *
+
 base_stage_init:
        .proc
        li   r1,character_set_base
@@ -74,13 +75,15 @@ three_residents_stage_init:
 *
 girders_stage_init:
        .proc
-       li   r1,girder_dumbbell_patterns
+       li   r1,balloon_girder_patterns
        bl   @load_sprite_patterns
        li   r1,character_set_base
        bl   @set_character_set
        bl   @create_girder
        bl   @create_girder
        .endproc
+girders_init_data:
+       data girder_handler,>0090,->0010,>0001,>0002,>0000
 *// girders_stage_init
 
 *********************************************************************
@@ -91,6 +94,9 @@ bird_stage_init:
        .proc
        li   r1,bird_patterns
        bl   @load_sprite_patterns
+;      TODO: test
+;      li   r1,character_set_base
+;      bl   @set_character_set
        bl   @allocate_sprite
        mov  r4,r4
        jeq  bird_stage_init_1
@@ -107,6 +113,8 @@ bird_stage_init:
        bl   @play_module
 bird_stage_init_1:
        .endproc
+bird_init_data:
+       data bird_handler,>0020,>0982,>0002,>0001,>0000
 *// bird_stage_init
 
 *********************************************************************
@@ -136,6 +144,8 @@ kong_stage_init:
        bl   @play_module
 kong_stage_init_1:
        .endproc
+kong_init_data:
+       data kong_handler,>0058,>0448,>0000,>0000,>0000
 *// kong_stage_init
 
 *********************************************************************
@@ -172,7 +182,64 @@ sparking_sign_stage_init_2:
        bl   @copy_sign_to_map
        clr  @spark_hits
        .endproc
+sparking_sign_init_data_2:
+       data sparking_sign_handler,>0070,>0480,>0000,sparking_sign_patterns_left,-8
+       data sparking_sign_handler,>00c0,>0480,>0006,sparking_sign_patterns_right,8
+sparking_sign_init_data_4:
+       data sparking_sign_handler,>0070,>0a80,>0000,sparking_sign_patterns_left,-8
+       data sparking_sign_handler,>00c0,>0a80,>0006,sparking_sign_patterns_right,8
 *//  sparking_sign_stage_init
+
+*********************************************************************
+*
+* Balloon stage init
+*
+balloon_stage_init:
+       .proc
+       li   r1,balloon_girder_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_base
+       bl   @set_character_set
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  balloon_stage_init_1
+       li   r0,balloon_init_data
+       mov  *r0+,@sprite_handler(r4)
+       mov  *r0+,@sprite_x(r4)
+       mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_vx(r4)
+       mov  *r0+,@sprite_vy(r4)
+balloon_stage_init_1:
+       .endproc
+balloon_init_data:
+       data  balloon_handler,>0088,>0280->0018,>0001,>0001
+*// balloon_stage_init
+
+*********************************************************************
+*
+* Dropping sign stage init
+*
+dropping_sign_stage_init:
+       .proc
+       li   r1,dropping_sign_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_base
+       bl   @set_character_set
+       bl   @allocate_sprite
+       mov  r4,r4
+       jeq  dropping_sign_init_1
+       li   r0,dropping_sign_init_data
+       mov  *r0+,@sprite_handler(r4)
+;       mov  *r0+,@sprite_x(r4)
+;       mov  *r0+,@sprite_y(r4)
+;       mov  *r0+,@sprite_count(r4)
+;       mov  *r0+,@sprite_vx(r4)
+;       mov  *r0+,@sprite_vy(r4)
+dropping_sign_init_1:
+       .endproc
+dropping_sign_init_data:
+       data dropping_sign_handler
+*// dropping_sign_stage_init
 
 *********************************************************************
 *
@@ -194,6 +261,6 @@ chopper_stage_init:
        mov  *r0+,@sprite_vy(r4)
 chopper_stage_init_1:
        .endproc
+chopper_init_data:
+       data chopper_handler,>0040,>0000,>0000,>0001,>0002
 *// chopper_stage_init
-
-

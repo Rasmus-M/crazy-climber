@@ -448,6 +448,41 @@ girder_handler_4:
 
 *********************************************************************
 *
+* Balloon handler
+*
+balloon_handler:
+       .proc
+*      Display sprite
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       li   r4,balloon
+       bl   @draw_big_sprite
+*      Update sprite
+       bl   @rand
+       mov  r0,r1
+       a    @sprite_vx(r3),@sprite_x(r3)
+       andi r0,1
+       jeq  balloon_handler_1
+       a    @sprite_vy(r3),@sprite_y(r3)
+balloon_handler_1:
+       andi r1,31
+       jne  balloon_handler_2
+       neg  @sprite_vx(r3)
+balloon_handler_2:
+       .endproc
+*// balloon_handler
+
+*********************************************************************
+*
+* Dropping sign handler
+*
+dropping_sign_handler:
+       .proc
+       .endproc
+*// dropping_sign_handler
+
+*********************************************************************
+*
 * Chopper handler
 *
 chopper_handler:
@@ -636,10 +671,10 @@ create_girder:
        bl   @rand
        andi r0,1
        jne  create_girder_2
-       li   r0,>0ea0
+       li   r0,>0ec8
        jmp  create_girder_3
 create_girder_2:
-       li   r0,>08d0
+       li   r0,>08e0
        neg  @sprite_vx(r4)
 create_girder_3:
        mov  r0,@sprite_ax(r4)          ; Color and pattern

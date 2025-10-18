@@ -1,0 +1,107 @@
+000 --
+080 00 XXXXXX Chopper
+100 00 XXXXXX
+180 00 XXXXXX Nothing
+200 03 XX  XX
+280 00 XXXXXX
+300 00 XXXXXX 3 residents
+380 02   XX  
+400 02   XX   Kong
+480 00 XXXXXX
+500 00 XXXXXX
+580 00 XXXXXX Nothing
+600 03 XX  XX
+680 00 XXXXXX
+700 00 XXXXXX
+780 00 XXXXXX 2 residents
+800 03 XX  XX
+880 00 XXXXXX
+900 00 XXXXXX Bird
+980 00 XXXXXX
+a00 02   XX  
+a80 00 XXXXXX
+b00 00 XXXXXX 1 resident
+b80 03 XX  XX
+c00 00 XXXXXX
+c80 00 XXXXXX Nothing
+
+000 --
+080 01  XXXX 
+100 01  XXXX 
+180 01  XXXX 
+200 01  XXXX 
+280 01  XXXX   balloon - girders if not pick up
+300 01  XXXX 
+380 01  XXXX   2 girders
+400 03 XX  XX
+480 03 XX  XX  Sign with wires
+500 01  XXXX 
+580 01  XXXX   2 girders
+600 01  XXXX 
+680 01  XXXX 
+700 03 XX  XX  Bird
+780 03 XX  XX
+800 03 XX  XX
+880 03 XX  XX
+900 00 XXXXXX
+980 01  XXXX   2 girders
+a00 02   XX  
+a80 02   XX  
+b00 02   XX    3 residents
+b80 02   XX  
+c00 01  XXXX   2 girders
+c80 00 XXXXXX
+
+000 --
+080 02   XX  
+100 02   XX  
+180 02   XX  
+200 02   XX   balloon - girders if not pick up  
+280 02   XX  
+300 02   XX   3 girders
+380 02   XX  
+400 02   XX   Kong 
+480 01  XXXX 
+500 01  XXXX  Nothing
+580 01  XXXX  3 girders
+600 01  XXXX 
+680 01  XXXX 
+700 01  XXXX  Dropping sign
+780 03 XX  XX
+800 00 XXXXXX
+880 00 XXXXXX
+900 03 XX  XX 
+980 00 XXXXXX 3 girders
+a00 03 XX  XX
+a80 03 XX  XX
+b00 03 XX  XX 3 residents
+b80 00 XXXXXX
+c00 00 XXXXXX 3 girders
+c80 00 XXXXXX
+
+000 --
+080 03 XX  XX
+100 03 XX  XX Nothing
+180 03 XX  XX
+200 03 XX  XX
+280 03 XX  XX
+300 03 XX  XX Dropping sign
+380 03 XX  XX
+400 01  XXXX 
+480 02   XX   1 girder
+500 01  XXXX 
+580 01  XXXX 
+600 00 XXXXXX
+680 00 XXXXXX
+700 00 XXXXXX
+780 02   XX   3 residents
+800 02   XX   Nothing
+880 00 XXXXXX
+900 00 XXXXXX Bird
+980 03 XX  XX 4 griders
+a00 03 XX  XX 
+a80 03 XX  XX Sign with wires
+b00 03 XX  XX
+b80 00 XXXXXX
+c00 03 XX  XX 4 girders
+c80 00 XXXXXX
