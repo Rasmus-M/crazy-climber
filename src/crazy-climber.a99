@@ -58,6 +58,8 @@ sprite_attr_table:                     ; Sprite attribute table
 *      For testing
 falling_enabled:
        equ  1
+display_title:
+       equ  0
 test_bird:
        equ  0
 test_kong:
@@ -271,7 +273,9 @@ start  limi 0                          ; disable interrupts
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
 new_game:
+       .ifeq display_title,1
        bl   @title_screen
+       .endif
        bl   @initial_static_screen
        bl   @game_init
 next_level:
@@ -293,18 +297,27 @@ main_loop:
 *      Main loop terminated
 finished:
        ci   r0,1
-       jeq  finished_1
-*      Level completed without chopper pickup
-       li   r0,3000
-       mov  r0,@bonus
-finished_1:
+       jne  finished_2
 *      Level completed with chopper pickup
+finished_1:
        bl   @chopper_pickup
        mov  @level,r0
        inc r0
        andi r0,n_levels-1
        mov  r0,@level
        jmp  next_level
+finished_2:
+       ci   r0,2
+       jne  finished_3
+*      Level completed without chopper pickup
+       li   r0,3000
+       mov  r0,@bonus
+       jmp  finished_1
+finished_3:
+*      Balloon pickup
+       clr  @status
+       bl   @balloon_pickup
+       jmp  main_loop
 died:
 *      Died
        bl   @fall_sequence
@@ -2484,6 +2497,36 @@ chopper_pickup_4:
        bl   @disable_sprites
        .endproc
 *// chopper_pickup
+
+
+*********************************************************************
+*
+* Climber is picked up by balloon
+*
+balloon_pickup:
+       .proc
+       mov  @frame,r0
+       ai   r0,128
+       mov  r0,@balloon_pickup_end_frame
+       li   r0,-2
+       mov  r0,@scroll_dy
+balloon_pickup_1:
+       bl   @vsync
+       bl   @set_name_table
+       bl   @int_routine
+       bl   @change_scroll_offset
+       bl   @update_pattern_table
+       bl   @update_name_table
+;       li   r1,10
+;       bl   @add_score
+       bl   @display_score
+       inc  @frame
+       c    @frame,@balloon_pickup_end_frame
+       jlt  balloon_pickup_1
+       .endproc
+balloon_pickup_end_frame
+       data 0
+*// balloon_pickup
 
 *********************************************************************
 *

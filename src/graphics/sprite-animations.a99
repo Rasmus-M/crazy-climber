@@ -403,7 +403,7 @@ bird_right_3:
 
 balloon:
        data 10
-       byte >00,>00,>a0,>08
+       byte >00,->10,>a0,>08
        byte >00,>10,>a4,>08
        byte >10,->10,>a8,>08
        byte >00,>10,>ac,>08

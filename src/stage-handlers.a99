@@ -207,12 +207,13 @@ balloon_stage_init:
        mov  *r0+,@sprite_handler(r4)
        mov  *r0+,@sprite_x(r4)
        mov  *r0+,@sprite_y(r4)
+       mov  *r0+,@sprite_count(r4)
        mov  *r0+,@sprite_vx(r4)
        mov  *r0+,@sprite_vy(r4)
 balloon_stage_init_1:
        .endproc
 balloon_init_data:
-       data  balloon_handler,>0088,>0280->0018,>0001,>0001
+       data  balloon_handler,>0098,>0280->0018,>00a0,>0001,>0001
 *// balloon_stage_init
 
 *********************************************************************

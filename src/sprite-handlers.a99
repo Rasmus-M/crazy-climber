@@ -458,17 +458,56 @@ balloon_handler:
        li   r4,balloon
        bl   @draw_big_sprite
 *      Update sprite
+       dec  @sprite_count(r3)
+       jlt  balloon_handler_4
        bl   @rand
        mov  r0,r1
        a    @sprite_vx(r3),@sprite_x(r3)
-       andi r0,1
-       jeq  balloon_handler_1
+       andi r0,3
+       jne  balloon_handler_1
        a    @sprite_vy(r3),@sprite_y(r3)
 balloon_handler_1:
        andi r1,31
        jne  balloon_handler_2
        neg  @sprite_vx(r3)
 balloon_handler_2:
+*      Check for pickup of climber
+       mov  @sprite_y(r3),r1
+       s    @scroll_y,r1
+       ci   r1,>40
+       jlt  balloon_handler_5
+       ci   r1,>50
+       jgt  balloon_handler_5
+       mov  @left_anim_ptr,r0
+       ci   r0,left_anim
+       jeq  balloon_handler_3
+       mov  @right_anim_ptr,r0
+       ci   r0,right_anim
+       jne  balloon_handler_5
+balloon_handler_3:
+       mov  @sprite_x(r3),r0
+       mov  @climber_pos,r1
+       andi r1,>00ff
+       ai   r1,>10
+       s    r1,r0
+       abs  r0
+       ci   r0,>10
+       jgt  balloon_handler_5
+*      Pickup
+       li   r0,256
+       s    r0,@sprite_y(r3)
+       seto @sprite_count(r3)          ; Fly away after pickup
+       li   r0,3
+       mov  r0,@status
+       jmp  balloon_handler_5
+*      Fly away
+balloon_handler_4:
+       dect @sprite_y(r3)
+       mov  @sprite_y(r3),r1
+       ci   r1,->0018
+       jgt  balloon_handler_5
+       clr  *r3
+balloon_handler_5:
        .endproc
 *// balloon_handler
 
@@ -478,6 +517,10 @@ balloon_handler_2:
 *
 dropping_sign_handler:
        .proc
+       mov  @sprite_x(r3),r0
+       mov  @sprite_y(r3),r1
+       li   r4,dropping_sign
+       bl   @draw_big_sprite
        .endproc
 *// dropping_sign_handler
 
@@ -532,7 +575,7 @@ chopper_handler_1:
 !      neg  @sprite_vy(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
 chopper_handler_2:
-*      Check for collision with climber
+*      Check for pickup of climber
        c    @scroll_y,@w_8
        jne  chopper_handler_6
        mov  @sprite_y(r3),r0
@@ -715,4 +758,3 @@ check_sprite_hit_head_2:
        clr  r2
        rt
 *// check_sprite_hit_head
-
