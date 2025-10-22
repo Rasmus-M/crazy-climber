@@ -3928,6 +3928,7 @@ sprites_end:
        copy "audio/intro-music.a99"
        copy "audio/bird-music.a99"
        copy "audio/kong-music.a99"
+       copy "audio/balloon-music.a99"
        copy "audio/completed-music.a99"
        copy "audio/speech-data.a99"
 

@@ -1,0 +1,285 @@
+balloon_module:
+       data >0006
+       data balloon_track_01
+       data balloon_track_02
+       data balloon_track_03
+       data >0000
+balloon_track_01:
+       data snd_channel_2
+balloon_track_01_rpt:
+       data balloon_seq_005C
+       data balloon_seq_0062
+       data balloon_seq_0068
+       data balloon_seq_006E
+       data >00FF
+       data balloon_track_01_rpt
+       data >0000
+balloon_track_02:
+       data snd_channel_3
+balloon_track_02_rpt:
+       data balloon_seq_0074
+       data balloon_seq_007E
+       data balloon_seq_0088
+       data balloon_seq_0092
+       data >00FF
+       data balloon_track_02_rpt
+       data >0000
+balloon_track_03:
+       data snd_channel_4
+balloon_track_03_rpt:
+       data balloon_seq_009C
+       data balloon_seq_00A6
+       data balloon_seq_00B0
+       data balloon_seq_00BA
+       data >00FF
+       data balloon_track_03_rpt
+       data >0000
+balloon_seq_0058:
+       data >0020
+       data >0000
+balloon_seq_005C:
+       data balloon_note_00C4
+       data >000F
+       data balloon_note_00C7
+       data >000F
+       data >0000
+balloon_seq_0074:
+       data balloon_note_00D6
+       data >0003
+       data balloon_note_00D9
+       data >0003
+       data balloon_note_00DC
+       data >0003
+       data balloon_note_00DF
+       data >0003
+       data balloon_note_00E2
+       data >0003
+       data balloon_note_00E5
+       data >0003
+       data balloon_note_00E8
+       data >0003
+       data balloon_note_00DC
+       data >0003
+       data >0000
+balloon_seq_009C:
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data >0000
+balloon_seq_0062:
+       data balloon_note_00CA
+       data >000F
+       data balloon_note_00CD
+       data >000F
+       data >0000
+balloon_seq_007E:
+       data balloon_note_00EB
+       data >0003
+       data balloon_note_00D6
+       data >0003
+       data balloon_note_00D9
+       data >0003
+       data balloon_note_00EE
+       data >0003
+       data balloon_note_00F1
+       data >0003
+       data balloon_note_00E2
+       data >0003
+       data balloon_note_00E5
+       data >0003
+       data balloon_note_00D9
+       data >0003
+       data >0000
+balloon_seq_00A6:
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data >0000
+balloon_seq_0068:
+       data balloon_note_00D0
+       data >000F
+       data balloon_note_00D3
+       data >000F
+       data >0000
+balloon_seq_0088:
+       data balloon_note_00F4
+       data >0003
+       data balloon_note_00EB
+       data >0003
+       data balloon_note_00D6
+       data >0003
+       data balloon_note_00F7
+       data >0003
+       data balloon_note_00FA
+       data >0003
+       data balloon_note_00F1
+       data >0003
+       data balloon_note_00E2
+       data >0003
+       data balloon_note_00D6
+       data >0003
+       data >0000
+balloon_seq_00B0:
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data >0000
+balloon_seq_006E:
+       data balloon_note_00D0
+       data >000F
+       data balloon_note_00CD
+       data >000F
+       data >0000
+balloon_seq_0092:
+       data balloon_note_00F4
+       data >0003
+       data balloon_note_00EB
+       data >0003
+       data balloon_note_00D6
+       data >0003
+       data balloon_note_00F7
+       data >0003
+       data balloon_note_00E2
+       data >0003
+       data balloon_note_00E5
+       data >0003
+       data balloon_note_00E8
+       data >0003
+       data balloon_note_00DC
+       data >0003
+       data >0000
+balloon_seq_00BA:
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data balloon_note_00FD
+       data >0003
+       data >0000
+balloon_note_00C4:
+       data balloon_instr_01
+       data F♯2
+balloon_note_00C7:
+       data balloon_instr_01
+       data E2
+balloon_note_00D6:
+       data balloon_instr_00
+       data C♯4
+balloon_note_00D9:
+       data balloon_instr_00
+       data >0051
+balloon_note_00DC:
+       data balloon_instr_00
+       data >0044
+balloon_note_00DF:
+       data balloon_instr_00
+       data >0033
+balloon_note_00E2:
+       data balloon_instr_00
+       data G♯3
+balloon_note_00E5:
+       data balloon_instr_00
+       data >006C
+balloon_note_00E8:
+       data balloon_instr_00
+       data >005B
+balloon_note_00FD:
+       data balloon_instr_02
+       data P3
+balloon_note_00CA:
+       data balloon_instr_01
+       data D2
+balloon_note_00CD:
+       data balloon_instr_01
+       data C♯2
+balloon_note_00EB:
+       data balloon_instr_00
+       data >0079
+balloon_note_00EE:
+       data balloon_instr_00
+       data >003D
+balloon_note_00F1:
+       data balloon_instr_00
+       data >00A1
+balloon_note_00D0:
+       data balloon_instr_01
+       data B2
+balloon_note_00D3:
+       data balloon_instr_01
+       data A2
+balloon_note_00F4:
+       data balloon_instr_00
+       data >0099
+balloon_note_00F7:
+       data balloon_instr_00
+       data F♯4
+balloon_note_00FA:
+       data balloon_instr_00
+       data >00CB
+balloon_instr_00:
+       byte T3
+       byte 8
+       byte 255
+       byte 0
+       data >0000
+balloon_instr_01:
+       byte T2
+       byte 63
+       byte 127
+       byte -2
+       data >0000
+balloon_instr_02:
+       byte P3
+       byte 63
+       byte 0
+       byte 4
+       data >0000
