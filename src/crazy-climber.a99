@@ -2505,6 +2505,9 @@ chopper_pickup_4:
 *
 balloon_pickup:
        .proc
+       bl   @mute_sound
+       li   r0,balloon_pickup_module
+       bl   @play_module
        mov  @frame,r0
        ai   r0,128
        mov  r0,@balloon_pickup_end_frame
@@ -3929,6 +3932,7 @@ sprites_end:
        copy "audio/bird-music.a99"
        copy "audio/kong-music.a99"
        copy "audio/balloon-music.a99"
+       copy "audio/balloon-pickup-music.a99"
        copy "audio/completed-music.a99"
        copy "audio/speech-data.a99"
 

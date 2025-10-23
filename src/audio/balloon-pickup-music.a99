@@ -1,0 +1,118 @@
+balloon_pickup_module:
+       data >0004
+       data balloon_pickup_track_01
+       data >0000
+balloon_pickup_track_01:
+       data snd_channel_2
+balloon_pickup_track_01_rpt:
+       data balloon_pickup_seq_0040
+       data balloon_pickup_seq_004D
+       data balloon_pickup_seq_0053
+       data balloon_pickup_seq_0060
+       data >00FF
+       data balloon_pickup_track_01_rpt
+       data >0000
+balloon_pickup_seq_0038:
+       data >0020
+       data >0000
+balloon_pickup_seq_0040:
+       data balloon_pickup_note_0066
+       data >0003
+       data balloon_pickup_note_0069
+       data >0001
+       data balloon_pickup_note_0069
+       data >0003
+       data balloon_pickup_note_006C
+       data >0001
+       data balloon_pickup_note_006F
+       data >0003
+       data balloon_pickup_note_0072
+       data >0001
+       data balloon_pickup_note_006F
+       data >0003
+       data balloon_pickup_note_006C
+       data >0001
+       data balloon_pickup_note_006F
+       data >0003
+       data balloon_pickup_note_0072
+       data >0001
+       data balloon_pickup_note_006F
+       data >0001
+       data >0000
+balloon_pickup_seq_003D:
+       data >0010
+       data >0000
+balloon_pickup_seq_004D:
+       data >0002
+       data balloon_pickup_note_006C
+       data >0001
+       data balloon_pickup_note_0075
+       data >000B
+       data >0000
+balloon_pickup_seq_0053:
+       data balloon_pickup_note_0078
+       data >0003
+       data balloon_pickup_note_0078
+       data >0001
+       data balloon_pickup_note_0075
+       data >0003
+       data balloon_pickup_note_007B
+       data >0001
+       data balloon_pickup_note_007E
+       data >0003
+       data balloon_pickup_note_0081
+       data >0001
+       data balloon_pickup_note_007E
+       data >0003
+       data balloon_pickup_note_006F
+       data >0001
+       data balloon_pickup_note_007B
+       data >0003
+       data balloon_pickup_note_007B
+       data >0001
+       data balloon_pickup_note_006C
+       data >0001
+       data >0000
+balloon_pickup_seq_0060:
+       data >0002
+       data balloon_pickup_note_0075
+       data >0001
+       data balloon_pickup_note_0069
+       data >000B
+       data >0000
+balloon_pickup_note_0066:
+       data balloon_pickup_instr_00
+       data F♯2
+balloon_pickup_note_0069:
+       data balloon_pickup_instr_00
+       data B3
+balloon_pickup_note_006C:
+       data balloon_pickup_instr_00
+       data D♯3
+balloon_pickup_note_006F:
+       data balloon_pickup_instr_00
+       data F♯3
+balloon_pickup_note_0072:
+       data balloon_pickup_instr_00
+       data G♯3
+balloon_pickup_note_0075:
+       data balloon_pickup_instr_00
+       data C♯3
+balloon_pickup_note_0078:
+       data balloon_pickup_instr_00
+       data G♯2
+balloon_pickup_note_007B:
+       data balloon_pickup_instr_00
+       data E3
+balloon_pickup_note_007E:
+       data balloon_pickup_instr_00
+       data A♯4
+balloon_pickup_note_0081:
+       data balloon_pickup_instr_00
+       data B4
+balloon_pickup_instr_00:
+       byte T2
+       byte 36
+       byte 0
+       byte 7
+       data >0000
