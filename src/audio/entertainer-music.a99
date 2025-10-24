@@ -1,0 +1,437 @@
+entertainer_module:
+       data >0005
+       data entertainer_track_00
+       data entertainer_track_01
+       data entertainer_track_02
+       data entertainer_track_03
+       data >0000
+entertainer_track_00:
+       data snd_channel_1
+       data entertainer_seq_0090
+entertainer_track_00_rpt:
+       data entertainer_seq_0095
+       data entertainer_seq_009E
+       data entertainer_seq_00A5
+       data entertainer_seq_00AE
+       data entertainer_seq_0095
+       data entertainer_seq_00B5
+       data entertainer_seq_00BB
+       data entertainer_seq_00C5
+       data >00FF
+       data entertainer_track_00_rpt
+       data >0000
+entertainer_track_01:
+       data snd_channel_2
+       data entertainer_seq_00CB
+entertainer_track_01_rpt:
+       data entertainer_seq_00CF
+       data entertainer_seq_00D7
+       data entertainer_seq_00DD
+       data entertainer_seq_00E2
+       data entertainer_seq_00CF
+       data entertainer_seq_00E9
+       data entertainer_seq_00ED
+       data entertainer_seq_00F2
+       data >00FF
+       data entertainer_track_01_rpt
+       data >0000
+entertainer_track_02:
+       data snd_channel_3
+       data entertainer_seq_00F6
+entertainer_track_02_rpt:
+       data entertainer_seq_00F9
+       data entertainer_seq_00FF
+       data entertainer_seq_0105
+       data entertainer_seq_010B
+       data entertainer_seq_00F9
+       data entertainer_seq_0111
+       data entertainer_seq_0117
+       data entertainer_seq_011D
+       data >00FF
+       data entertainer_track_02_rpt
+       data >0000
+entertainer_track_03:
+       data snd_channel_4
+       data entertainer_seq_00F6
+entertainer_track_03_rpt:
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data entertainer_seq_0123
+       data >00FF
+       data entertainer_track_03_rpt
+       data >0000
+entertainer_seq_0090:
+       data entertainer_note_0129
+       data >0001
+       data entertainer_note_012C
+       data >0001
+       data >0000
+entertainer_seq_00CB:
+       data entertainer_note_014D
+       data >0001
+       data entertainer_note_0150
+       data >0001
+       data >0000
+entertainer_seq_00F6:
+       data >0004
+       data >0000
+entertainer_seq_0095:
+       data entertainer_note_012F
+       data >0001
+       data entertainer_note_0132
+       data >0003
+       data entertainer_note_012F
+       data >0001
+       data entertainer_note_0132
+       data >0003
+       data entertainer_note_012F
+       data >0001
+       data entertainer_note_0132
+       data >0001
+       data >0000
+entertainer_seq_00CF:
+       data entertainer_note_0153
+       data >0001
+       data entertainer_note_0156
+       data >0003
+       data entertainer_note_0153
+       data >0001
+       data entertainer_note_0156
+       data >0003
+       data entertainer_note_0153
+       data >0001
+       data entertainer_note_0156
+       data >0001
+       data >0000
+entertainer_seq_00F9:
+       data entertainer_note_016E
+       data >0003
+       data entertainer_note_0171
+       data >0003
+       data entertainer_note_0174
+       data >0003
+       data entertainer_note_0177
+       data >0003
+       data >0000
+entertainer_seq_0123:
+       data entertainer_note_019B
+       data >0003
+       data entertainer_note_019B
+       data >0003
+       data entertainer_note_019B
+       data >0003
+       data entertainer_note_019B
+       data >0003
+       data >0000
+entertainer_seq_009E:
+       data >000A
+       data entertainer_note_0135
+       data >0001
+       data entertainer_note_0138
+       data >0001
+       data entertainer_note_013B
+       data >0001
+       data >0000
+entertainer_seq_00D7:
+       data >000A
+       data entertainer_note_0159
+       data >0001
+       data entertainer_note_015C
+       data >0001
+       data entertainer_note_015F
+       data >0001
+       data >0000
+entertainer_seq_00FF:
+       data entertainer_note_017A
+       data >0003
+       data entertainer_note_017D
+       data >0003
+       data entertainer_note_0180
+       data >0003
+       data entertainer_note_0183
+       data >0003
+       data >0000
+entertainer_seq_00A5:
+       data entertainer_note_013E
+       data >0001
+       data entertainer_note_0135
+       data >0001
+       data entertainer_note_0138
+       data >0001
+       data entertainer_note_013E
+       data >0003
+       data entertainer_note_0141
+       data >0001
+       data entertainer_note_0138
+       data >0003
+       data >0000
+entertainer_seq_00DD:
+       data entertainer_note_0162
+       data >0005
+       data entertainer_note_0162
+       data >0005
+       data entertainer_note_015C
+       data >0003
+       data >0000
+entertainer_seq_0105:
+       data entertainer_note_0174
+       data >0003
+       data entertainer_note_0171
+       data >0003
+       data entertainer_note_0174
+       data >0003
+       data entertainer_note_0186
+       data >0003
+       data >0000
+entertainer_seq_00AE:
+       data entertainer_note_0135
+       data >000B
+       data entertainer_note_0129
+       data >0001
+       data entertainer_note_012C
+       data >0001
+       data >0000
+entertainer_seq_00E2:
+       data entertainer_note_0159
+       data >0003
+       data entertainer_note_0165
+       data >0003
+       data entertainer_note_0165
+       data >0003
+       data entertainer_note_014D
+       data >0001
+       data entertainer_note_0150
+       data >0001
+       data >0000
+entertainer_seq_010B:
+       data entertainer_note_016E
+       data >0003
+       data entertainer_note_0171
+       data >0003
+       data entertainer_note_0171
+       data >0003
+       data entertainer_note_0186
+       data >0003
+       data >0000
+entertainer_seq_00B5:
+       data >000C
+       data entertainer_note_0144
+       data >0001
+       data entertainer_note_0147
+       data >0001
+       data >0000
+entertainer_seq_00E9:
+       data >000C
+       data entertainer_note_0168
+       data >0003
+       data >0000
+entertainer_seq_0111:
+       data entertainer_note_017A
+       data >0003
+       data entertainer_note_017D
+       data >0003
+       data entertainer_note_0180
+       data >0003
+       data entertainer_note_0189
+       data >0003
+       data >0000
+entertainer_seq_00BB:
+       data entertainer_note_014A
+       data >0001
+       data entertainer_note_0144
+       data >0001
+       data entertainer_note_0135
+       data >0001
+       data entertainer_note_013E
+       data >0003
+       data entertainer_note_0138
+       data >0001
+       data entertainer_note_0135
+       data >0001
+       data entertainer_note_0144
+       data >0001
+       data >0000
+entertainer_seq_00ED:
+       data entertainer_note_016B
+       data >0005
+       data entertainer_note_0159
+       data >0009
+       data >0000
+entertainer_seq_0117:
+       data entertainer_note_018C
+       data >0003
+       data entertainer_note_018F
+       data >0003
+       data entertainer_note_0192
+       data >0003
+       data entertainer_note_0171
+       data >0003
+       data >0000
+entertainer_seq_00C5:
+       data entertainer_note_0138
+       data >000B
+       data entertainer_note_0129
+       data >0001
+       data entertainer_note_012C
+       data >0001
+       data >0000
+entertainer_seq_00F2:
+       data entertainer_note_015C
+       data >000F
+       data >0000
+entertainer_seq_011D:
+       data entertainer_note_0186
+       data >0003
+       data entertainer_note_0174
+       data >0003
+       data entertainer_note_0195
+       data >0003
+       data entertainer_note_0198
+       data >0003
+       data >0000
+entertainer_note_0129:
+       data entertainer_instr_00
+       data D2
+entertainer_note_012C:
+       data entertainer_instr_00
+       data D♯2
+entertainer_note_014D:
+       data entertainer_instr_01
+       data >017E
+entertainer_note_0150:
+       data entertainer_instr_01
+       data >0169
+entertainer_note_012F:
+       data entertainer_instr_00
+       data E2
+entertainer_note_0132:
+       data entertainer_instr_00
+       data C3
+entertainer_note_0153:
+       data entertainer_instr_01
+       data >0154
+entertainer_note_0156:
+       data entertainer_instr_01
+       data >00D7
+entertainer_note_016E:
+       data entertainer_instr_02
+       data >0072
+entertainer_note_0171:
+       data entertainer_instr_02
+       data B5
+entertainer_note_0174:
+       data entertainer_instr_02
+       data >0099
+entertainer_note_0177:
+       data entertainer_instr_02
+       data A5
+entertainer_note_019B:
+       data entertainer_instr_03
+       data P3
+entertainer_note_0135:
+       data entertainer_instr_00
+       data C4
+entertainer_note_0138:
+       data entertainer_instr_00
+       data D4
+entertainer_note_013B:
+       data entertainer_instr_00
+       data D♯4
+entertainer_note_0159:
+       data entertainer_instr_01
+       data E3
+entertainer_note_015C:
+       data entertainer_instr_01
+       data F3
+entertainer_note_015F:
+       data entertainer_instr_01
+       data F♯3
+entertainer_note_017A:
+       data entertainer_instr_02
+       data >00AB
+entertainer_note_017D:
+       data entertainer_instr_02
+       data >0044
+entertainer_note_0180:
+       data entertainer_instr_02
+       data >00B5
+entertainer_note_0183:
+       data entertainer_instr_02
+       data G4
+entertainer_note_013E:
+       data entertainer_instr_00
+       data E4
+entertainer_note_0141:
+       data entertainer_instr_00
+       data B4
+entertainer_note_0162:
+       data entertainer_instr_01
+       data G3
+entertainer_note_0186:
+       data entertainer_instr_02
+       data >003D
+entertainer_note_0165:
+       data entertainer_instr_01
+       data C2
+entertainer_note_0144:
+       data entertainer_instr_00
+       data A4
+entertainer_note_0147:
+       data entertainer_instr_00
+       data G3
+entertainer_note_0168:
+       data entertainer_instr_01
+       data D♯3
+entertainer_note_0189:
+       data entertainer_instr_02
+       data >00C0
+entertainer_note_014A:
+       data entertainer_instr_00
+       data F♯3
+entertainer_note_016B:
+       data entertainer_instr_01
+       data C3
+entertainer_note_018C:
+       data entertainer_instr_02
+       data >00CB
+entertainer_note_018F:
+       data entertainer_instr_02
+       data >0051
+entertainer_note_0192:
+       data entertainer_instr_02
+       data C♯4
+entertainer_note_0195:
+       data entertainer_instr_02
+       data G♯3
+entertainer_note_0198:
+       data entertainer_instr_02
+       data >0079
+entertainer_instr_00:
+       byte T1
+       byte 63
+       byte 0
+       byte 4
+       data >0000
+entertainer_instr_01:
+       byte T2
+       byte 63
+       byte 0
+       byte 4
+       data >0000
+entertainer_instr_02:
+       byte T3
+       byte 8
+       byte 255
+       byte 0
+       data >0000
+entertainer_instr_03:
+       byte P3
+       byte 63
+       byte 0
+       byte 4
+       data >0000

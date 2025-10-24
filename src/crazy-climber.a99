@@ -59,7 +59,7 @@ sprite_attr_table:                     ; Sprite attribute table
 falling_enabled:
        equ  1
 display_title:
-       equ  0
+       equ  1
 test_bird:
        equ  0
 test_kong:
@@ -67,11 +67,11 @@ test_kong:
 test_sign:
        equ  0
 test_balloon:
-       equ  1
+       equ  0
 test_chopper:
        equ  0
 start_level:
-       equ  1                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -2462,10 +2462,10 @@ chopper_pickup:
        .proc
        c    @status,@w_1
        jne  chopper_pickup_0
-       li   r0,completed_module
+       mov  @completed_music,r0
        bl   @play_module
 chopper_pickup_0:
-       li   r8,>90
+       li   r8,>b0
 chopper_pickup_1:
        li   r9,3
 chopper_pickup_2:
@@ -2497,7 +2497,6 @@ chopper_pickup_4:
        bl   @disable_sprites
        .endproc
 *// chopper_pickup
-
 
 *********************************************************************
 *
@@ -2592,9 +2591,9 @@ title_screen:
        .proc
 title_screen_1:
        bl   @mute_sound
+       seto @title_bank_select
        li   r0,title2_module
        bl   @play_module
-       seto @title_bank_select
        bl   @one_pattern_table
 *      Title screen loop
        li   r0,3
@@ -3532,6 +3531,12 @@ quit:
        blwp @>0000
 *// check_quit
 
+*********************************************************************
+*
+*      Program includes
+*
+       copy "stage-handlers.a99"
+
 ***************************************************************************
 *
 lower_memory_max:
@@ -3541,13 +3546,12 @@ lower_memory_max:
 *
 *      Upper memory
 *
-       aorg >A000
+       aorg >a000
 
 *********************************************************************
 *
 *      Program includes
 *
-       copy "stage-handlers.a99"
        copy "sprite-handlers.a99"
        copy "vdp.a99"
        copy "sound-player.a99"
@@ -3688,6 +3692,7 @@ level1:
        data 100
        data 10000
        data stages_1
+       data completed_module
 level2:
        data level_2_bank_select
        data TCHARS2
@@ -3702,6 +3707,7 @@ level2:
        data 150
        data 20000
        data stages_2
+       data entertainer_module
 level3:
        data level_3_bank_select
        data TCHARS3
@@ -3716,6 +3722,7 @@ level3:
        data 200
        data 30000
        data stages_3
+       data completed_module
 level4:
        data level_4_bank_select
        data TCHARS4
@@ -3730,6 +3737,7 @@ level4:
        data 250
        data 40000
        data stages_4
+       data entertainer_module
 
 *      Level dependent data
 current_level_data:
@@ -3764,8 +3772,11 @@ bonus_points:
        data 10000
 stages:
        data stages_1
+completed_music:
+       data completed_module
 level_data_size:
        equ  $-current_level_data
+
        copy "levels/level-1-stages.a99"
        copy "levels/level-2-stages.a99"
        copy "levels/level-3-stages.a99"
@@ -3927,13 +3938,13 @@ sprites_end:
        copy "graphics/map-animations.a99"
        copy "graphics/sprite-animations.a99"
        copy "audio/sound-fx.a99"
-       copy "audio/title-music.a99"
        copy "audio/intro-music.a99"
        copy "audio/bird-music.a99"
        copy "audio/kong-music.a99"
        copy "audio/balloon-music.a99"
        copy "audio/balloon-pickup-music.a99"
        copy "audio/completed-music.a99"
+       copy "audio/entertainer-music.a99"
        copy "audio/speech-data.a99"
 
 map_buffer:

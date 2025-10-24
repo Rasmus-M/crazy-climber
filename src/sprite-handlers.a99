@@ -556,7 +556,7 @@ chopper_handler_0:
 *      Skip the rest if it's the end sequence
        mov  @status,r0
        jlt  chopper_handler_5
-       jne  chopper_handler_6
+       jne  chopper_handler_7
 *      Boundary check
        mov  @sprite_x(r3),r0
        ci   r0,building_left
@@ -604,6 +604,7 @@ chopper_handler_5:
        seto @sprite_vy(r3)
 chopper_handler_6:
        bl   @play_chopper
+chopper_handler_7:
        .endproc
 *// chopper_handler
 
