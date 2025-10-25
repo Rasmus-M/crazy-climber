@@ -1,0 +1,79 @@
+died_module:
+       data >0005
+       data died_track_01
+       data died_track_02
+       data >0000
+died_track_01:
+       data snd_channel_2
+       data died_seq_0034
+       data >0000
+died_track_02:
+       data snd_channel_3
+       data died_seq_0042
+       data >0000
+died_seq_0034:
+       data died_note_004C
+       data >0001
+       data died_note_004F
+       data >0001
+       data died_note_0052
+       data >0001
+       data died_note_0055
+       data >0001
+       data died_note_004C
+       data >0001
+       data died_note_004F
+       data >0001
+       data died_note_0052
+       data >0001
+       data died_note_0055
+       data >0001
+       data died_note_004C
+       data >0003
+       data died_note_0055
+       data >0003
+       data died_note_004C
+       data >0007
+       data >0000
+died_seq_0042:
+       data died_note_0058
+       data >0007
+       data died_note_005B
+       data >0007
+       data died_note_0058
+       data >0003
+       data died_note_0058
+       data >0003
+       data died_note_0058
+       data >0007
+       data >0000
+died_note_004C:
+       data died_instr_00
+       data A♯3
+died_note_004F:
+       data died_instr_00
+       data A3
+died_note_0052:
+       data died_instr_00
+       data G2
+died_note_0055:
+       data died_instr_00
+       data F2
+died_note_0058:
+       data died_instr_01
+       data A♯2
+died_note_005B:
+       data died_instr_01
+       data F1
+died_instr_00:
+       byte T2
+       byte 127
+       byte 0
+       byte 2
+       data >0000
+died_instr_01:
+       byte T3
+       byte 127
+       byte 0
+       byte 2
+       data >0000

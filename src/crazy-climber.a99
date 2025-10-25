@@ -1967,6 +1967,8 @@ fall_1:
        .endif
        li   r0,speech_oh_no_idx
        bl   @speak
+       li   r0,died_module
+       bl   @play_module
        .endproc
 *// fall
 
@@ -3945,6 +3947,7 @@ sprites_end:
        copy "audio/balloon-pickup-music.a99"
        copy "audio/completed-music.a99"
        copy "audio/entertainer-music.a99"
+       copy "audio/died-music.a99"
        copy "audio/speech-data.a99"
 
 map_buffer:
