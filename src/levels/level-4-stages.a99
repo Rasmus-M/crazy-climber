@@ -12,6 +12,9 @@ sign_stage_4:
 three_resident_stage_4:
        data (sign_row_4-24)*8          ; >A20
        data three_residents_stage_init
+dropping_sign_4:
+       data >0300                      ; scroll y
+       data dropping_sign_stage_init_level_4
 chopper_stage_4:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init

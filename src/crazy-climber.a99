@@ -17,6 +17,7 @@
        copy "rom-banks/rom-bank-6.a99"
        copy "rom-banks/rom-bank-7.a99"
        copy "rom-banks/rom-bank-8.a99"
+       copy "rom-banks/rom-bank-9.a99"
 
 **
 * Memory mapped addresses
@@ -64,14 +65,16 @@ test_bird:
        equ  0
 test_kong:
        equ  0
-test_sign:
+test_sign_with_wires:
        equ  0
+test_dropping_sign:
+       equ  1
 test_balloon:
        equ  0
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is the first building
+       equ  2                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -132,6 +135,8 @@ level_3_bank_select:
        equ  >600e
 level_4_bank_select:
        equ  >6010
+sprite_patterns_bank_select:
+       equ  >6012
 
 **
 * Scratch pad
@@ -3087,6 +3092,7 @@ one_time_init:
 game_init:
        .proc
 *      Sprite patterns
+       seto @sprite_patterns_bank_select
        li   r0,sprite_pattern_table
        li   r1,SPR0
        li   r2,64*32
@@ -3150,10 +3156,16 @@ level_init:
        li   r0,kong_stage_1
        mov  r0,@next_stage_ptr
        .endif
-       .ifeq test_sign,1
-       li   r0,(sign_row_2*8)+>60      ; For testing sign
+       .ifeq test_sign_with_wires,1
+       li   r0,(sign_row_2*8)+>60      ; For testing sign with wires
        mov  r0,@scroll_y
        li   r0,sign_stage_2
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_dropping_sign,1
+       li   r0,>760                    ; For testing dropping sign
+       mov  r0,@scroll_y
+       li   r0,dropping_sign_3
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_balloon,1
@@ -3242,6 +3254,7 @@ clear_sprites_and_animations:
 *
 load_sprite_patterns:
        .proc
+       seto @sprite_patterns_bank_select
        li   r0,sprite_pattern_table + (40 * 32)
        bl   @vwad
        mov  r1,@secondary_sprite_patterns
@@ -3249,6 +3262,8 @@ load_sprite_patterns:
        mov  @sprite_pattern_sets(r1),r1
        li   r2,24*32/8
        bl   @vdp_copy
+       mov  @level_bank_select,r0
+       seto *r0
        .endproc
 *// load_sprite_patterns
 
@@ -3936,7 +3951,6 @@ sprites_end:
 *      Data includes
 *
        copy "graphics/progress-map.a99"
-       copy "graphics/sprite-patterns.a99"
        copy "graphics/map-animations.a99"
        copy "graphics/sprite-animations.a99"
        copy "audio/sound-fx.a99"

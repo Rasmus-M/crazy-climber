@@ -1,0 +1,6 @@
+       aorg >6000
+       bss  >40
+       copy "../graphics/sprite-patterns.a99"
+rom_bank_9_end:
+       equ  $
+       bss  >8000-$

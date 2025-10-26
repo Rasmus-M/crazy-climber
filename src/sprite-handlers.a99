@@ -517,10 +517,42 @@ balloon_handler_5:
 *
 dropping_sign_handler:
        .proc
+*      Display sprite
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        li   r4,dropping_sign
        bl   @draw_big_sprite
+*      Update sprite
+       a    @sprite_ay(r3),@sprite_vy(r3)
+       mov  @sprite_vy(r3),r1
+       sra  r1,4
+       a    r1,@sprite_y(r3)
+*      Check for bouncing
+       dec  @sprite_count(r3)
+       jne  dropping_sign_handler_1
+       mov  @sprite_vy(r3),r0
+       sra  r0,1
+       neg  r0
+       mov  r0,@sprite_vy(r3)
+       li   r0,48
+       mov  r0,@sprite_count(r3)
+dropping_sign_handler_1:
+*      Check if bottom reached
+       mov  @sprite_y(r3),r1
+       s    @scroll_y,r1
+       ci   r1,>00c0
+       jlt  dropping_sign_handler_2
+*      Return to top
+       li   r0,>00e0
+       s    r0,@sprite_y(r3)
+       clr  @sprite_vy(r3)
+       li   r2,>0080
+       bl   @rand_max
+       ai   r0,>0040
+       mov  r0,@sprite_x(r3)
+       li   r0,32
+       mov  r0,@sprite_count(r3)
+dropping_sign_handler_2:
        .endproc
 *// dropping_sign_handler
 
