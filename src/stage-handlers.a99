@@ -26,40 +26,21 @@ base_stage_init:
 
 *********************************************************************
 *
-* One resident stage init
+* Residents stage init
 *
 one_resident_stage_init:
        .proc
-       li   r1,character_set_residents
-       bl   @set_character_set
-       li   r1,head_and_hands_patterns
-       bl   @load_sprite_patterns
        li   r0,1
-       mov  r0,@max_residents
-       .endproc
-*// one_resident_stage_init
-
-*********************************************************************
-*
-* Two residents stage init
-*
+       jmp  residents_stage_init
 two_residents_stage_init:
        .proc
-       li   r1,head_and_hands_patterns
-       bl   @load_sprite_patterns
-       li   r1,head_and_hands_patterns
-       bl   @load_sprite_patterns
        li   r0,2
-       mov  r0,@max_residents
-       .endproc
-*// two_residents_stage_init
-
-*********************************************************************
-*
-* Three residents stage init
-*
-three_residents_stage_init:
+       jmp  residents_stage_init
+three_residents_stage_init
        .proc
+       li   r0,3
+residents_stage_init:
+       mov  r0,@max_residents
        li   r1,character_set_residents
        bl   @set_character_set
        li   r1,head_and_hands_patterns
@@ -67,20 +48,32 @@ three_residents_stage_init:
        li   r0,3
        mov  r0,@max_residents
        .endproc
-*// three_residents_stage_init
+*// residents_stage_init
 
 *********************************************************************
 *
-* Griders and dumbbells stage init
+* Girders and dumbbells stage init
 *
-girders_stage_init:
+two_girders_stage_init:
        .proc
+       li   r5,2
+       jmp  girders_stage_init
+three_girders_stage_init:
+       .proc
+       li   r5,3
+       jmp  girders_stage_init
+four_girders_stage_init:
+       .proc
+       li   r5,4
+girders_stage_init:
        li   r1,balloon_girder_patterns
        bl   @load_sprite_patterns
        li   r1,character_set_base
        bl   @set_character_set
+girders_stage_init_1:
        bl   @create_girder
-       bl   @create_girder
+       dec  r5
+       jne  girders_stage_init_1
        .endproc
 girders_init_data:
        data girder_handler,>0090,->0010,>0001,>0002,>0000
@@ -90,17 +83,22 @@ girders_init_data:
 *
 * Bird stage init
 *
-bird_stage_init:
+bird_stage_init_level_1_4:
        .proc
+       li   r4,bird_init_data_1_4
+       jmp   bird_stage_init
+bird_stage_init_level_2:
+       .proc
+       li   r4,bird_init_data_2
+bird_stage_init:
        li   r1,bird_patterns
        bl   @load_sprite_patterns
-;      TODO: test
-;      li   r1,character_set_base
-;      bl   @set_character_set
+       li   r1,character_set_base
+       bl   @set_character_set
+       mov  r4,r0
        bl   @allocate_sprite
        mov  r4,r4
        jeq  bird_stage_init_1
-       li   r0,bird_init_data
        mov  *r0+,@sprite_handler(r4)
        mov  *r0+,@sprite_x(r4)
        mov  *r0+,@sprite_y(r4)
@@ -113,7 +111,9 @@ bird_stage_init:
        bl   @play_module
 bird_stage_init_1:
        .endproc
-bird_init_data:
+bird_init_data_1_4:
+       data bird_handler,>0020,>0982,>0002,>0001,>0000
+bird_init_data_2:
        data bird_handler,>0020,>0982,>0002,>0001,>0000
 *// bird_stage_init
 

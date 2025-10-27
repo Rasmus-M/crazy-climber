@@ -9,7 +9,7 @@ one_resident_stage_1:
        data one_resident_stage_init    ; init
 bird_stage_1:
        data >0980                      ; scroll y
-       data bird_stage_init            ; init
+       data bird_stage_init_level_1_4  ; init
 two_residents_stage_1:
        data >0780                      ; scroll y
        data two_residents_stage_init   ; init

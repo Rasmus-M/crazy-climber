@@ -1,3 +1,5 @@
+Building 1
+
 000 --
 080 00 XXXXXX Chopper
 100 00 XXXXXX
@@ -24,6 +26,8 @@ b00 00 XXXXXX 1 resident
 b80 03 XX  XX
 c00 00 XXXXXX
 c80 00 XXXXXX Nothing
+
+Building 2
 
 000 --
 080 01  XXXX 
@@ -52,6 +56,8 @@ b80 02   XX
 c00 01  XXXX   2 girders
 c80 00 XXXXXX
 
+Building 3
+
 000 --
 080 02   XX  
 100 02   XX  
@@ -78,6 +84,8 @@ b00 03 XX  XX 3 residents
 b80 00 XXXXXX
 c00 00 XXXXXX 3 girders
 c80 00 XXXXXX
+
+Building 4
 
 000 --
 080 03 XX  XX

@@ -2,7 +2,7 @@ stages_2:
        equ  $
 girders_stage_2:
        data >0c00                      ; scroll y
-       data girders_stage_init         ; init
+       data two_girders_stage_init         ; init
 one_resident_stage_2:
        data >0b00                      ; scroll y
        data one_resident_stage_init    ; init
