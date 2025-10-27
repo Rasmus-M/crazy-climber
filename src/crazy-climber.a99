@@ -3243,6 +3243,8 @@ clear_sprites_and_animations:
        clr  @windows_tail_ptr
 *      No residents
        clr  @current_residents
+*      Clear hardware sprites
+       bl   @disable_sprites
        .endproc
 *// clear_sprites_and_animations
 
