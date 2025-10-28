@@ -18,7 +18,7 @@ Building 1
 780 00 XXXXXX 2 residents
 800 03 XX  XX
 880 00 XXXXXX
-900 00 XXXXXX Bird
+900 00 XXXXXX Bird 2 droppings
 980 00 XXXXXX
 a00 02   XX  
 a80 00 XXXXXX
@@ -30,39 +30,39 @@ c80 00 XXXXXX Nothing
 Building 2
 
 000 --
-080 01  XXXX 
+080 01  XXXX  Chopper
 100 01  XXXX 
 180 01  XXXX 
 200 01  XXXX 
-280 01  XXXX   balloon - girders if not pick up
+280 01  XXXX  Balloon - girders if not pick up
 300 01  XXXX 
-380 01  XXXX   2 girders
+380 01  XXXX  2 girders
 400 03 XX  XX
-480 03 XX  XX  Sign with wires
+480 03 XX  XX Sign with wires
 500 01  XXXX 
-580 01  XXXX   2 girders
+580 01  XXXX  2 girders
 600 01  XXXX 
 680 01  XXXX 
-700 03 XX  XX  Bird
+700 03 XX  XX Bird 2 droppings
 780 03 XX  XX
 800 03 XX  XX
 880 03 XX  XX
 900 00 XXXXXX
-980 01  XXXX   2 girders
+980 01  XXXX  2 girders
 a00 02   XX  
 a80 02   XX  
-b00 02   XX    3 residents
+b00 02   XX   3 residents
 b80 02   XX  
-c00 01  XXXX   2 girders
+c00 01  XXXX  2 girders
 c80 00 XXXXXX
 
 Building 3
 
 000 --
-080 02   XX  
+080 02   XX   Chopper
 100 02   XX  
 180 02   XX  
-200 02   XX   balloon - girders if not pick up  
+200 02   XX   Balloon - girders if not pick up
 280 02   XX  
 300 02   XX   3 girders
 380 02   XX  
@@ -105,7 +105,7 @@ Building 4
 780 02   XX   3 residents
 800 02   XX   Nothing
 880 00 XXXXXX
-900 00 XXXXXX Bird
+900 00 XXXXXX Bird 4 droppings
 980 03 XX  XX 4 griders
 a00 03 XX  XX 
 a80 03 XX  XX Sign with wires

@@ -45,8 +45,6 @@ residents_stage_init:
        bl   @set_character_set
        li   r1,head_and_hands_patterns
        bl   @load_sprite_patterns
-       li   r0,3
-       mov  r0,@max_residents
        .endproc
 *// residents_stage_init
 
@@ -75,8 +73,6 @@ girders_stage_init_1:
        dec  r5
        jne  girders_stage_init_1
        .endproc
-girders_init_data:
-       data girder_handler,>0090,->0010,>0001,>0002,>0000
 *// girders_stage_init
 
 *********************************************************************
@@ -114,7 +110,7 @@ bird_stage_init_1:
 bird_init_data_1_4:
        data bird_handler,>0020,>0982,>0002,>0001,>0000
 bird_init_data_2:
-       data bird_handler,>0020,>0982,>0002,>0001,>0000
+       data bird_handler,>0020,>0702,>0002,>0001,>0000
 *// bird_stage_init
 
 *********************************************************************

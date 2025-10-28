@@ -6,6 +6,8 @@ r4lb   equ  wrksp2+9
 *
 * r0: Address of module to play
 *
+* Modifies r0-r2
+*
 play_module:
        mov  *r0+,@module_speed
        li   r2,snd_track_1

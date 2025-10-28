@@ -3,21 +3,32 @@ stages_3:
 base_stage_3:
        data >0c10                      ; scroll y
        data base_stage_init            ; init
-one_resident_stage_3:
-       data >0ac0                      ; scroll y
-       data one_resident_stage_init    ; init
+three_girders_stage_3_1:
+       data >0c00                      ; scroll y
+       data three_girders_stage_init   ; init
+three_residents_stage_3:
+       data >0b00                      ; scroll y
+       data three_residents_stage_init ; init
+three_girders_stage_3_2:
+       data >0980                      ; scroll y
+       data three_girders_stage_init   ; init
 dropping_sign_3:
        data >0700                      ; scroll y
        data dropping_sign_stage_init_level_3
+three_girders_stage_3_3:
+       data >0580                      ; scroll y
+       data three_girders_stage_init   ; init
 kong_stage_3:
        data (kong_row_1_3*8)+>60       ; scroll y
        data kong_stage_init            ; init
-three_residents_stage_3:
-       data >0390                      ; scroll y
-       data three_residents_stage_init ; init
+three_girders_stage_3_4:
+       data >0300                      ; scroll y
+       data three_girders_stage_init   ; init
+balloon_stage_3:
+       data >0200                      ; scroll y
+       data balloon_stage_init         ; init
 chopper_stage_3:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
 *      End marker
        data 0
-

@@ -58,11 +58,11 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 falling_enabled:
-       equ  1
+       equ  0
 display_title:
        equ  1
 test_bird:
-       equ  1
+       equ  0
 test_kong:
        equ  0
 test_sign_with_wires:
@@ -74,7 +74,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is the first building
+       equ  1                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -1268,7 +1268,7 @@ control_climber_horz_check_keys:
        mov  @right_hand_pos,r0
        jgt  control_climber_horz_0a    ; Right hand at left side of window - make left wide
        jeq  auto_move_0                ; Right hand at wall (falling)
-       cb   @climber_pos+1,@b_building_left
+       cb   @climber_pos+1,@b_building_left ; TODO check map
        jh   control_climber_horz_1a    ; Right hand at right side of window - make right wide and move
 auto_move_0:
        b    @control_climber_horz_11
@@ -1304,7 +1304,7 @@ auto_move_3:
        mov  @left_hand_pos,r0
        jlt  control_climber_horz_5a      ; Left hand at right side of window - make right wide
        jeq  control_climber_horz_11      ; Left hand at wall (falling)
-       cb   @climber_pos+1,@b_building_right
+       cb   @climber_pos+1,@b_building_right ; TODO check map
        jl   control_climber_horz_6a      ; Left hand at left side of window - make left wide and move
        jmp  control_climber_horz_11
 auto_move_4:
@@ -1332,7 +1332,7 @@ control_climber_horz_0:
        abs  @left_wide
        jne  control_climber_horz_1
 *      Left is normal
-       abs  r1                         ; S (1st)
+       abs  r1                         ; Left joystick left
        jeq  control_climber_horz_5
 control_climber_horz_0a:
        seto @left_wide                 ; Make left wide
@@ -1342,7 +1342,7 @@ control_climber_horz_1:
        abs  @right_wide
        jne  control_climber_horz_3
 *      Left is wide and right is normal
-       abs  r1                         ; S (2nd)
+       abs  r1                         ; Left joystick left
        jeq  control_climber_horz_2
 control_climber_horz_1a:
        seto @right_wide                ; Make right wide
@@ -1350,14 +1350,14 @@ control_climber_horz_1a:
        s    r0,@climber_pos
        jmp  control_climber_horz_9
 control_climber_horz_2:
-       abs r2                          ; F (2nd)
+       abs r2                          ; Left joystick right
        jeq  control_climber_horz_5
 control_climber_horz_2a:
        clr  @left_wide                 ; Make left normal
        jmp  control_climber_horz_4
 *      Left is wide and right is wide
 control_climber_horz_3:
-       abs r2                          ; F (1st)
+       abs r2                          ; Left joystick right
        jeq  control_climber_horz_5
 control_climber_horz_3a:
        clr  @right_wide                ; Make right normal
@@ -1374,17 +1374,17 @@ control_climber_horz_5:
        abs  @right_wide
        jne  control_climber_horz_6
 *      Right is normal
-       abs  r4                         ; L
+       abs  r4                         ; Right joystick right
        jeq  control_climber_horz_11
 control_climber_horz_5a:
-       seto @right_wide                 ; Make right wide
+       seto @right_wide                ; Make right wide
        jmp  control_climber_horz_10
 *      Right is wide
 control_climber_horz_6:
        abs  @left_wide
        jne  control_climber_horz_8
 *      Right is wide and left is normal
-       abs  r4                         ; L
+       abs  r4                         ; Right joystick right
        jeq  control_climber_horz_7
 control_climber_horz_6a:
        seto @left_wide                 ; Make left wide
@@ -1392,14 +1392,14 @@ control_climber_horz_6a:
        a    r0,@climber_pos
        jmp  control_climber_horz_9
 control_climber_horz_7:
-       abs  r3                         ; J
+       abs  r3                         ; Right joystick left
        jeq  control_climber_horz_11
 control_climber_horz_7a:
-       clr  @right_wide                 ; Make right normal
+       clr  @right_wide                ; Make right normal
        jmp  control_climber_horz_10
 *      Right is wide and left is wide
 control_climber_horz_8:
-       abs  r3                         ; J
+       abs  r3                         ; Right joystick left
        jeq  control_climber_horz_11
 control_climber_horz_8a:
        clr  @left_wide                 ; Make left normal
@@ -1915,8 +1915,11 @@ is_resident_above_1:
 *
 * Lose grip with one hand.
 *
+* MOdifies r0-r1
+*
 lose_grip:
        .proc
+       .push r3
        abs  @left_grip
        jeq  lose_grip_3
        mov  @left_anim_ptr,r0
@@ -1953,6 +1956,7 @@ lose_grip_3:
 lose_grip_4:
        bl   @fall
 lose_grip_6:
+       .pop r3
        .endproc
 *// lose_grip
 
@@ -2323,7 +2327,7 @@ rand_max:
 *
 * Generate a pseudo random number
 *
-* On return R0 contains the number, which is also stored at @RANDNO
+* On return r1 and r1 contains the number, which is also stored at @RANDNO
 *
 * r0 and r1 are modified
 *

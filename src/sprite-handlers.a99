@@ -76,8 +76,8 @@ plant_handler:
        sra  r2,1
        mov  r2,@sprite_vy(r3)
        a    r2,@sprite_y(r3)           ; Prevent double hit
-       .push r3
        bl   @lose_grip
+       .push r3
        bl   @play_boing
        .pop  r3
        li   r0,8
@@ -235,6 +235,7 @@ kong_handler:
        s    *r1,r0
        ci   r0,8
        jgt  kong_handler_1
+*      Remove
        clr  @sprite_handler(r3)
        jmp  kong_handler_3
 kong_handler_1:
@@ -324,6 +325,7 @@ sparking_sign_handler:
        s    *r1,r0
        ci   r0,8
        jgt  sparking_sign_handler_1
+*      Remove
        clr  @sprite_handler(r3)
        jmp  sparking_sign_handler_5
 sparking_sign_handler_1:
@@ -402,6 +404,12 @@ spark_hits:
 *
 girder_handler:
        .proc
+*      Check for remove sprite
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
+       ci   r0,16
+       jlt  girder_handler_4
 *      Display sprite
        mov  @sprite_y(r3),r1
        swpb r1
@@ -419,12 +427,12 @@ girder_handler:
 *      Check for collision with climber
        bl   @check_sprite_hit_head
        mov  r2,r2
-       jeq  girder_handler_5
+       jeq  girder_handler_2
 *      Hit
        bl   @lose_grip
        jmp  girder_handler_4
 *      Update sprite
-girder_handler_5:
+girder_handler_2:
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
        s    @scroll_dy,@sprite_y(r3)
@@ -437,12 +445,16 @@ girder_handler_3:
        mov  r0,@sprite_count(r3)
        mov  @sprite_y(r3),r0
        ci   r0,>00c0
-       jlt  girder_handler_4
+       jlt  girder_handler_5
        clr  *r3
        .push r3
        bl   @create_girder
        .pop r3
+       jmp  girder_handler_5
+*      Remove
 girder_handler_4:
+       clr  @sprite_handler(r3)
+girder_handler_5:
        .endproc
 *// girder_handler
 
@@ -517,7 +529,16 @@ balloon_handler_5:
 *
 dropping_sign_handler:
        .proc
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
+       ci   r0,8
+       jgt  dropping_sign_handler_0
+*      Remove
+       clr  @sprite_handler(r3)
+       jmp  dropping_sign_handler_3
 *      Display sprite
+dropping_sign_handler_0:
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        li   r4,dropping_sign
@@ -752,29 +773,32 @@ create_girder:
        .proc
        bl   @allocate_sprite
        mov  r4,r4
-       jeq  create_girder_1
-       li   r3,girders_init_data
+       jeq  create_girder_3
+       li   r3,girder_init_data
        mov  *r3+,@sprite_handler(r4)
        mov  *r3+,r2
        bl   @rand_max
        ai   r0,building_left
        mov  r0,@sprite_x(r4)
        mov  *r3+,@sprite_y(r4)
-       mov  *r3+,@sprite_vx(r4)
        mov  *r3+,@sprite_vy(r4)
        mov  *r3+,@sprite_count(r4)
        bl   @rand
-       andi r0,1
-       jne  create_girder_2
+       andi r0,3                       ; 0-2
+       dec  r0                         ; -1-1
+       mov  r0,@sprite_vx(r4)
+       andi r1,4
+       jne  create_girder_1
        li   r0,>0ec8
-       jmp  create_girder_3
-create_girder_2:
-       li   r0,>08e0
-       neg  @sprite_vx(r4)
-create_girder_3:
-       mov  r0,@sprite_ax(r4)          ; Color and pattern
+       jmp  create_girder_2
 create_girder_1:
+       li   r0,>08e0
+create_girder_2:
+       mov  r0,@sprite_ax(r4)          ; Color and pattern
+create_girder_3:
        .endproc
+girder_init_data:
+       data girder_handler,>0090,->0010,>0002,>0000
 *// girders_stage_init
 
 *********************************************************************
