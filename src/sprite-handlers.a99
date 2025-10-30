@@ -116,11 +116,12 @@ bird_handler:
 *      Remove
        mov  @status,r0
        jne  bird_handler_1
-       c    @w_8,@bird_rounds
+       c    @bird_rounds,@w_8
        jeq  bird_handler_1
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
-       c    r0,*r1
+       s    *r1,r0
+       ci   r0,8
        jgt  bird_handler_2
 bird_handler_1:
        clr  @sprite_handler(r3)
@@ -408,7 +409,7 @@ girder_handler:
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
-       ci   r0,16
+       ci   r0,8
        jlt  girder_handler_4
 *      Display sprite
        mov  @sprite_y(r3),r1
