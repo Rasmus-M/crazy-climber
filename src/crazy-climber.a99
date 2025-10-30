@@ -59,8 +59,10 @@ sprite_attr_table:                     ; Sprite attribute table
 *      For testing
 falling_enabled:
        equ  0
-display_title:
+windows_enabled:
        equ  1
+display_title:
+       equ  0
 test_bird:
        equ  0
 test_kong:
@@ -365,7 +367,9 @@ main_loop_body:
 !      mov  @frame,r0                  ; Only do this every 16th frame
        andi r0,>000f                   ; Frame 0, 16, 32, 64 ...
        jne  !
+       .ifeq windows_enabled,1
        bl   @create_windows
+       .endif
        bl   @check_int
 *      Update patterns
 !      bl   @update_pattern_table
@@ -1268,10 +1272,10 @@ control_climber_horz_check_keys:
        mov  @right_hand_pos,r0
        jgt  control_climber_horz_0a    ; Right hand at left side of window - make left wide
        jeq  auto_move_0                ; Right hand at wall (falling)
-       cb   @climber_pos+1,@b_building_left ; TODO check map
-       jh   control_climber_horz_1a    ; Right hand at right side of window - make right wide and move
+       abs  @right_wide                ; Right already wide?
+       jeq  control_climber_horz_1a    ; Right hand at right side of window - make right wide and move
 auto_move_0:
-       b    @control_climber_horz_11
+       b    @control_climber_horz_11   ; Don't move
 auto_move_1:
 *      Left hand at left side of window
        mov  @right_hand_pos,r0
@@ -1302,29 +1306,29 @@ auto_move_3:
        jlt  auto_move_5
 *      Right hand at wall
        mov  @left_hand_pos,r0
-       jlt  control_climber_horz_5a      ; Left hand at right side of window - make right wide
-       jeq  control_climber_horz_11      ; Left hand at wall (falling)
-       cb   @climber_pos+1,@b_building_right ; TODO check map
-       jl   control_climber_horz_6a      ; Left hand at left side of window - make left wide and move
-       jmp  control_climber_horz_11
+       jlt  control_climber_horz_5a    ; Left hand at right side of window - make right wide
+       jeq  control_climber_horz_11    ; Left hand at wall (falling)
+       abs  @left_wide                 ; Left already wide?
+       jeq  control_climber_horz_6a    ; Left hand at left side of window - make left wide and move
+       jmp  control_climber_horz_11    ; Don't move
 auto_move_4:
 *      Right hand at left side of window
        mov  @left_hand_pos,r0
-       jgt  control_climber_horz_3a      ; Left hand at left side of window - make right normal and move
-       jeq  control_climber_horz_0a      ; Left hand at wall - make left wide (bad position)
+       jgt  control_climber_horz_3a    ; Left hand at left side of window - make right normal and move
+       jeq  control_climber_horz_0a    ; Left hand at wall - make left wide (bad position)
        abs  @right_wide
-       jne  control_climber_horz_6a      ; Left hand at right side of window, right wide - make left wide and move
-       jmp  control_climber_horz_5a      ; Left hand at right side of window, right normal - make right wide
+       jne  control_climber_horz_6a    ; Left hand at right side of window, right wide - make left wide and move
+       jmp  control_climber_horz_5a    ; Left hand at right side of window, right normal - make right wide
 auto_move_5:
 *      Right hand at right side of window
        mov  @left_hand_pos,r0
-       jgt  control_climber_horz_5a      ; Left hand at left side of window - make right wide
-       jlt  control_climber_horz_3a      ; Left hand at right side of window - make right normal and move
+       jgt  control_climber_horz_5a    ; Left hand at left side of window - make right wide
+       jlt  control_climber_horz_3a    ; Left hand at right side of window - make right normal and move
        abs  @right_wide
-       jne  control_climber_horz_3a      ; Make right normal and move
+       jne  control_climber_horz_3a    ; Make right normal and move
        abs  @left_wide
-       jeq  control_climber_horz_0a      ; Left hand at wall, left normal - make left wide
-       jmp  control_climber_horz_2a      ; Left hand at wall, left wide - make left normal
+       jeq  control_climber_horz_0a    ; Left hand at wall, left normal - make left wide
+       jmp  control_climber_horz_2a    ; Left hand at wall, left wide - make left normal
 control_climber_horz_0:
 *      Left
        abs  @right_grip                ; Can only move left arm if right hand has a grip
