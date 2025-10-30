@@ -26,6 +26,20 @@ base_stage_init:
 
 *********************************************************************
 *
+* Windows stage init
+*
+windows_stage_init:
+       .proc
+       li   r1,head_and_hands_patterns
+       bl   @load_sprite_patterns
+       li   r1,character_set_base
+       bl   @set_character_set
+       clr  @max_residents
+       .endproc
+*// windows_stage_init
+
+*********************************************************************
+*
 * Residents stage init
 *
 one_resident_stage_init:

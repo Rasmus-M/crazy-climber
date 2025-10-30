@@ -88,7 +88,7 @@ c80 00 XXXXXX
 Building 4
 
 000 --
-080 03 XX  XX
+080 03 XX  XX Chopper
 100 03 XX  XX Nothing
 180 03 XX  XX
 200 03 XX  XX

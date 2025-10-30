@@ -13,7 +13,7 @@ four_girders_stage_4_2:
        data >0980                      ; scroll y
        data four_girders_stage_init    ; init
 bird_stage_4:
-       data >0900                      ; scroll y
+       data >0980                      ; scroll y
        data bird_stage_init_level_1_4  ; init
 three_residents_stage_4:
        data >0780                      ; scroll y
@@ -21,6 +21,9 @@ three_residents_stage_4:
 dropping_sign_4:
        data >0300                      ; scroll y
        data dropping_sign_stage_init_level_4
+windows_stage_init_4:
+       data >0180                      ; scroll y
+       data windows_stage_init         ; init
 chopper_stage_4:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init

@@ -410,7 +410,7 @@ girder_handler:
        mov  @next_stage_ptr,r1
        s    *r1,r0
        ci   r0,8
-       jlt  girder_handler_4
+       jlt  girder_handler_5
 *      Display sprite
        mov  @sprite_y(r3),r1
        swpb r1
@@ -431,31 +431,36 @@ girder_handler:
        jeq  girder_handler_2
 *      Hit
        bl   @lose_grip
-       jmp  girder_handler_4
+       jmp  girder_handler_5
 *      Update sprite
 girder_handler_2:
+       mov  @sprite_ay(r3),r0          ; Delay
+       jeq  girder_handler_3
+       dec  @sprite_ay(r3)
+       jmp  girder_handler_6
+girder_handler_3:
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
        s    @scroll_dy,@sprite_y(r3)
        mov  @sprite_count(r3),r0
        inc  r0
        ci   r0,6
-       jlt  girder_handler_3
+       jlt  girder_handler_4
        clr  r0
-girder_handler_3:
+girder_handler_4:
        mov  r0,@sprite_count(r3)
        mov  @sprite_y(r3),r0
        ci   r0,>00c0
-       jlt  girder_handler_5
+       jlt  girder_handler_6
        clr  *r3
        .push r3
        bl   @create_girder
        .pop r3
-       jmp  girder_handler_5
+       jmp  girder_handler_6
 *      Remove
-girder_handler_4:
-       clr  @sprite_handler(r3)
 girder_handler_5:
+       clr  @sprite_handler(r3)
+girder_handler_6:
        .endproc
 *// girder_handler
 
@@ -797,6 +802,9 @@ create_girder_1:
        li   r0,>08e0
 create_girder_2:
        mov  r0,@sprite_ax(r4)          ; Color and pattern
+       bl   @rand
+       andi r0,31
+       mov  r0,@sprite_ay(r4)          ; Delay
 create_girder_3:
        .endproc
 girder_init_data:

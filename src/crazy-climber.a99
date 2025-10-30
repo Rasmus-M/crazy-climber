@@ -58,11 +58,11 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 falling_enabled:
-       equ  0
+       equ  1
 windows_enabled:
        equ  1
 display_title:
-       equ  0
+       equ  1
 test_bird:
        equ  0
 test_kong:
@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  3                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:
