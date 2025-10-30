@@ -22,10 +22,10 @@ kong_stage_3:
        data (kong_row_1_3*8)+>60       ; scroll y
        data kong_stage_init            ; init
 three_girders_stage_3_4:
-       data >0300                      ; scroll y
+       data >0390                      ; scroll y
        data three_girders_stage_init   ; init
 balloon_stage_3:
-       data >0200                      ; scroll y
+       data >0280                      ; scroll y
        data balloon_stage_init         ; init
 chopper_stage_3:
        data >0080                      ; scroll y

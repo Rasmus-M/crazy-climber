@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  2                          ; 0 is the first building
+       equ  3                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -1980,8 +1980,10 @@ fall_1:
        .endif
        li   r0,speech_oh_no_idx
        bl   @speak
+       .ifeq falling_enabled,1
        li   r0,died_module
        bl   @play_module
+       .endif
        .endproc
 *// fall
 

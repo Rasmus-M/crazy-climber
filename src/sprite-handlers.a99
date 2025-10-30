@@ -562,6 +562,7 @@ dropping_sign_handler_1:
 *      Check for collision
        mov  @climber_pos,r0
        andi r0,>00ff
+       ai   r0,8
        s    @sprite_x(r3),r0
        ci   r0,-15
        jlt  dropping_sign_handler_2
