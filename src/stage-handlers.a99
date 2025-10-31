@@ -245,8 +245,7 @@ chopper_stage_init:
        mov  r0,r5
        li   r1,chopper_patterns
        bl   @load_sprite_patterns
-       li   r1,character_set_base
-       bl   @set_character_set
+*      Don't load base characters since residents could stil be visible
        bl   @allocate_sprite
        mov  r4,r4
        jeq  chopper_stage_init_1

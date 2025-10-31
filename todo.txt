@@ -1,1 +1,3 @@
-- After playing it auto-starts in player mode?
+Character issue when kong appeared level 1
+Bird should disappear more smoothly
+Windows appearing in sparkling sign

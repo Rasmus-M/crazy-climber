@@ -453,6 +453,13 @@ girder_handler_4:
        ci   r0,>00c0
        jlt  girder_handler_6
        clr  *r3
+
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
+       ci   r0,64
+       jlt  girder_handler_6
+
        .push r3
        bl   @create_girder
        .pop r3
