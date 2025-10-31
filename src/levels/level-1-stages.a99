@@ -4,24 +4,31 @@ stages_1:
 base_stage_1:
        data >0c10                      ; scroll y
        data base_stage_init            ; init
+       data 0
 one_resident_stage_1:
        data >0ac0                      ; scroll y
-       data one_resident_stage_init    ; init
+       data residents_stage_init       ; init
+       data one_resident_init_data
 bird_stage_1:
        data >0980                      ; scroll y
-       data bird_stage_init_level_1_4  ; init
+       data bird_stage_init            ; init
+       data bird_init_data_1_4
 two_residents_stage_1:
        data >0780                      ; scroll y
-       data two_residents_stage_init   ; init
+       data residents_stage_init       ; init
+       data two_residents_init_data
 kong_stage_1:
        data (kong_row_1_3*8)+>60       ; scroll y
        data kong_stage_init            ; init
+       data kong_init_data
 three_residents_stage_1:
        data >0390                      ; scroll y
-       data three_residents_stage_init ; init
+       data residents_stage_init       ; init
+       data three_residents_init_data
 chopper_stage_1:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
+       data chopper_init_data
 *      End marker
        data 0
 

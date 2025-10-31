@@ -583,8 +583,10 @@ update_stage:
        .push r0
        clr  @max_residents
        bl   @mute_sound
+       mov  *r0,r0                     ; Data
        bl   *r1                        ; Execute init routine
        .pop r0
+       inct r0                         ; Skip past data
 update_stage_1:
        c   *r0,@w_0
        jne  update_stage_2
@@ -2426,9 +2428,7 @@ initial_scrolling_screen:
        bl   @update_name_table
        clr  @frame
        bl   @set_name_table
-*      Screen on
-       li   r0,>01e2
-       bl   @vwtr
+       bl   @screen_on
        .endproc
 *// initial_scrolling_screen
 
@@ -2561,11 +2561,17 @@ fall_sequence_1:
        bl   @display_sprites
        bl   @update_name_table
        ab   @b_1,@climber_pos
-       cb   @climber_pos,@b_191
+       cb   @climber_pos,@b_192
        jeq  fall_sequence_2
        inc  @frame
        jmp  fall_sequence_1
 fall_sequence_2:
+       li   r8,120
+fall_sequence_3:
+       bl   @vsync
+       bl   @int_routine
+       dec  r8
+       jne fall_sequence_3
        .endproc
 *// fall_sequence
 
@@ -2613,6 +2619,7 @@ title_screen_1:
        bl   @play_module
        bl   @one_pattern_table
 *      Title screen loop
+       clr  @title_screen_done
        li   r0,3
        mov  r0,@title_screen_loops
 title_screen_2:
@@ -2628,9 +2635,6 @@ title_screen_3:
 *      Select name_table_0
        clr  @frame
        bl   @set_name_table
-*      Screen off
-       li   r0,>01a2
-       bl   @vwtr
        bl   @three_pattern_tables
        .endproc
 title_screen_loops:
@@ -2638,30 +2642,6 @@ title_screen_loops:
 title_screen_done:
        data 0
 *// title_screen
-
-*********************************************************************
-*
-* Enable 3 pattern tables if required
-*
-one_pattern_table:
-       .proc
-       li   r0,>0400
-       bl   @vwtr
-       .endproc
-
-*********************************************************************
-*
-* Enable 3 pattern tables if required
-*
-three_pattern_tables:
-       .proc
-       abs  @sprite_dupl_bug
-       jeq  three_pattern_tables_1
-*      3 pattern tables
-       li   r0,>0403
-       bl   @vwtr
-three_pattern_tables_1:
-       .endproc
 
 *********************************************************************
 *
@@ -2678,32 +2658,47 @@ title_screen_main_cycle:
        li   r2,>8000
 title_screen_main_cycle_1:
        bl   @check_int
-*      Read keyboard
-       li   r0,KEY_1
-       bl   @check_key
-       jeq  title_screen_main_cycle_2
-       li   r0,keyboard_control
-       mov  r0,@control_set
-       jmp  title_screen_main_cycle_4
-title_screen_main_cycle_2:
-       li   r0,KEY_2
-       bl   @check_key
-       jeq  title_screen_main_cycle_3
-       li   r0,joystick_control
-       mov  r0,@control_set
-       jmp  title_screen_main_cycle_4
-title_screen_main_cycle_3:
+       bl   @check_keys_for_title_screen
+       abs  @title_screen_done
+       jne  title_screen_main_cycle_5
        dec  r2
        jne  title_screen_main_cycle_1
        bl   @disable_sprites
        bl   @high_score_screen
        jmp  title_screen_main_cycle_5
-title_screen_main_cycle_4:
-       seto @title_screen_done
 title_screen_main_cycle_5:
        .endproc
-       data 0
 *// title_screen
+
+*********************************************************************
+*
+* Check keys for title screen
+*
+check_keys_for_title_screen:
+       .proc
+       li   r0,KEY_1
+       bl   @check_key
+       jeq  check_keys_for_title_screen_1
+       li   r0,keyboard_control
+       mov  r0,@control_set
+       jmp  check_keys_for_title_screen_3
+check_keys_for_title_screen_1:
+       li   r0,KEY_FI
+       bl   @check_key
+       jne  check_keys_for_title_screen_2
+       li   r0,KEY_2
+       bl   @check_key
+       jeq  check_keys_for_title_screen_4
+check_keys_for_title_screen_2:
+       li   r0,joystick_control
+       mov  r0,@control_set
+check_keys_for_title_screen_3:
+       seto @title_screen_done
+       bl   @mute_sound
+       bl   @screen_off
+check_keys_for_title_screen_4:
+       .endproc
+*// check_keys_for_title_screen
 
 *********************************************************************
 *
@@ -2788,15 +2783,20 @@ title_scroll_logo_4:
        srl  r2,3
        jeq  title_scroll_logo_5
        bl   @vm8bw
-*      Change scroll offset
+*      Check keys
 title_scroll_logo_5:
+       bl   @check_keys_for_title_screen
+       abs  @title_screen_done
+       jne  title_scroll_logo_7
+*      Change scroll offset
+title_scroll_logo_6:
        bl   @check_int
        dec  @scroll_y
-       jlt  title_scroll_logo_6
+       jlt  title_scroll_logo_7
        inc  @frame
        jmp  title_scroll_logo_1
 *      Equalize the two name tables
-title_scroll_logo_6:
+title_scroll_logo_7:
        li   r0,name_table_0
        li   r1,L_MAP_HIGH+32
        li   r2,6*32/8
@@ -2857,18 +2857,23 @@ title_scroll_text_3:
        sla  r2,5
        s    r2,r0
        srl  r2,3
-       jeq  title_scroll_text_4
+       jeq  title_scroll_text_5
        bl   @vm8bw
        bl   @check_int
-*      Change scroll offset
+*      Check keys
 title_scroll_text_4:
+       bl   @check_keys_for_title_screen
+       abs  @title_screen_done
+       jne  title_scroll_text_6
+*      Change scroll offset
+title_scroll_text_5:
        inct @scroll_y
        mov  @scroll_y,r0
        ci   r0,140
-       jeq  title_scroll_text_5
+       jeq  title_scroll_text_6
        inc  @frame
        jmp  title_scroll_text_1
-title_scroll_text_5:
+title_scroll_text_6:
        .endproc
 *// title_scroll_text
 
@@ -2921,11 +2926,8 @@ high_score_screen_1:
 high_score_screen_2:
        bl   @check_int
 *      Read keyboard
-       li   r0,KEY_1
-       bl   @check_key
-       jne  high_score_screen_3
-       li   r0,KEY_2
-       bl   @check_key
+       bl   @check_keys_for_title_screen
+       abs  @title_screen_done
        jne  high_score_screen_3
        dec  r2
        jne  high_score_screen_2
@@ -3359,6 +3361,54 @@ f18a_detect_1:
 f18a_detect_2:
        .endproc
 *// f18a_detect
+
+*********************************************************************
+*
+* screen off
+*
+screen_off:
+       .proc
+       li   r0,>01a2
+       bl   @vwtr
+       .endproc
+*// screen_off
+
+*********************************************************************
+*
+* screen on
+*
+screen_on:
+       .proc
+       li   r0,>01e2
+       bl   @vwtr
+       .endproc
+*// screen_on
+
+*********************************************************************
+*
+* Enable 3 pattern tables if required
+*
+one_pattern_table:
+       .proc
+       li   r0,>0400
+       bl   @vwtr
+       .endproc
+*// one_pattern_tables
+
+*********************************************************************
+*
+* Enable 3 pattern tables if required
+*
+three_pattern_tables:
+       .proc
+       abs  @sprite_dupl_bug
+       jeq  three_pattern_tables_1
+*      3 pattern tables
+       li   r0,>0403
+       bl   @vwtr
+three_pattern_tables_1:
+       .endproc
+*// three_pattern_tables
 
 *********************************************************************
 *

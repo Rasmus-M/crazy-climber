@@ -3,30 +3,39 @@ stages_4:
 base_stage_4:
        data >0c10                      ; scroll y
        data base_stage_init            ; init
+       data 0
 four_girders_stage_4_1:
        data >0c00                      ; scroll y
-       data four_girders_stage_init    ; init
+       data girders_stage_init         ; init
+       data four_girders_init_data
 sign_stage_4:
        data (sign_row_4+2)*8           ; >A90
-       data sparking_sign_stage_init_level_4
+       data sparking_sign_stage_init   ; init
+       data sparking_sign_init_data_4
 four_girders_stage_4_2:
        data >0980                      ; scroll y
-       data four_girders_stage_init    ; init
+       data girders_stage_init         ; init
+       data four_girders_init_data
 bird_stage_4:
        data >0980                      ; scroll y
-       data bird_stage_init_level_1_4  ; init
+       data bird_stage_init            ; init
+       data bird_init_data_1_4
 three_residents_stage_4:
        data >0780                      ; scroll y
-       data three_residents_stage_init ; init
+       data residents_stage_init       ; init
+       data three_residents_init_data
 dropping_sign_4:
        data >0300                      ; scroll y
-       data dropping_sign_stage_init_level_4
+       data dropping_sign_stage_init   ; init
+       data dropping_sign_init_data_4
 windows_stage_init_4:
        data >0180                      ; scroll y
        data windows_stage_init         ; init
+       data 0
 chopper_stage_4:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init
+       data chopper_init_data
 *      End marker
        data 0
 
