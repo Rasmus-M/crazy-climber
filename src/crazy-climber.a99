@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  1                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:

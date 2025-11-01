@@ -532,6 +532,7 @@ balloon_handler_4:
        ci   r1,->0018
        jgt  balloon_handler_5
        clr  *r3
+       bl   @mute_sound
 balloon_handler_5:
        .endproc
 *// balloon_handler
