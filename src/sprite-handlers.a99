@@ -607,6 +607,11 @@ dropping_sign_handler_2:
        s    @scroll_y,r1
        ci   r1,>00c0
        jlt  dropping_sign_handler_3
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0
+       ci   r0,96                      ; If close to next stage
+       jlt  dropping_sign_handler_3    ; then just finish
 *      Return to top
        li   r0,>00e0
        s    r0,@sprite_y(r3)
