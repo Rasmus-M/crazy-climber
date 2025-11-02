@@ -846,31 +846,31 @@ check_sprite_hit_head:
        mov  @climber_pos,r2
 *      y
        sb   r1,r2                      ; Climber y - sprite y
-       jlt  check_sprite_hit_head_4
+       jlt  check_sprite_hit_head_3
        cb   r2,@b_12
-       jgt  check_sprite_hit_head_4
+       jgt  check_sprite_hit_head_3
 *      x
        swpb r2
        abs  @left_wide
        jne  check_sprite_hit_head_1
-       ai   r2,>0800
+       ai   r2,>0800                   ; If not left wide, sprite starts 8 pixels to the left
 check_sprite_hit_head_1:
        sb   r0,r2                      ; Climber x - sprite x
-       mov  r2,r1
-       abs  r2
+       mov  r2,r1                      ; Save offset as return value
+       cb   r2,@b_m8
+       jlt  check_sprite_hit_head_3
        abs  @right_wide
        jne  check_sprite_hit_head_2
        cb   r2,@b_8
-       jmp  check_sprite_hit_head_3
+       jgt  check_sprite_hit_head_3
 check_sprite_hit_head_2:
        cb   r2,@b_16
-check_sprite_hit_head_3:
-       jgt  check_sprite_hit_head_4
+       jgt  check_sprite_hit_head_3
 *      Hit
        seto r2
        rt
 *      Not hit
-check_sprite_hit_head_4:
+check_sprite_hit_head_3:
        clr  r2
        rt
 *// check_sprite_hit_head

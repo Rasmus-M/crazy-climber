@@ -64,7 +64,7 @@ windows_enabled:
 display_title:
        equ  0
 test_bird:
-       equ  1
+       equ  0
 test_kong:
        equ  0
 test_sign_with_wires:
@@ -3670,10 +3670,6 @@ b_face_first:
        byte chr_face_first
 b_face_last:
        byte chr_face_last
-b_building_left:
-       byte building_left
-b_building_right:
-       byte building_right
 b_life:
        byte chr_life
 b_space:
@@ -3688,6 +3684,10 @@ b_16:
        byte 16
 b_192:
        byte 192
+b_m8:
+       byte -8
+b_m16:
+       byte -16
 w_0:
        data 0
 w_1:
