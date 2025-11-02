@@ -44,10 +44,10 @@ windows_stage_init:
 residents_stage_init:
        .proc
        mov  *r0,@max_residents
-       li   r1,character_set_residents
-       bl   @set_character_set
        li   r1,head_and_hands_patterns
        bl   @load_sprite_patterns
+       li   r1,character_set_residents
+       bl   @set_character_set
        .endproc
 one_resident_init_data:
        data 1

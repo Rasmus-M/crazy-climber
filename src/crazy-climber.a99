@@ -68,7 +68,7 @@ test_bird:
 test_kong:
        equ  0
 test_sign_with_wires:
-       equ  0
+       equ  1
 test_dropping_sign:
        equ  0
 test_balloon:
@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is the first building
+       equ  1                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -886,6 +886,11 @@ create_windows_5:
 *      Determine type
        c    @current_residents,@max_residents
        jhe  create_windows_6           ; Jump if resident not allowed
+       mov  @scroll_y,r0
+       mov  @next_stage_ptr,r1
+       s    *r1,r0                     ; Next stage scroll y
+       ci   r0,64                      ; Are we close to next stage?
+       jlt  create_windows_6           ; Yes - don't create resident
        bl   @rand
        andi r0,1                       ; 1/2 chance of resident
        ci   r0,window_anim_type_resident
@@ -919,14 +924,19 @@ create_windows_7c:
        mov  r1,*r3                     ; Save it in new window anim (window_anim_row)
 *      Check map position
        mov  @window_anim_col(r3),r0    ; X coord
+;       ci   r0,4
+;       jne  !
+;       ci   r1,>49
+;       jne  !
+;       nop
+;!
        bl   @window_map_addr           ; Window address in r2
-       bl   @is_open_window            ; Is there an open window?
+       bl   @is_open_window            ; Is there an open window? Checks 'from char' = window open top.
        jne  create_windows_10          ; If not then skip
-       ai   r2,-2*map_width            ; Move one window up
-       bl   @is_open_window_bottom     ; Is there an open window above?
+       bl   @is_open_window_bottom     ; Is there a window above? Checks 'to char' = window open bottom.
        jne  create_windows_10          ; If not then skip
-       ai   r2,4*map_width             ; Move one window down
-       bl   @is_open_window            ; Is there an open window below?
+       ai   r2,2*map_width             ; Move one window down
+       bl   @is_open_window            ; Is there an open window below? Checks from char = window open top.
        jne  create_windows_10          ; If not then skip
 *      Other initializations
        clr  @window_anim_frame(r3)     ; Clear frame
@@ -1842,7 +1852,8 @@ window_screen_coords:
 
 *********************************************************************
 *
-* Checks whether r2 points to a fully open window in the map
+* Checks whether r2 points to a fully open window in the map.
+* Checks from char = window open top.
 *
 * On return EQ means that it's an open window. r1 is modified.
 *
@@ -1859,7 +1870,8 @@ is_open_window:
 
 *********************************************************************
 *
-* Checks whether r2 points to a window with the bottom open in the map
+* Checks whether r2 points to a window with the bottom open in the map.
+* Checks to char = window open bottom.
 *
 * On return EQ means that it's an open window. r1 is modified.
 *
