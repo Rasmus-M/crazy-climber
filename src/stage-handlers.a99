@@ -101,16 +101,19 @@ bird_stage_init:
        mov  *r5+,@sprite_vx(r4)
        mov  *r5+,@sprite_vy(r4)
        mov  *r5+,@sprite_count(r4)
+       mov  *r5,@max_bird_droppings
        clr  @bird_droppings
-       clr  @bird_rounds
+       clr  @bird_done
        li   r0,bird_module
        bl   @play_module
 bird_stage_init_1:
        .endproc
-bird_init_data_1_4:
-       data bird_handler,>0020,>0982,>0002,>0001,>0000
+bird_init_data_1:
+       data bird_handler,>0020,>0982,>0002,>0001,>0000,2
 bird_init_data_2:
-       data bird_handler,>0020,>0702,>0002,>0001,>0000
+       data bird_handler,>0020,>0702,>0002,>0001,>0000,2
+bird_init_data_4:
+       data bird_handler,>0020,>0982,>0002,>0001,>0000,4
 *// bird_stage_init
 
 *********************************************************************

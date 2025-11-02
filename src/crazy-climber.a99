@@ -64,11 +64,11 @@ windows_enabled:
 display_title:
        equ  0
 test_bird:
-       equ  0
+       equ  1
 test_kong:
        equ  0
 test_sign_with_wires:
-       equ  1
+       equ  0
 test_dropping_sign:
        equ  0
 test_balloon:
@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  1                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -3684,8 +3684,8 @@ b_8:
        byte 8
 b_12:
        byte 12
-b_191:
-       byte 191
+b_16:
+       byte 16
 b_192:
        byte 192
 w_0:

@@ -1,1 +1,0 @@
-Bird should disappear more smoothly

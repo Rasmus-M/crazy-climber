@@ -116,17 +116,22 @@ bird_handler:
 *      Remove
        mov  @status,r0
        jne  bird_handler_1
-       c    @bird_rounds,@w_8
-       jeq  bird_handler_1
+       abs  @bird_done
+       jne  bird_handler_2
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
-       ci   r0,8
+       ci   r0,64
        jgt  bird_handler_2
+*      Fly away
+       clr  @sprite_vx(r3)
+       seto @sprite_vy(r3)
+       seto @bird_done
+       jmp  bird_handler_2
 bird_handler_1:
        clr  @sprite_handler(r3)
        bl   @mute_sound
-       jmp  bird_handler_10
+       jmp  bird_handler_11
 bird_handler_2:
 *      Draw
        mov  @sprite_x(r3),r0
@@ -134,7 +139,7 @@ bird_handler_2:
        clr  r4
        mov  @sprite_count(r3),r5
        srl  r5,2
-       div  @w_6,r4
+       div  @w_6,r4                    ; Animation has 6 frames
        sla  r5,1
        mov  @sprite_vx(r3),r2
        jlt  bird_handler_3
@@ -157,33 +162,42 @@ bird_handler_4:
 bird_handler_5:
        neg  @sprite_vx(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
-       inc  @bird_rounds
 bird_handler_6
 *      Y boundaries
        mov  @sprite_y(r3),r0
        s    @scroll_y,r0
+       abs  @bird_done
+       jne  bird_handler_9
+       mov  r0,r0
        jlt  bird_handler_7
        ci   r0,>18
-       jle  bird_handler_8
+       jlt  bird_handler_8
 bird_handler_7:
        neg  @sprite_vy(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
 bird_handler_8:
 *      Drop
-       mov  @bird_droppings,r0
-       ci   r0,2
-       jhe  bird_handler_9
+       c    @bird_droppings,@max_bird_droppings
+       jhe  bird_handler_10
        bl   @rand
        ci   r0,>f400
-       jl   bird_handler_9
+       jl   bird_handler_10
        bl   @create_bird_dropping
+       jmp  bird_handler_10
 bird_handler_9:
-       inc  @sprite_count(r3)
+*      Remove when flown away
+       ci   r0,-31
+       jlt  bird_handler_1
 bird_handler_10:
+*      Update animation counter
+       inc  @sprite_count(r3)
+bird_handler_11:
        .endproc
 bird_droppings:
        data 0
-bird_rounds:
+max_bird_droppings:
+       data 2
+bird_done:
        data 0
 *// bird_handler
 
@@ -830,25 +844,33 @@ girder_init_data:
 *
 check_sprite_hit_head:
        mov  @climber_pos,r2
-       sb   r1,r2                      ; Climber y - plant y
-       jlt  check_sprite_hit_head_2
+*      y
+       sb   r1,r2                      ; Climber y - sprite y
+       jlt  check_sprite_hit_head_4
        cb   r2,@b_12
-       jgt  check_sprite_hit_head_2
+       jgt  check_sprite_hit_head_4
+*      x
        swpb r2
        abs  @left_wide
-       jeq  check_sprite_hit_head_1
+       jne  check_sprite_hit_head_1
        ai   r2,>0800
 check_sprite_hit_head_1:
-       sb   r0,r2                      ; Climber x - plant x
+       sb   r0,r2                      ; Climber x - sprite x
        mov  r2,r1
        abs  r2
+       abs  @right_wide
+       jne  check_sprite_hit_head_2
        cb   r2,@b_8
-       jgt  check_sprite_hit_head_2
+       jmp  check_sprite_hit_head_3
+check_sprite_hit_head_2:
+       cb   r2,@b_16
+check_sprite_hit_head_3:
+       jgt  check_sprite_hit_head_4
 *      Hit
        seto r2
        rt
 *      Not hit
-check_sprite_hit_head_2:
+check_sprite_hit_head_4:
        clr  r2
        rt
 *// check_sprite_hit_head
