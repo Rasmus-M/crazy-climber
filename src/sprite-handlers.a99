@@ -466,21 +466,17 @@ girder_handler_4:
        mov  @sprite_y(r3),r0
        ci   r0,>00c0
        jlt  girder_handler_6
-       clr  *r3
-
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
-       ci   r0,64
-       jlt  girder_handler_6
-
+       ci   r0,64                      ; If close to next stage
+       jlt  girder_handler_6           ; then just finish
        .push r3
-       bl   @create_girder
+       bl   @create_girder             ; Otherwise create a new girder
        .pop r3
-       jmp  girder_handler_6
 *      Remove
 girder_handler_5:
-       clr  @sprite_handler(r3)
+       clr  @sprite_handler(r3)        ; Remove this girder
 girder_handler_6:
        .endproc
 *// girder_handler
