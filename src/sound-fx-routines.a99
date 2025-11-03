@@ -77,6 +77,18 @@ play_girder:
 
 *********************************************************************
 *
+* Play sign
+*
+play_sign:
+       .proc
+       li   r0,snd_sign
+       li   r1,snd_channel_3
+       bl   @play_snd
+       .endproc
+*// play_sign
+
+*********************************************************************
+*
 * Play chopper
 *
 play_chopper:

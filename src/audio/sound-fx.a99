@@ -29,6 +29,13 @@ snd_girder:
        byte 0                          ; Attn step
        data 1                          ; Freq step
 
+snd_sign:
+       byte W2
+       byte 12                         ; Frames
+       byte 32                         ; Attn start
+       byte 16                         ; Attn step
+       data 0                          ; Freq step
+
 snd_chopper:
        byte W0
        byte 4                          ; Frames
