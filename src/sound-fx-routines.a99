@@ -64,6 +64,19 @@ play_boing:
 
 *********************************************************************
 *
+* Play girder
+*
+play_girder:
+       .proc
+       li   r0,snd_girder
+       li   r1,snd_channel_2
+       li   r2,G♯5
+       bl   @play_snd
+       .endproc
+*// play_girder
+
+*********************************************************************
+*
 * Play chopper
 *
 play_chopper:

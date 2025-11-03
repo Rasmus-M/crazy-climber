@@ -841,6 +841,7 @@ create_girder_2:
        bl   @rand
        andi r0,31
        mov  r0,@sprite_ay(r4)          ; Delay
+       bl   @play_girder
 create_girder_3:
        .endproc
 girder_init_data:
