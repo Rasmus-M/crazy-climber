@@ -62,7 +62,7 @@ falling_enabled:
 windows_enabled:
        equ  1
 display_title:
-       equ  0
+       equ  1
 test_bird:
        equ  0
 test_kong:
