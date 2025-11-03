@@ -29,7 +29,7 @@ dropping_sign_4:
        data dropping_sign_stage_init   ; init
        data dropping_sign_init_data_4
 windows_stage_init_4:
-       data >0180                      ; scroll y
+       data >0100                      ; scroll y
        data windows_stage_init         ; init
        data 0
 chopper_stage_4:

@@ -584,13 +584,24 @@ dropping_sign_handler_0:
 dropping_sign_handler_1:
 *      Check for collision
        mov  @climber_pos,r0
-       andi r0,>00ff
-       ai   r0,8
-       s    @sprite_x(r3),r0
-       ci   r0,-15
-       jlt  dropping_sign_handler_2
-       ci   r0,63
+       andi r0,>00ff                   ; Climber x
+       abs  @left_wide
+       jne  dropping_sign_handler_4
+       ai   r0,8                       ; If not left wide, climber starts 8 pixels to the left
+dropping_sign_handler_4:
+       s    @sprite_x(r3),r0           ; Climber x - sprite x
+       ci   r0,58
        jgt  dropping_sign_handler_2
+       abs  @right_wide
+       jne  dropping_sign_handler_5
+       ci   r0,-14
+       jlt  dropping_sign_handler_2
+       jmp  dropping_sign_handler_6
+dropping_sign_handler_5:
+       ci   r0,-22
+       jlt  dropping_sign_handler_2
+*      Check y
+dropping_sign_handler_6:
        mov  @climber_pos,r1
        swpb r1
        andi r1,>00ff
@@ -610,7 +621,7 @@ dropping_sign_handler_2:
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
-       ci   r0,96                      ; If close to next stage
+       ci   r0,128                     ; If close to next stage
        jlt  dropping_sign_handler_3    ; then just finish
 *      Return to top
        li   r0,>00e0
@@ -632,6 +643,8 @@ dropping_sign_handler_3:
 *
 chopper_handler:
        .proc
+       mov  @status,r0
+       jne  chopper_handler_0
        mov  @sprite_count(r3),r4
        ci   r4,480                     ; Give up?
        jne  chopper_handler_0
@@ -847,31 +860,33 @@ check_sprite_hit_head:
        mov  @climber_pos,r2
 *      y
        sb   r1,r2                      ; Climber y - sprite y
-       jlt  check_sprite_hit_head_3
+       jlt  check_sprite_hit_head_4
        cb   r2,@b_12
-       jgt  check_sprite_hit_head_3
+       jgt  check_sprite_hit_head_4
 *      x
        swpb r2
        abs  @left_wide
        jne  check_sprite_hit_head_1
-       ai   r2,>0800                   ; If not left wide, sprite starts 8 pixels to the left
+       ai   r2,>0800                   ; If not left wide, climber starts 8 pixels to the left
 check_sprite_hit_head_1:
        sb   r0,r2                      ; Climber x - sprite x
        mov  r2,r1                      ; Save offset as return value
-       cb   r2,@b_m8
-       jlt  check_sprite_hit_head_3
+       cb   r2,@b_12
+       jgt  check_sprite_hit_head_4
        abs  @right_wide
        jne  check_sprite_hit_head_2
-       cb   r2,@b_8
-       jgt  check_sprite_hit_head_3
+       cb   r2,@b_m12
+       jlt  check_sprite_hit_head_4
+       jmp  check_sprite_hit_head_3
 check_sprite_hit_head_2:
-       cb   r2,@b_16
-       jgt  check_sprite_hit_head_3
+       cb   r2,@b_m20
+       jlt  check_sprite_hit_head_4
 *      Hit
+check_sprite_hit_head_3:
        seto r2
        rt
 *      Not hit
-check_sprite_hit_head_3:
+check_sprite_hit_head_4:
        clr  r2
        rt
 *// check_sprite_hit_head

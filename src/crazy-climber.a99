@@ -58,7 +58,7 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 falling_enabled:
-       equ  0
+       equ  1
 windows_enabled:
        equ  1
 display_title:
@@ -70,13 +70,13 @@ test_kong:
 test_sign_with_wires:
        equ  0
 test_dropping_sign:
-       equ  1
+       equ  0
 test_balloon:
        equ  0
 test_chopper:
        equ  0
 start_level:
-       equ  2                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -2127,11 +2127,27 @@ progress_top_offset:
 * r1: Points to add
 *
 add_score:
+       .proc
+       mov  @score,r0                  ; Score before
        a    r1,@score
        jnc  add_score_1
        inc  @score_msw
 add_score_1:
-       rt
+       mov  @score,r1                  ; Score after
+       ci   r1,30000
+       jl   add_score_3
+       ci   r0,30000                   ; Score before
+       jl   add_score_2
+       ci   r1,50000
+       jl   add_score_3
+       ci   r0,50000
+       jhe  add_score_3
+*      Extra life
+add_score_2:
+       inc  @lives
+       bl   @display_lives
+add_score_3:
+       .endproc
 *// add_score
 
 *******************************************************************
@@ -3189,9 +3205,9 @@ level_init:
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_dropping_sign,1
-       li   r0,>760                    ; For testing dropping sign
+       li   r0,>380                    ; For testing dropping sign
        mov  r0,@scroll_y
-       li   r0,dropping_sign_3
+       li   r0,dropping_sign_4
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_balloon,1
@@ -3676,18 +3692,14 @@ b_space:
        byte chr_space
 b_1:
        byte 1
-b_8:
-       byte 8
 b_12:
        byte 12
-b_16:
-       byte 16
 b_192:
        byte 192
-b_m8:
-       byte -8
-b_m16:
-       byte -16
+b_m12:
+       byte -12
+b_m20:
+       byte -20
 w_0:
        data 0
 w_1:
