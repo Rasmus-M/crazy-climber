@@ -398,7 +398,7 @@ vsync1:
        tb   2
        jeq  vsync1
        socb @vdpsta,@vdp_status
-       b    *r11
+       rt
 *// vsync
 
 *********************************************************************
@@ -414,7 +414,7 @@ check_int:
        bl   @int_routine
        .endproc
 check_int_1:
-       b    *r11
+       rt
 *// check_int
 
 *********************************************************************
