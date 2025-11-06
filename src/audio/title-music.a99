@@ -1,5 +1,5 @@
 title2_module:
-       data >0001
+       data >0004
        data title2_track_00
        data title2_track_01
        data title2_track_02
@@ -8,293 +8,836 @@ title2_module:
 title2_track_00:
        data snd_channel_1
 title2_track_00_rpt:
-       data title2_seq_00C8
-       data title2_seq_00CF
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00DB
-       data title2_seq_00E2
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
+       data title2_seq_0118
+       data title2_seq_0123
+       data title2_seq_012E
+       data title2_seq_0139
+       data title2_seq_0143
+       data title2_seq_0123
+       data title2_seq_012E
+       data title2_seq_014E
+       data title2_seq_0156
+       data title2_seq_015F
+       data title2_seq_0168
+       data title2_seq_0171
+       data title2_seq_0177
+       data title2_seq_0180
+       data title2_seq_0189
+       data title2_seq_0192
        data >00FF
        data title2_track_00_rpt
        data >0000
 title2_track_01:
        data snd_channel_2
 title2_track_01_rpt:
-       data title2_seq_00E8
-       data title2_seq_00EE
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00F4
-       data title2_seq_00FA
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
-       data title2_seq_00D6
+       data title2_seq_019B
+       data title2_seq_019B
+       data title2_seq_01A5
+       data title2_seq_01AF
+       data title2_seq_019B
+       data title2_seq_019B
+       data title2_seq_01B6
+       data title2_seq_01C8
+       data title2_seq_01CF
+       data title2_seq_01D7
+       data title2_seq_01DF
+       data title2_seq_01E7
+       data title2_seq_01CF
+       data title2_seq_01EC
+       data title2_seq_01F4
+       data title2_seq_01FC
        data >00FF
        data title2_track_01_rpt
        data >0000
 title2_track_02:
        data snd_channel_3
 title2_track_02_rpt:
-       data title2_seq_0100
-       data title2_seq_0105
-       data title2_seq_010B
-       data title2_seq_0110
-       data title2_seq_0116
-       data title2_seq_011B
-       data title2_seq_0121
-       data title2_seq_011B
-       data title2_seq_0126
-       data title2_seq_012B
-       data title2_seq_0131
-       data title2_seq_0136
-       data title2_seq_0100
-       data title2_seq_0105
-       data title2_seq_010B
-       data title2_seq_0110
+       data title2_seq_0201
+       data title2_seq_020B
+       data title2_seq_0215
+       data title2_seq_0201
+       data title2_seq_0201
+       data title2_seq_020B
+       data title2_seq_021F
+       data title2_seq_0201
+       data title2_seq_0229
+       data title2_seq_0233
+       data title2_seq_023D
+       data title2_seq_0247
+       data title2_seq_0229
+       data title2_seq_0233
+       data title2_seq_023D
+       data title2_seq_0251
        data >00FF
        data title2_track_02_rpt
        data >0000
 title2_track_03:
        data snd_channel_4
 title2_track_03_rpt:
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_0142
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_0148
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_013C
-       data title2_seq_0148
+       data title2_seq_025B
+       data title2_seq_0265
+       data title2_seq_0271
+       data title2_seq_0265
+       data title2_seq_025B
+       data title2_seq_0265
+       data title2_seq_0271
+       data title2_seq_0265
+       data title2_seq_027B
+       data title2_seq_027B
+       data title2_seq_027B
+       data title2_seq_0285
+       data title2_seq_027B
+       data title2_seq_027B
+       data title2_seq_027B
+       data title2_seq_0291
        data >00FF
        data title2_track_03_rpt
        data >0000
-title2_seq_00C8:
-       data title2_note_0152
-       data >000F
-       data title2_note_0155
-       data >000F
+title2_seq_0118:
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
        data >0000
-title2_seq_00E8:
-       data title2_note_0167
-       data >000F
-       data title2_note_016A
-       data >000F
+title2_seq_019B:
+       data title2_note_02C8
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02CB
+       data >0003
+       data title2_note_02CB
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02CB
+       data >0003
+       data title2_note_02CB
+       data >0003
        data >0000
-title2_seq_0100:
-       data title2_note_017C
+title2_seq_0201:
+       data title2_note_031F
+       data >0007
+       data title2_note_0322
+       data >0003
+       data title2_note_031F
+       data >0007
+       data title2_note_031F
+       data >0003
+       data title2_note_0325
+       data >0003
+       data title2_note_0322
+       data >0003
+       data >0000
+title2_seq_025B:
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0003
+       data title2_note_0355
+       data >0003
+       data >0000
+title2_seq_0123:
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data >0000
+title2_seq_020B:
+       data title2_note_0328
+       data >0007
+       data title2_note_032B
+       data >0003
+       data title2_note_0328
+       data >0007
+       data title2_note_0328
+       data >0003
+       data title2_note_032B
+       data >0003
+       data title2_note_0328
+       data >0003
+       data >0000
+title2_seq_0265:
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data >0000
+title2_seq_012E:
+       data title2_note_02A4
+       data >0003
+       data title2_note_02A4
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A4
+       data >0003
+       data title2_note_02A4
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data >0000
+title2_seq_01A5:
+       data title2_note_02CE
+       data >0003
+       data title2_note_02CE
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02CE
+       data >0003
+       data title2_note_02CE
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data title2_note_02C8
+       data >0003
+       data >0000
+title2_seq_0215:
+       data title2_note_032E
+       data >0007
+       data title2_note_0331
+       data >0003
+       data title2_note_032E
+       data >0007
+       data title2_note_032E
+       data >0003
+       data title2_note_0334
+       data >0003
+       data title2_note_032E
+       data >0003
+       data >0000
+title2_seq_0271:
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0003
+       data >0000
+title2_seq_0139:
+       data title2_note_02A7
+       data >0003
+       data title2_note_02AA
+       data >0003
+       data title2_note_02AD
+       data >0003
+       data title2_note_02AD
+       data >000B
+       data title2_note_02B0
+       data >0003
+       data title2_note_02B0
+       data >0003
+       data >0000
+title2_seq_01AF:
+       data title2_note_02D1
+       data >0003
+       data title2_note_02D4
+       data >0003
+       data title2_note_02D7
+       data >0003
+       data title2_note_02D7
+       data >0013
+       data >0000
+title2_seq_0143:
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_029E
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data title2_note_02A1
+       data >0003
+       data >0000
+title2_seq_01B6:
+       data title2_note_02DA
+       data >0001
+       data title2_note_02DD
+       data >0001
+       data title2_note_02E0
+       data >0001
+       data title2_note_02E3
+       data >0001
+       data title2_note_02DD
+       data >0001
+       data title2_note_02E6
+       data >0001
+       data title2_note_02E9
+       data >0001
+       data title2_note_02EC
+       data >0001
+       data title2_note_02E6
+       data >0001
+       data title2_note_02E0
+       data >0001
+       data title2_note_02E3
+       data >0001
+       data title2_note_02EC
+       data >0001
+       data title2_note_02E0
+       data >0001
+       data title2_note_02E9
+       data >0001
+       data title2_note_02EC
+       data >0001
+       data title2_note_02EF
+       data >0001
+       data >0000
+title2_seq_021F:
+       data title2_note_032E
+       data >0007
+       data title2_note_0331
+       data >0003
+       data title2_note_032E
+       data >0007
+       data title2_note_032E
+       data >0003
+       data title2_note_0334
+       data >0003
+       data title2_note_032E
+       data >0003
+       data >0000
+title2_seq_014E:
+       data title2_note_02A4
+       data >0003
+       data title2_note_02B3
+       data >0003
+       data title2_note_02B6
+       data >0003
+       data title2_note_02B6
+       data >0013
+       data >0000
+title2_seq_01C8:
+       data title2_note_02F2
+       data >0003
+       data title2_note_02F5
+       data >0003
+       data title2_note_02F8
+       data >0003
+       data title2_note_02F8
+       data >0013
+       data >0000
+title2_seq_0156:
+       data title2_note_02AD
+       data >000B
+       data title2_note_029E
+       data >000B
+       data title2_note_02AD
+       data >0007
+       data >0000
+title2_seq_01CF:
+       data title2_note_02FB
+       data >000B
+       data title2_note_02FE
+       data >000B
+       data title2_note_02FB
+       data >0007
+       data >0000
+title2_seq_0229:
+       data title2_note_031F
+       data >0003
+       data title2_note_031F
+       data >0003
+       data title2_note_0322
+       data >0003
+       data title2_note_0322
+       data >0003
+       data title2_note_031F
+       data >0003
+       data title2_note_031F
+       data >0003
+       data title2_note_0325
+       data >0003
+       data title2_note_0322
+       data >0003
+       data >0000
+title2_seq_027B:
+       data title2_note_0355
+       data >0007
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0003
+       data title2_note_0355
+       data >0007
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0003
+       data >0000
+title2_seq_015F:
+       data title2_note_02B9
+       data >000B
+       data title2_note_02BC
+       data >000B
+       data title2_note_02A4
+       data >0007
+       data >0000
+title2_seq_01D7:
+       data title2_note_0301
+       data >000B
+       data title2_note_0304
+       data >000B
+       data title2_note_0307
+       data >0007
+       data >0000
+title2_seq_0233:
+       data title2_note_0328
+       data >0003
+       data title2_note_0328
+       data >0003
+       data title2_note_032B
+       data >0003
+       data title2_note_032B
+       data >0003
+       data title2_note_0328
+       data >0003
+       data title2_note_0328
+       data >0003
+       data title2_note_0337
+       data >0003
+       data title2_note_032B
+       data >0003
+       data >0000
+title2_seq_0168:
+       data title2_note_02A1
+       data >000B
+       data title2_note_029E
+       data >000B
+       data title2_note_02B3
+       data >0007
+       data >0000
+title2_seq_01DF:
+       data title2_note_030A
+       data >000B
+       data title2_note_02FE
+       data >000B
+       data title2_note_030D
+       data >0007
+       data >0000
+title2_seq_023D:
+       data title2_note_033A
+       data >0003
+       data title2_note_033A
+       data >0003
+       data title2_note_033D
+       data >0003
+       data title2_note_033D
+       data >0003
+       data title2_note_033A
+       data >0003
+       data title2_note_033A
+       data >0003
+       data title2_note_0340
+       data >0003
+       data title2_note_033D
+       data >0003
+       data >0000
+title2_seq_0171:
+       data title2_note_02BF
        data >001F
        data >0000
-title2_seq_013C:
-       data title2_note_0194
-       data >000F
-       data title2_note_0194
-       data >000F
-       data >0000
-title2_seq_00CF:
-       data title2_note_0158
-       data >000F
-       data title2_note_015B
-       data >000F
-       data >0000
-title2_seq_00EE:
-       data title2_note_016D
-       data >000F
-       data title2_note_0170
-       data >000F
-       data >0000
-title2_seq_0105:
-       data title2_note_017F
-       data >000F
-       data title2_note_017C
-       data >000F
-       data >0000
-title2_seq_00D6:
-       data >0020
-       data >0000
-title2_seq_010B:
-       data >0010
-       data title2_note_017C
-       data >000F
-       data >0000
-title2_seq_0110:
-       data title2_note_0182
-       data >000F
-       data title2_note_017F
-       data >000F
-       data >0000
-title2_seq_0142:
-       data title2_note_0196
-       data >000F
-       data title2_note_0194
-       data >000F
-       data >0000
-title2_seq_00DB:
-       data title2_note_015E
-       data >000F
-       data title2_note_0161
-       data >000F
-       data >0000
-title2_seq_00F4:
-       data title2_note_0173
-       data >000F
-       data title2_note_0176
-       data >000F
-       data >0000
-title2_seq_0116:
-       data title2_note_0185
+title2_seq_01E7:
+       data title2_note_0310
        data >001F
        data >0000
-title2_seq_00E2:
-       data title2_note_0164
-       data >000F
-       data title2_note_0152
-       data >000F
+title2_seq_0247:
+       data title2_note_0343
+       data >0003
+       data title2_note_0343
+       data >0003
+       data title2_note_0346
+       data >0003
+       data title2_note_0346
+       data >0003
+       data title2_note_0343
+       data >0003
+       data title2_note_0343
+       data >0003
+       data title2_note_0349
+       data >0003
+       data title2_note_034C
+       data >0003
        data >0000
-title2_seq_00FA:
-       data title2_note_0179
-       data >000F
-       data title2_note_0167
-       data >000F
-       data >0000
-title2_seq_011B:
-       data title2_note_0188
-       data >000F
-       data title2_note_0185
-       data >000F
-       data >0000
-title2_seq_0121:
-       data >0010
-       data title2_note_0185
-       data >000F
-       data >0000
-title2_seq_0148:
-       data title2_note_0196
+title2_seq_0285:
+       data title2_note_0355
        data >0007
-       data title2_note_0194
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0003
+       data title2_note_0355
        data >0007
-       data title2_note_0194
-       data >0007
-       data title2_note_0194
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data >0000
+title2_seq_0177:
+       data title2_note_02AD
+       data >000B
+       data title2_note_029E
+       data >000B
+       data title2_note_02AD
        data >0007
        data >0000
-title2_seq_0126:
-       data title2_note_018B
+title2_seq_0180:
+       data title2_note_02AA
+       data >000B
+       data title2_note_02C2
+       data >000B
+       data title2_note_02AA
+       data >0007
+       data >0000
+title2_seq_01EC:
+       data title2_note_0313
+       data >000B
+       data title2_note_0316
+       data >000B
+       data title2_note_0313
+       data >0007
+       data >0000
+title2_seq_0189:
+       data title2_note_02A7
+       data >000B
+       data title2_note_02AA
+       data >000B
+       data title2_note_02A7
+       data >0007
+       data >0000
+title2_seq_01F4:
+       data title2_note_0319
+       data >000B
+       data title2_note_0313
+       data >000B
+       data title2_note_0319
+       data >0007
+       data >0000
+title2_seq_0192:
+       data title2_note_02C5
+       data >0007
+       data title2_note_02B0
+       data >0003
+       data title2_note_02B0
+       data >000B
+       data title2_note_02B0
+       data >0003
+       data title2_note_02B0
+       data >0003
+       data >0000
+title2_seq_01FC:
+       data title2_note_031C
        data >001F
        data >0000
-title2_seq_012B:
-       data title2_note_018E
-       data >000F
-       data title2_note_018B
-       data >000F
+title2_seq_0251:
+       data title2_note_0343
+       data >0003
+       data title2_note_0343
+       data >0003
+       data title2_note_0346
+       data >0003
+       data title2_note_0346
+       data >0003
+       data title2_note_0343
+       data >0003
+       data title2_note_034F
+       data >0003
+       data title2_note_0349
+       data >0003
+       data title2_note_0352
+       data >0003
        data >0000
-title2_seq_0131:
-       data >0010
-       data title2_note_018B
-       data >000F
+title2_seq_0291:
+       data title2_note_0355
+       data >0007
+       data title2_note_0355
+       data >0003
+       data title2_note_0357
+       data >0003
+       data title2_note_0355
+       data >0003
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
+       data title2_note_0355
+       data >0001
        data >0000
-title2_seq_0136:
-       data title2_note_0191
-       data >000F
-       data title2_note_018B
-       data >000F
-       data >0000
-title2_note_0152:
+title2_note_029E:
        data title2_instr_03
        data F♯2
-title2_note_0155:
+title2_note_02A1:
        data title2_instr_03
-       data F2
-title2_note_0167:
-       data title2_instr_03
+       data G2
+title2_note_02C8:
+       data title2_instr_04
        data >012F
-title2_note_016A:
-       data title2_instr_03
-       data >0141
-title2_note_017C:
+title2_note_02CB:
+       data title2_instr_04
+       data >011E
+title2_note_031F:
        data title2_instr_00
        data B1
-title2_note_0194:
+title2_note_0322:
+       data title2_instr_00
+       data B2
+title2_note_0325:
+       data title2_instr_02
+       data B2
+title2_note_0355:
        data title2_instr_01
        data W0
-title2_note_0158:
-       data title2_instr_03
-       data E2
-title2_note_015B:
-       data title2_instr_03
-       data B2
-title2_note_016D:
-       data title2_instr_03
-       data >0154
-title2_note_0170:
-       data title2_instr_03
-       data >01C6
-title2_note_017F:
-       data title2_instr_00
-       data B2
-title2_note_0182:
-       data title2_instr_02
-       data B2
-title2_note_0196:
-       data title2_instr_01
+title2_note_0357:
+       data title2_instr_05
        data W2
-title2_note_015E:
-       data title2_instr_03
-       data B3
-title2_note_0161:
-       data title2_instr_03
-       data A♯3
-title2_note_0173:
-       data title2_instr_03
-       data P3
-title2_note_0176:
-       data title2_instr_03
-       data >00F1
-title2_note_0185:
+title2_note_0328:
        data title2_instr_00
        data D1
-title2_note_0164:
-       data title2_instr_03
-       data A3
-title2_note_0179:
-       data title2_instr_03
-       data >00FF
-title2_note_0188:
+title2_note_032B:
        data title2_instr_00
        data D2
-title2_note_018B:
+title2_note_02A4:
+       data title2_instr_03
+       data E2
+title2_note_02CE:
+       data title2_instr_04
+       data >0154
+title2_note_032E:
        data title2_instr_00
        data A1
-title2_note_018E:
+title2_note_0331:
        data title2_instr_00
        data A2
-title2_note_0191:
+title2_note_0334:
        data title2_instr_02
        data A2
+title2_note_02A7:
+       data title2_instr_03
+       data E3
+title2_note_02AA:
+       data title2_instr_03
+       data D3
+title2_note_02AD:
+       data title2_instr_03
+       data B3
+title2_note_02B0:
+       data title2_instr_07
+       data F♯4
+title2_note_02D1:
+       data title2_instr_04
+       data E2
+title2_note_02D4:
+       data title2_instr_04
+       data D2
+title2_note_02D7:
+       data title2_instr_04
+       data B2
+title2_note_02DA:
+       data title2_instr_08
+       data A4
+title2_note_02DD:
+       data title2_instr_08
+       data G3
+title2_note_02E0:
+       data title2_instr_08
+       data E3
+title2_note_02E3:
+       data title2_instr_08
+       data C♯3
+title2_note_02E6:
+       data title2_instr_08
+       data F♯3
+title2_note_02E9:
+       data title2_instr_08
+       data D3
+title2_note_02EC:
+       data title2_instr_08
+       data A3
+title2_note_02EF:
+       data title2_instr_08
+       data F♯2
+title2_note_02B3:
+       data title2_instr_03
+       data D2
+title2_note_02B6:
+       data title2_instr_03
+       data B2
+title2_note_02F2:
+       data title2_instr_04
+       data E1
+title2_note_02F5:
+       data title2_instr_04
+       data D1
+title2_note_02F8:
+       data title2_instr_04
+       data B1
+title2_note_02FB:
+       data title2_instr_06
+       data B2
+title2_note_02FE:
+       data title2_instr_06
+       data F♯1
+title2_note_02B9:
+       data title2_instr_03
+       data A3
+title2_note_02BC:
+       data title2_instr_03
+       data G♯2
+title2_note_0301:
+       data title2_instr_06
+       data A2
+title2_note_0304:
+       data title2_instr_06
+       data G♯1
+title2_note_0307:
+       data title2_instr_06
+       data E1
+title2_note_0337:
+       data title2_instr_02
+       data D2
+title2_note_030A:
+       data title2_instr_06
+       data G1
+title2_note_030D:
+       data title2_instr_06
+       data D1
+title2_note_033A:
+       data title2_instr_00
+       data E1
+title2_note_033D:
+       data title2_instr_00
+       data E2
+title2_note_0340:
+       data title2_instr_02
+       data E2
+title2_note_02BF:
+       data title2_instr_03
+       data C♯2
+title2_note_0310:
+       data title2_instr_06
+       data C♯1
+title2_note_0343:
+       data title2_instr_00
+       data F♯1
+title2_note_0346:
+       data title2_instr_00
+       data F♯2
+title2_note_0349:
+       data title2_instr_02
+       data G♯1
+title2_note_034C:
+       data title2_instr_00
+       data A♯2
+title2_note_02C2:
+       data title2_instr_03
+       data C♯3
+title2_note_0313:
+       data title2_instr_06
+       data D2
+title2_note_0316:
+       data title2_instr_06
+       data C♯2
+title2_note_0319:
+       data title2_instr_06
+       data E2
+title2_note_02C5:
+       data title2_instr_03
+       data F♯3
+title2_note_031C:
+       data title2_instr_06
+       data F♯2
+title2_note_034F:
+       data title2_instr_02
+       data F♯1
+title2_note_0352:
+       data title2_instr_02
+       data A♯2
 title2_instr_00:
        byte T3
        byte 28
@@ -315,7 +858,37 @@ title2_instr_02:
        data >0008
 title2_instr_03:
        byte T1
+       byte 31
+       byte 0
+       byte 8
+       data >0000
+title2_instr_04:
+       byte T2
+       byte 47
+       byte 63
+       byte 4
+       data >0000
+title2_instr_05:
+       byte W2
+       byte 6
+       byte 0
+       byte 42
+       data >0000
+title2_instr_06:
+       byte T2
+       byte 127
+       byte 128
+       byte -1
+       data >0000
+title2_instr_07:
+       byte T1
+       byte 6
+       byte 0
+       byte 42
+       data >0000
+title2_instr_08:
+       byte T2
+       byte 8
        byte 63
        byte 0
-       byte 4
        data >0000

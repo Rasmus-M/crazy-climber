@@ -139,6 +139,8 @@ level_4_bank_select:
        equ  >6010
 sprite_patterns_bank_select:
        equ  >6012
+static_screen_bank_select:
+       equ  >6012
 
 **
 * Scratch pad
@@ -2018,7 +2020,7 @@ display_progress:
        mov  @frame,r0
        andi r0,63
        jeq  display_progress_2
-       seto @title_bank_select
+       seto @static_screen_bank_select
        mov  @climber_pos,r3            ; World y coordinate of climber
        srl  r3,8
        a    @scroll_y,r3
@@ -2401,7 +2403,7 @@ initial_static_screen:
 *
 load_static_characters:
        .proc
-       seto @title_bank_select
+       seto @static_screen_bank_select
 *      Non-scrolling patterns 1st part
        li   r0,108*8+pattern_table     ; Non-scrolling characters
        li   r1,PAT108

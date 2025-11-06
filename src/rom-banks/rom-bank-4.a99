@@ -4,7 +4,6 @@
        copy "../graphics/title-sprites.a99"
        copy "../audio/sound-defs.a99"
        copy "../audio/title-music.a99"
-       copy "../graphics/main-screen.a99"
 rom_bank_4_end:
        equ  $
        bss  >8000-$
