@@ -157,11 +157,11 @@ vsmw_1:
 *
 * R0 is modified, R1 is next read address, R2 is zero
 *
-vm8bw8:
-       li   r3,8                       ; call here to skip 8 bytes
+vm8bw8:                                ; call here to skip 8 bytes
+       li   r3,8
        jmp  vm8bw0
-vm8bw:
-       clr  r3                         ; call here to skip zero bytes
+vm8bw:                                 ; call here to skip zero bytes
+       clr  r3
 vm8bw0:
        .proc
        bl   @vwad                      ; setup write address

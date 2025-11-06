@@ -172,8 +172,10 @@ vdp_status:                            ; VDP status byte
        equ  rand_no+2
 frame:                                 ; Frame counter
        equ  vdp_status+2
-sprite_dupl_bug:                       ; Does VDP have sprite duplication bug?
+int_count:                             ; Frame counter
        equ  frame+2
+sprite_dupl_bug:                       ; Does VDP have sprite duplication bug?
+       equ  int_count+2
 scroll_y:                              ; Vertical scroll offset
        equ  sprite_dupl_bug+2
 scroll_dy:                             ; Scroll direction
@@ -216,10 +218,8 @@ max_residents:                         ; Maximum residents together on screen
        equ  next_stage_ptr+2
 current_residents:                     ; Currently disaplyed residents
        equ  max_residents+2
-secondary_sprite_patterns:             ; Secondary sprite patterns loaded (0 = head and hands)
-       equ  current_residents+2
 control_set:                           ; Points to current control set (joystick_control or keyboard_control)
-       equ  secondary_sprite_patterns+2
+       equ  current_residents+2
 status:                                ; Game status (-1 = dead, 0 = normal, 1 = finished, 2 = finished but not picked up by chopper)
        equ  control_set+2
 level:                                 ; Current level, 0 - ...
@@ -427,6 +427,7 @@ int_routine:
        bl   @module_player
        bl   @speech_player
        bl   @check_quit
+       inc  @int_count
        lwpi wrksp
        rt
 *// int_routine
@@ -2413,6 +2414,7 @@ load_static_characters:
        li   r1,PAT236
        li   r2,20*8
        bl   @vmbw
+       bl   @check_int
 *      Non-scrolling patterns 2nd part
        li   r0,108*8+pattern_table_1   ; Non-scrolling characters
        li   r1,PAT108
@@ -2422,6 +2424,7 @@ load_static_characters:
        li   r1,PAT236
        li   r2,20*8
        bl   @vmbw
+       bl   @check_int
 *      Non-scrolling patterns 2rd part
        li   r0,108*8+pattern_table_2   ; Non-scrolling characters
        li   r1,PAT108
@@ -2431,6 +2434,7 @@ load_static_characters:
        li   r1,PAT236
        li   r2,20*8
        bl   @vmbw
+       bl   @check_int
 *      Non-scrolling colors
        li   r0,108*8+color_table       ; Non-scrolling colors
        li   r1,COL108
@@ -2440,6 +2444,7 @@ load_static_characters:
        li   r1,COL236
        li   r2,20*8
        bl   @vmbw
+       bl   @check_int
        .endproc
 *// load_static_characters
 
@@ -2650,6 +2655,7 @@ title_screen_1:
        li   r0,title2_module
        bl   @play_module
        bl   @one_pattern_table
+       clr  @int_count
 *      Title screen loop
        clr  @title_screen_done
        li   r0,3
@@ -2687,13 +2693,14 @@ title_screen_main_cycle:
        bl   @title_scroll_logo
        bl   @check_int
        bl   @title_scroll_text
-       li   r2,>8000
 title_screen_main_cycle_1:
-       bl   @check_int
+       bl   @vsync
+       bl   @int_routine
        bl   @check_keys_for_title_screen
        abs  @title_screen_done
        jne  title_screen_main_cycle_5
-       dec  r2
+       mov  @int_count,r0
+       andi r0,511
        jne  title_screen_main_cycle_1
        bl   @disable_sprites
        bl   @high_score_screen
@@ -2784,17 +2791,15 @@ title_scroll_logo_2:
        li   r0,pattern_table
        a    r4,r0
        mov  r5,r1
-       mov  @L_TCHNUM,r2
-       bl   @vm8bw8
-       bl   @check_int
+       mov  @L_TCHNUM,r7
+       bl   @upload_title_chars
 *      Copy colors
        li   r0,color_table
        a    r4,r0
        mov  r5,r1
        ai   r1,L_CSTRIP-L_PSTRIP
-       mov  @L_TCHNUM,r2
-       bl   @vm8bw8
-       bl   @check_int
+       mov  @L_TCHNUM,r7
+       bl   @upload_title_chars
 *      Copy name table
        mov  @frame,r0
        inv  r0
@@ -2819,16 +2824,15 @@ title_scroll_logo_4:
 title_scroll_logo_5:
        bl   @check_keys_for_title_screen
        abs  @title_screen_done
-       jne  title_scroll_logo_7
+       jne  title_scroll_logo_6
 *      Change scroll offset
-title_scroll_logo_6:
        bl   @check_int
        dec  @scroll_y
-       jlt  title_scroll_logo_7
+       jlt  title_scroll_logo_6
        inc  @frame
-       jmp  title_scroll_logo_1
+       b    @title_scroll_logo_1
 *      Equalize the two name tables
-title_scroll_logo_7:
+title_scroll_logo_6:
        li   r0,name_table_0
        li   r1,L_MAP_HIGH+32
        li   r2,6*32/8
@@ -2861,17 +2865,15 @@ title_scroll_text_1:
        li   r0,58*8+pattern_table
        a    r4,r0
        mov  r5,r1
-       mov  @T_TCHNUM,r2
-       bl   @vm8bw8
-       bl   @check_int
+       mov  @T_TCHNUM,r7
+       bl   @upload_title_chars
 *      Copy colors
        li   r0,58*8+color_table
        a    r4,r0
        mov  r5,r1
        ai   r1,T_CSTRIP-T_PSTRIP
-       mov  @T_TCHNUM,r2
-       bl   @vm8bw8
-       bl   @check_int
+       mov  @T_TCHNUM,r7
+       bl   @upload_title_chars
 *      Copy name table
        mov  @frame,r0
        inv  r0
@@ -2889,25 +2891,52 @@ title_scroll_text_3:
        sla  r2,5
        s    r2,r0
        srl  r2,3
-       jeq  title_scroll_text_5
+       jeq  title_scroll_text_4
        bl   @vm8bw
        bl   @check_int
 *      Check keys
-title_scroll_text_4:
        bl   @check_keys_for_title_screen
        abs  @title_screen_done
-       jne  title_scroll_text_6
+       jne  title_scroll_text_5
 *      Change scroll offset
-title_scroll_text_5:
+title_scroll_text_4:
        inct @scroll_y
        mov  @scroll_y,r0
        ci   r0,140
-       jeq  title_scroll_text_6
+       jeq  title_scroll_text_5
        inc  @frame
        jmp  title_scroll_text_1
-title_scroll_text_6:
+title_scroll_text_5:
        .endproc
 *// title_scroll_text
+
+*********************************************************************
+*
+* Upload characters for title screen
+*
+* r7: Total chars
+*
+upload_title_chars:
+       .proc
+       mov  r7,r6
+       srl  r6,2
+       mov  r6,r2
+       bl   @vm8bw8
+       bl   @check_int
+       s    r6,r7
+       li   r8,2
+upload_title_chars_1:
+       mov  r6,r2
+       bl   @vm8bw_pad
+       bl   @check_int
+       s    r6,r7
+       dec  r8
+       jne  upload_title_chars_1
+       mov  r7,r2
+       bl   @vm8bw_pad
+       bl   @check_int
+       .endproc
+*// title_upload_chars:
 
 *********************************************************************
 *
@@ -2916,14 +2945,18 @@ title_scroll_text_6:
 high_score_screen:
        .proc
        bl   @clear_screen
-       bl   @check_int
        bl   @load_static_characters
-       bl   @check_int
+       seto @title_bank_select
        li   r0,color_table
        li   r1,>f100
-       li   r2,>800
+       li   r3,8
+high_score_screen_0:
+       li   r2,>100
        bl   @vsmw
        bl   @check_int
+       ai   r0,>100
+       dec  r3
+       jne  high_score_screen_0
        clr  @frame
        bl   @set_name_table
        li   r0,5*32+9+name_table_0
@@ -2951,17 +2984,19 @@ high_score_screen_1:
        mov  *r8+,r6
        mov  *r8+,r7
        bl   @display_double
+       bl   @check_int
        inc  r9
        ci   r9,5
        jne  high_score_screen_1
-       li   r2,>8000
 high_score_screen_2:
-       bl   @check_int
+       bl   @vsync
+       bl   @int_routine
 *      Read keyboard
        bl   @check_keys_for_title_screen
        abs  @title_screen_done
        jne  high_score_screen_3
-       dec  r2
+       mov  @int_count,r0
+       andi r0,511
        jne  high_score_screen_2
 high_score_screen_3:
        .endproc
@@ -3311,6 +3346,8 @@ load_sprite_patterns:
        mov  @level_bank_select,r0
        seto *r0
        .endproc
+secondary_sprite_patterns:
+       data 0
 *// load_sprite_patterns
 
 *********************************************************************
@@ -3450,7 +3487,6 @@ clear_screen:
        .proc
        li   r0,name_table_0
        bl   @clear_name_table
-       bl   @check_int
        li   r0,name_table_1
        bl   @clear_name_table
        .endproc
@@ -3463,7 +3499,9 @@ clear_screen:
 clear_name_table:
        .proc
        bl   @vwad
-       li   r2,>300/4
+       li   r3,4
+clear_name_table_0:
+       li   r2,>300/16
 clear_name_table_1:
        clr  *r15
        clr  *r15
@@ -3471,6 +3509,9 @@ clear_name_table_1:
        clr  *r15
        dec  r2
        jne  clear_name_table_1
+       bl   @check_int
+       dec  r3
+       jne  clear_name_table_0
        .endproc
 *// clear_name_table
 
