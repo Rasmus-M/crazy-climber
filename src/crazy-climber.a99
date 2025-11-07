@@ -2921,12 +2921,12 @@ title_scroll_text_5:
 upload_title_chars:
        .proc
        mov  r7,r6
-       srl  r6,2
+       srl  r6,3
        mov  r6,r2
        bl   @vm8bw8
        bl   @check_int
        s    r6,r7
-       li   r8,2
+       li   r8,6
 upload_title_chars_1:
        mov  r6,r2
        bl   @vm8bw_pad
