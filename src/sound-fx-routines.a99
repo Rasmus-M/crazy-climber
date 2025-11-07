@@ -64,16 +64,29 @@ play_boing:
 
 *********************************************************************
 *
-* Play girder
+* Play girder 1
 *
-play_girder:
+play_girder_1:
        .proc
-       li   r0,snd_girder
+       li   r0,snd_girder_1
        li   r1,snd_channel_2
        li   r2,G♯5
        bl   @play_snd
        .endproc
-*// play_girder
+*// play_girder_1
+
+*********************************************************************
+*
+* Play girder 2
+*
+play_girder_2:
+       .proc
+       li   r0,snd_girder_2
+       li   r1,snd_channel_3
+       li   r2,C♯5
+       bl   @play_snd
+       .endproc
+*// play_girder_2
 
 *********************************************************************
 *
@@ -93,8 +106,6 @@ play_sign:
 *
 play_spark:
        .proc
-       li   r2,A1
-       a    r1,r2
        li   r0,snd_spark
        li   r1,snd_channel_3
        bl   @play_snd

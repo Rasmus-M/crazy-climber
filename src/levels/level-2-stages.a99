@@ -36,6 +36,10 @@ balloon_stage_2:
        data >0280                      ; scroll y
        data balloon_stage_init         ; init
        data balloon_init_data
+two_girders_stage_2_5:
+       data >0200                      ; scroll y
+       data girders_stage_init         ; init
+       data two_girders_init_data
 chopper_stage_2:
        data >0080                      ; scroll y
        data chopper_stage_init         ; init

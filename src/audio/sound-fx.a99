@@ -22,8 +22,15 @@ snd_boing:
        byte 8                          ; Attn step
        data -32                        ; Freq step
 
-snd_girder:
+snd_girder_1:
        byte T2
+       byte 192                        ; Frames
+       byte 64                         ; Attn start
+       byte 0                          ; Attn step
+       data 1                          ; Freq step
+
+snd_girder_2:
+       byte T3
        byte 192                        ; Frames
        byte 64                         ; Attn start
        byte 0                          ; Attn step

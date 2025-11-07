@@ -509,7 +509,7 @@ balloon_handler:
        jne  balloon_handler_1
        a    @sprite_vy(r3),@sprite_y(r3)
 balloon_handler_1:
-       andi r1,31
+       andi r1,15
        jne  balloon_handler_2
        neg  @sprite_vx(r3)
 balloon_handler_2:
@@ -539,6 +539,8 @@ balloon_handler_3:
        li   r0,256
        s    r0,@sprite_y(r3)
        seto @sprite_count(r3)          ; Fly away after pickup
+       li   r0,6
+       a    r0,@next_stage_ptr         ; Skip girders
        li   r0,3
        mov  r0,@status
        jmp  balloon_handler_5
@@ -546,7 +548,8 @@ balloon_handler_3:
 balloon_handler_4:
        dect @sprite_y(r3)
        mov  @sprite_y(r3),r1
-       ci   r1,->0018
+       s    @scroll_y,r1
+       ci   r1,->0030
        jgt  balloon_handler_5
        clr  *r3
        bl   @mute_sound
@@ -843,15 +846,17 @@ create_girder:
        andi r1,4
        jne  create_girder_1
        li   r0,>0ec8
+       li   r2,play_girder_1
        jmp  create_girder_2
 create_girder_1:
        li   r0,>08e0
+       li   r2,play_girder_2
 create_girder_2:
        mov  r0,@sprite_ax(r4)          ; Color and pattern
        bl   @rand
        andi r0,31
        mov  r0,@sprite_ay(r4)          ; Delay
-       bl   @play_girder
+       bl   *r2
 create_girder_3:
        .endproc
 girder_init_data:

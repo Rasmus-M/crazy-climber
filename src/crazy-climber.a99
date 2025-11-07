@@ -68,7 +68,7 @@ test_bird:
 test_kong:
        equ  0
 test_sparking_sign:
-       equ  1
+       equ  0
 test_dropping_sign:
        equ  0
 test_balloon:
@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  1                          ; 0 is the first building
+       equ  0                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -2540,7 +2540,10 @@ chopper_pickup_3:
        c    @status,@w_1
        jne  chopper_pickup_4
        sb   @b_1,@climber_pos
+       jmp  chopper_pickup_5
 chopper_pickup_4:
+       bl   @play_chopper
+chopper_pickup_5:
        inc  @frame
        dec  r8
        jne  chopper_pickup_1
@@ -2571,8 +2574,6 @@ balloon_pickup_1:
        bl   @change_scroll_offset
        bl   @update_pattern_table
        bl   @update_name_table
-;       li   r1,10
-;       bl   @add_score
        bl   @display_score
        inc  @frame
        c    @frame,@balloon_pickup_end_frame

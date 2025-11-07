@@ -208,7 +208,7 @@ balloon_stage_init_1:
        bl   @play_module
        .endproc
 balloon_init_data:
-       data  balloon_handler,>0098,>0280->0018,>00a0,>0001,>0001
+       data  balloon_handler,>0098,>0280->0018,>00c8,>0001,>0001
 *// balloon_stage_init
 
 *********************************************************************
