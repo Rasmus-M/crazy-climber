@@ -397,6 +397,13 @@ sparking_sign_handler_3:
 *      Update sprite
 sparking_sign_handler_4:
        inc  @sprite_count(r3)
+*      Sound FX
+       bl   @rand
+       andi r0,15
+       jne  sparking_sign_handler_5
+       .push r3
+        bl   @play_spark
+       .pop r3
 sparking_sign_handler_5:
        .endproc
 sparking_sign_patterns_left:

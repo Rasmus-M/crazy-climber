@@ -67,8 +67,8 @@ test_bird:
        equ  0
 test_kong:
        equ  0
-test_sign_with_wires:
-       equ  0
+test_sparking_sign:
+       equ  1
 test_dropping_sign:
        equ  0
 test_balloon:
@@ -76,7 +76,7 @@ test_balloon:
 test_chopper:
        equ  0
 start_level:
-       equ  0                          ; 0 is the first building
+       equ  1                          ; 0 is the first building
 
 *      Constants
 map_width:
@@ -3237,7 +3237,7 @@ level_init:
        li   r0,kong_stage_1
        mov  r0,@next_stage_ptr
        .endif
-       .ifeq test_sign_with_wires,1
+       .ifeq test_sparking_sign,1
        li   r0,(sign_row_2*8)+>60      ; For testing sign with wires
        mov  r0,@scroll_y
        li   r0,sign_stage_2

@@ -89,6 +89,20 @@ play_sign:
 
 *********************************************************************
 *
+* Play spark
+*
+play_spark:
+       .proc
+       li   r2,A1
+       a    r1,r2
+       li   r0,snd_spark
+       li   r1,snd_channel_3
+       bl   @play_snd
+       .endproc
+*// play_spark
+
+*********************************************************************
+*
 * Play chopper
 *
 play_chopper:
