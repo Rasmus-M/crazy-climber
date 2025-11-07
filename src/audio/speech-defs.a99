@@ -6,3 +6,6 @@ speech_go_for_it_idx:
 
 speech_oh_no_idx:
        equ  3
+
+speech_extra_life_idx:
+       equ  4

@@ -2149,6 +2149,8 @@ add_score_1:
 add_score_2:
        inc  @lives
        bl   @display_lives
+       li   r0,speech_extra_life_idx
+       bl   @speak
 add_score_3:
        .endproc
 *// add_score

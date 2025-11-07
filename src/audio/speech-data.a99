@@ -17,6 +17,9 @@ speech_data:
        data speech_oh_no
        data speech_oh_no_end-speech_oh_no
 
+       data speech_extra_life
+       data speech_extra_life_end-speech_extra_life
+
 speech_ouch:
        BYTE >45,>F3,>A5,>2E,>AC,>7E,>14,>DD
        BYTE >EE,>7A,>B3,>DA,>B5,>F4,>30,>EB
@@ -75,6 +78,35 @@ speech_oh_no:
        BYTE >D5,>12,>33,>54,>D9,>29,>0A,>52
        BYTE >25,>00,>A7,>22,>1e
 speech_oh_no_end:
+       equ  $
+
+speech_extra_life:
+       BYTE >01,>0C,>8D,>9B,>B6,>07,>17,>7C
+       BYTE >74,>6B,>FE,>8F,>32,>D8,>52,>23
+       BYTE >F8,>6A,>45,>23,>CB,>65,>A7,>5C
+       BYTE >29,>86,>2C,>9D,>5C,>A2,>64,>83
+       BYTE >03,>C2,>B2,>30,>78,>4F,>77,>03
+       BYTE >00,>CC,>E1,>3F,>FD,>44,>A8,>3B
+       BYTE >83,>FE,>D9,>95,>A1,>57,>04,>FB
+       BYTE >D6,>4D,>A8,>08,>42,>40,>FB,>D3
+       BYTE >0E,>E8,>B3,>2B,>E9,>FE,>BA,>19
+       BYTE >49,>DE,>A6,>BB,>A9,>EE,>CE,>6D
+       BYTE >96,>E1,>53,>85,>9A,>2E,>19,>A6
+       BYTE >75,>5D,>4A,>5D,>37,>58,>32,>74
+       BYTE >30,>6F,>54,>67,>F1,>B0,>41,>F2
+       BYTE >76,>82,>25,>DC,>19,>EB,>DA,>77
+       BYTE >26,>F7,>E7,>E4,>67,>3B,>19,>CA
+       BYTE >BE,>B1,>8E,>B3,>A6,>6B,>BF,>45
+       BYTE >76,>F6,>86,>E6,>FD,>35,>DB,>D8
+       BYTE >19,>9A,>8B,>33,>38,>C3,>A8,>69
+       BYTE >B6,>B6,>49,>17,>F1,>A5,>85,>DA
+       BYTE >0B,>75,>52,>8E,>16,>4B,>A4,>76
+       BYTE >3A,>39,>7A,>1E,>66,>DA,>6D,>65
+       BYTE >19,>39,>8B,>E6,>8C,>95,>04,>D4
+       BYTE >09,>5E,>80,>5A,>21,>13,>90,>23
+       BYTE >64,>00,>52,>75,>66,>40,>AF,>DF
+       BYTE >04,>68,>65,>F2,>01
+speech_extra_life_end:
        equ  $
 
 ;       bss >8000-speech_go_for_it_end-2
