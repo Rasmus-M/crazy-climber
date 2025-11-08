@@ -334,6 +334,9 @@ died:
        jne  restart_level
 *      Game over
        bl   @record_high_score
+       clr  @title_screen_done
+       clr  @int_count
+       bl   @high_score_screen
        b    @new_game
 *// main_loop
 
@@ -2943,9 +2946,11 @@ upload_title_chars_1:
 *
 high_score_screen:
        .proc
+       bl   @one_pattern_table
        bl   @clear_screen
        bl   @load_static_characters
        seto @title_bank_select
+*      Set all colors to white on black
        li   r0,color_table
        li   r1,>f100
        li   r3,8
@@ -2956,15 +2961,19 @@ high_score_screen_0:
        ai   r0,>100
        dec  r3
        jne  high_score_screen_0
+*      Set name table
        clr  @frame
        bl   @set_name_table
+*      Display HIGHEST SCORES
        li   r0,5*32+9+name_table_0
        li   r1,txt_highest_scores
        li   r2,14
        bl   @vmbw
+*      Display high scores
        li   r8,high_scores
        clr   r9
 high_score_screen_1:
+*      Display NOX
        mov  r9,r0
        sla  r0,6
        ai   r0,8*32+11
@@ -2977,16 +2986,30 @@ high_score_screen_1:
        li   r1,txt_no1
        li   r2,4
        bl   @vmbw
+*      Display high score
        mov  r9,r0
        sla  r0,6
        ai   r0,8*32+15
        mov  *r8+,r6
        mov  *r8+,r7
        bl   @display_double
+*      Check if it was the last score
+       c    @-4(r8),@score_msw
+       jne  high_score_screen_1a
+       c    @-2(r8),@score
+       jne  high_score_screen_1a
+*      Indicate last score
+       ai   r0,-(name_table_1-name_table_0)+5
+       bl   @vwad
+       li   r1,chr_life*256
+       movb r1,*r15
+*      Next high score
+high_score_screen_1a:
        bl   @check_int
        inc  r9
        ci   r9,5
        jne  high_score_screen_1
+*      Wait
 high_score_screen_2:
        bl   @vsync
        bl   @int_routine
@@ -3012,8 +3035,10 @@ record_high_score:
 record_high_score_1:
        c    @score_msw,*r0+
        jh   record_high_score_2
+       jl   record_high_score_1a
        c    @score,*r0
        jh   record_high_score_2
+record_high_score_1a:
        inct r0
        dec  r2
        jne  record_high_score_1
@@ -3484,6 +3509,12 @@ three_pattern_tables_1:
 *
 clear_screen:
        .proc
+*      Clear char 0
+       li   r0,pattern_table
+       clr  r1
+       li   r2,8
+       bl   @vsmw
+*      Clear name tables
        li   r0,name_table_0
        bl   @clear_name_table
        li   r0,name_table_1

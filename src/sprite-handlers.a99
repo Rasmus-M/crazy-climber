@@ -452,7 +452,7 @@ girder_handler:
        jeq  girder_handler_2
 *      Hit
        bl   @lose_grip
-       jmp  girder_handler_5
+       jmp  girder_handler_4a
 *      Update sprite
 girder_handler_2:
        mov  @sprite_ay(r3),r0          ; Delay
@@ -478,6 +478,7 @@ girder_handler_4:
        s    *r1,r0
        ci   r0,64                      ; If close to next stage
        jlt  girder_handler_6           ; then just finish
+girder_handler_4a:
        .push r3
        bl   @create_girder             ; Otherwise create a new girder
        .pop r3
