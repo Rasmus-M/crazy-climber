@@ -3203,6 +3203,10 @@ logo_screen_1:
        bl   @vsync
        dec  r2
        jne  logo_screen_1
+logo_screen_2:
+       li   r0,KEY_SP
+       bl   @check_key
+       jne  logo_screen_2
        bl   @screen_off
        .endproc
 *// logo_screen
