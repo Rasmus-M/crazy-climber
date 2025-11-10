@@ -18,6 +18,7 @@
        copy "rom-banks/rom-bank-7.a99"
        copy "rom-banks/rom-bank-8.a99"
        copy "rom-banks/rom-bank-9.a99"
+       copy "rom-banks/rom-bank-A.a99"
 
 **
 * Memory mapped addresses
@@ -60,6 +61,8 @@ sprite_attr_table:                     ; Sprite attribute table
 falling_enabled:
        equ  1
 windows_enabled:
+       equ  1
+display_logo:
        equ  1
 display_title:
        equ  1
@@ -141,6 +144,8 @@ sprite_patterns_bank_select:
        equ  >6012
 static_screen_bank_select:
        equ  >6012
+logo_screen_bank_select:
+       equ  >6014
 
 **
 * Scratch pad
@@ -281,6 +286,9 @@ start  limi 0                          ; disable interrupts
        lwpi wrksp                      ; setup workspace
        li   r10,stack                  ; use r10 as stack pointer
        bl   @one_time_init
+       .ifeq display_logo, 1
+       bl   @logo_screen
+       .endif
 new_game:
        .ifeq display_title,1
        bl   @title_screen
@@ -2657,6 +2665,7 @@ title_screen_1:
        li   r0,title2_module
        bl   @play_module
        bl   @one_pattern_table
+       bl   @screen_on
        clr  @int_count
 *      Title screen loop
        clr  @title_screen_done
@@ -3151,6 +3160,52 @@ demo_horz_keys:
        clr  r4                         ; Right right
        rt
 *// demo_horz_keys
+
+*********************************************************************
+*
+* Display logo screen
+*
+logo_screen:
+       .proc
+       seto @logo_screen_bank_select
+       bl   @screen_off
+       li   r0,pattern_table
+       li   r1,PAT0
+       li   r2,160*8
+       bl   @vmbw
+       li   r0,pattern_table_1
+       li   r1,PAT0
+       li   r2,160*8
+       bl   @vmbw
+       li   r0,pattern_table_2
+       li   r1,PAT0
+       li   r2,160*8
+       bl   @vmbw
+       li   r0,color_table
+       li   r1,COL0
+       li   r2,160*8
+       bl   @vmbw
+       li   r0,name_table_0
+       li   r1,MD0
+       li   r2,>300
+       bl   @vmbw
+       li   r0,sprite_pattern_table
+       li   r1,_SPR0
+       li   r2,13*32
+       bl   @vmbw
+       li   r0,sprite_attr_table
+       li   r1,SL0
+       li   r2,16*4+1
+       bl   @vmbw
+       bl   @screen_on
+       li   r2,240
+logo_screen_1:
+       bl   @vsync
+       dec  r2
+       jne  logo_screen_1
+       bl   @screen_off
+       .endproc
+*// logo_screen
 
 *********************************************************************
 *
