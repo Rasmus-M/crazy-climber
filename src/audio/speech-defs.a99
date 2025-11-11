@@ -9,3 +9,6 @@ speech_oh_no_idx:
 
 speech_extra_life_idx:
        equ  4
+
+speech_yuck_idx:
+       equ  5

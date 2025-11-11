@@ -2,8 +2,6 @@
 *
 * Speech data
 *
-;       aorg >6000
-
 speech_data:
        data 0
        data 1
@@ -19,6 +17,9 @@ speech_data:
 
        data speech_extra_life
        data speech_extra_life_end-speech_extra_life
+
+       data speech_yuck
+       data speech_yuck_end-speech_yuck
 
 speech_ouch:
        BYTE >45,>F3,>A5,>2E,>AC,>7E,>14,>DD
@@ -109,5 +110,34 @@ speech_extra_life:
 speech_extra_life_end:
        equ  $
 
-;       bss >8000-speech_go_for_it_end-2
+speech_yuck:
+       BYTE >80,>7C,>60,>BF,>9B,>C8,>0A,>09
+       BYTE >30,>DF,>59,>45,>59,>24,>A4,>A4
+       BYTE >67,>1D,>65,>89,>50,>82,>9A,>0E
+       BYTE >91,>25,>42,>0D,>7C,>B7,>09,>99
+       BYTE >8A,>0C,>B4,>DE,>13,>B0,>26,>34
+       BYTE >58,>F3,>CE,>C0,>84,>D0,>12,>A9
+       BYTE >BD,>82,>56,>3C,>AF,>39,>AF,>03
+       BYTE >72,>F1,>9C,>93,>EA,>76,>2A,>CD
+       BYTE >75,>C9,>2C,>AA,>A0,>34,>D7,>D5
+       BYTE >30,>CB,>86,>DA,>5C,>D7,>5A,>CC
+       BYTE >87,>58,>F3,>4C,>5F,>37,>6F,>B2
+       BYTE >49,>77,>AB,>11,>65,>C4,>04,>DD
+       BYTE >F5,>16,>94,>24,>90,>38,>FB,>2F
+       BYTE >44,>5E,>90,>C3,>DD,>DB,>12,>FA
+       BYTE >F9,>09,>73,>E3,>D6,>78,>A3,>04
+       BYTE >30,>E5,>3F,>83,>9A,>46,>E0,>F0
+       BYTE >C2,>C3,>4B,>2A,>00,>40,>60,>D3
+       BYTE >CF,>AA,>B0,>26,>85,>4F,>4F,>2B
+       BYTE >43,>9D,>06,>BA,>BC,>26,>8D,>4C
+       BYTE >56,>D8,>72,>2E,>C4,>D2,>59,>00
+       BYTE >F3,>CF,>0C,>09,>27,>01,>4B,>BB
+       BYTE >C4,>2C,>9D,>06,>2D,>8D,>31,>B7
+       BYTE >B4,>E7,>CC,>D8,>87,>DC,>32,>98
+       BYTE >D1,>63,>1B,>37,>89,>BB,>42,>8E
+       BYTE >6D,>C5,>5D,>AD,>20,>D5,>EF,>12
+       BYTE >37,>55,>02,>0F
+speech_yuck_end:
+       equ  $
+
        data -1

@@ -223,6 +223,8 @@ bird_dropping_handler:
        mov  r2,r2
        jeq  bird_dropping_handler_2
 *      Hit
+       li   r0,speech_yuck_idx
+       bl   @speak
        bl   @lose_grip
        jmp  bird_dropping_handler_3
 *      Update sprite

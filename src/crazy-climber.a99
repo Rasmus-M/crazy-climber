@@ -2,11 +2,14 @@
 *
 * Crazy climber
 *
+* For the TI-99/4A home computer
+*
+* July - November 2025
 * Rasmus Moustgaard <rasmus.moustgaard@gmail.com>
 *
 *********************************************************************
 
-       def   start
+       def  start
 
        copy "macros.a99"
        copy "audio/sound-defs.a99"
@@ -58,6 +61,10 @@ sprite_attr_table:                     ; Sprite attribute table
        equ  >3000
 
 *      For testing
+infinite_lives:
+       equ  0
+n_lives:
+       equ  3
 falling_enabled:
        equ  1
 windows_enabled:
@@ -318,10 +325,7 @@ finished:
 *      Level completed with chopper pickup
 finished_1:
        bl   @chopper_pickup
-       mov  @level,r0
-       inc r0
-       andi r0,n_levels-1
-       mov  r0,@level
+       inc  @level
        jmp  next_level
 finished_2:
        ci   r0,2
@@ -338,7 +342,9 @@ finished_3:
 died:
 *      Died
        bl   @fall_sequence
+       .ifeq infinite_lives,0
        dec  @lives
+       .endif
        jne  restart_level
 *      Game over
        bl   @record_high_score
@@ -2142,6 +2148,7 @@ add_score:
        a    r1,@score
        jnc  add_score_1
        inc  @score_msw
+       jmp  add_score_3
 add_score_1:
        mov  @score,r1                  ; Score after
        ci   r1,30000
@@ -2248,6 +2255,10 @@ display_level:
        mov  @level,r1
        inc  r1
        li   r2,1
+       ci   r1,10
+       jl   display_level_1
+       inc  r2
+display_level_1:
        bl   @display_decimal
        .endproc
 *// display_level
@@ -2713,7 +2724,6 @@ title_screen_main_cycle_1:
        mov  @int_count,r0
        andi r0,511
        jne  title_screen_main_cycle_1
-       bl   @disable_sprites
        bl   @high_score_screen
        jmp  title_screen_main_cycle_5
 title_screen_main_cycle_5:
@@ -2955,6 +2965,7 @@ upload_title_chars_1:
 *
 high_score_screen:
        .proc
+       bl   @disable_sprites
        bl   @one_pattern_table
        bl   @clear_screen
        bl   @load_static_characters
@@ -3145,7 +3156,7 @@ demo_vert_keys_2:
 
 *********************************************************************
 *
-* Demo mode horizontal control
+* Demo mode horizontal control. Could be improved :-)
 *
 * On return:
 * r1 Left left
@@ -3201,6 +3212,12 @@ logo_screen:
        li   r2,240
 logo_screen_1:
        bl   @vsync
+       li   r0,KEY_1
+       bl   @check_key
+       jne  logo_screen_2
+       li   r0,KEY_2
+       bl   @check_key
+       jne  logo_screen_2
        dec  r2
        jne  logo_screen_1
 logo_screen_2:
@@ -3263,7 +3280,7 @@ game_init:
        clr  @score
        clr  @score_msw
        clr  @status
-       li   r0,3
+       li   r0,n_lives
        mov  r0,@lives
        li   r0,start_level
        mov  r0,@level
@@ -3282,12 +3299,20 @@ level_init:
        bl   @clear_sprites_and_animations
 *      Copy level data
        mov  @level,r0
+       andi r0,n_levels-1
        sla  r0,1
        ai   r0,levels
        mov  *r0,r0
        li   r1,current_level_data
        li   r2,level_data_size
        bl   @copy
+*      Override window settings for higher levels
+       mov  @level,r0
+       ci   r0,n_levels
+       jlt  level_init_1
+       mov  @level4+close_window_counts-current_level_data,@close_window_counts
+       mov  @level4+create_windows_frame_mask-current_level_data,@create_windows_frame_mask
+level_init_1:
 *      Set ROM bank
        mov  @level_bank_select,r0
        seto *r0
