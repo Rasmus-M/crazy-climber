@@ -2148,8 +2148,9 @@ add_score:
        a    r1,@score
        jnc  add_score_1
        inc  @score_msw
-       jmp  add_score_3
 add_score_1:
+       mov  @score_msw,r0
+       jne  add_score_3
        mov  @score,r1                  ; Score after
        ci   r1,30000
        jl   add_score_3
