@@ -409,7 +409,7 @@ main_loop_body:
 * Wait for vsync
 *
 vsync:
-       movb @vdpsta,@vdp_status        ; Clear flag if already set
+;      movb @vdpsta,@vdp_status        ; Clear flag if already set
        clr  r12
 vsync1:
        tb   2
@@ -3226,6 +3226,7 @@ logo_screen_2:
        bl   @check_key
        jne  logo_screen_2
        bl   @screen_off
+       bl   @disable_sprites
        .endproc
 *// logo_screen
 

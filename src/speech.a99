@@ -19,6 +19,9 @@ speak:
 ;       seto @speech_bank
        mov  *r0+,@speech_addr
        mov  *r0,@speech_counter
+*      Reset
+       movb @h70,@spchwt
+       bl   @delay_12us
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
@@ -196,6 +199,7 @@ buffer_empty:
        data >2000                      ; Buffer empty
 h10    byte >10
 h60    byte >60
+h70    byte >70
 hAA    byte >aa
 
        even

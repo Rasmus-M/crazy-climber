@@ -61,6 +61,8 @@ plant_handler:
        li   r2,>0c00                   ; Green
        movb r2,*r15
 *      Check for collision with climber
+       abs  @sprite_ax(r3)
+       jne  plant_handler_1
        bl   @check_sprite_hit_head
        mov  r2,r2
        jeq  plant_handler_1
@@ -75,7 +77,7 @@ plant_handler:
        neg  r2                         ; Reverse y velocity
        sra  r2,1
        mov  r2,@sprite_vy(r3)
-       a    r2,@sprite_y(r3)           ; Prevent double hit
+       seto @sprite_ax(r3)             ; Prevent double hit
        bl   @lose_grip
        .push r3
        bl   @play_boing
@@ -85,7 +87,6 @@ plant_handler:
        seto @speech_reserved
 *      Update sprite
 plant_handler_1:
-       a    @sprite_ax(r3),@sprite_vx(r3)
        a    @sprite_ay(r3),@sprite_vy(r3)
        a    @sprite_vx(r3),@sprite_x(r3)
        a    @sprite_vy(r3),@sprite_y(r3)
