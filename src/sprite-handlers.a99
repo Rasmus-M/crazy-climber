@@ -61,7 +61,7 @@ plant_handler:
        li   r2,>0c00                   ; Green
        movb r2,*r15
 *      Check for collision with climber
-       abs  @sprite_ax(r3)
+       abs  @sprite_ax(r3)             ; check if already hit
        jne  plant_handler_1
        bl   @check_sprite_hit_head
        mov  r2,r2
