@@ -2149,7 +2149,7 @@ add_score:
        jnc  add_score_1
        inc  @score_msw
 add_score_1:
-       mov  @score_msw,r0
+       mov  @score_msw,r2
        jne  add_score_3
        mov  @score,r1                  ; Score after
        ci   r1,30000

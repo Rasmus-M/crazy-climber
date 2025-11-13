@@ -17,11 +17,8 @@ speak:
 *      Are there bytes left to send
        mov  @speech_counter,r2         ; Get counter
        jgt  speak_1                    ; Skip if already speaking
-*      Are there data left in the FIFO buffer?
-       bl   @speech_read_pad
-       movb @speech_status,r0
-       coc  @talking,r0                ; Talking?
-       jeq  speak_1                    ; Then skip
+*      Reset speech synthesizer
+       movb @h70,@spchwt
 *      Setup variables
        sla  r0,2                       ; index * 4
        ai   r0,speech_data
