@@ -3203,11 +3203,11 @@ logo_screen:
        bl   @vmbw
        li   r0,sprite_pattern_table
        li   r1,_SPR0
-       li   r2,13*32
+       li   r2,17*32
        bl   @vmbw
        li   r0,sprite_attr_table
        li   r1,SL0
-       li   r2,16*4+1
+       li   r2,20*4+1
        bl   @vmbw
        bl   @screen_on
        li   r2,240
