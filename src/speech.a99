@@ -1,6 +1,6 @@
 *********************************************************************************
 *
-* Send speak external command and first 8 bytes
+* Send speak external command and first 16 bytes
 *
 * r0: index of speech data
 *
@@ -8,20 +8,25 @@
 *
 speak:
        .proc
+*      Do we have a speech synthesizer?
        mov  @speech_detected,r1
-       jeq  speak_1
+       jeq  speak_1                    ; Skip
+*      Is it reserved?
        abs  @speech_reserved
-       jne  speak_1
+       jne  speak_1                    ; Skip
+*      Are there bytes left to send
        mov  @speech_counter,r2         ; Get counter
        jgt  speak_1                    ; Skip if already speaking
+*      Are there data left in the FIFO buffer?
+       bl   @speech_read_pad
+       movb @speech_status,r0
+       coc  @talking,r0                ; Talking?
+       jeq  speak_1                    ; Then skip
+*      Setup variables
        sla  r0,2                       ; index * 4
        ai   r0,speech_data
-;       seto @speech_bank
        mov  *r0+,@speech_addr
        mov  *r0,@speech_counter
-*      Reset
-       movb @h70,@spchwt
-       bl   @delay_12us
 *      Speak external command
        movb @h60,@spchwt
        bl   @delay_12us
