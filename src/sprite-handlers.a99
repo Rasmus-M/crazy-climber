@@ -312,6 +312,8 @@ kong_handler_2:
        bl   @copy_kong_to_map
 kong_handler_3:
 *      Check for collision with climber
+       mov  @status,r0
+       jne  kong_handler_4
        c    @sprite_ax(r3),@w_3        ; Arm should be extended
        jne  kong_handler_4
        mov   @scroll_y,r0
@@ -325,7 +327,7 @@ kong_handler_3:
        inct r1                         ; 3 or 4
        c    r0,r1                      ; Compare to climber column
        jne  kong_handler_4
-       bl   @lose_grip
+       bl   @fall
 kong_handler_4:
        .endproc
 kong_x:
@@ -456,7 +458,7 @@ girder_handler:
 *      Hit
        li   r0,speech_ouch_idx
        bl   @speak
-       bl   @lose_grip
+       bl   @lose_grip_or_fall
        jmp  girder_handler_4a
 *      Update sprite
 girder_handler_2:

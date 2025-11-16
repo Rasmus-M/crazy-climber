@@ -87,6 +87,8 @@ test_chopper:
        equ  0
 start_level:
        equ  0                          ; 0 is the first building
+beta_stamp:
+       equ  0
 
 *      Constants
 map_width:
@@ -384,10 +386,10 @@ main_loop_body:
        bl   @animate_windows
        bl   @check_int
 !      mov  @frame,r0                  ; Only do this every 16th frame
-       czc  @create_windows_frame_mask,r0
+       czc  @create_window_frame_mask,r0
        jne  !
        .ifeq windows_enabled,1
-       bl   @create_windows
+       bl   @create_window
        .endif
        bl   @check_int
 *      Update patterns
@@ -877,68 +879,68 @@ add_window_to_list_5:
 *
 * Create window animations
 *
-create_windows:
+create_window:
        .proc
 *      Remove window animations that are scrolled out
        mov  @scroll_y,r4
        srl  r4,4                       ; Number of windows scrolled
        ai   r4,12                      ; Y coord of bottom window row on screen
        mov  @windows_head_ptr,r3
-create_windows_1:
+create_window_1:
        mov  r3,r3                      ; Reached the end?
-       jeq  create_windows_3           ; Yes, move on
+       jeq  create_window_3            ; Yes, move on
        c    r4,*r3                     ; Compare bottom row to window_anim_row
-       jhe  create_windows_2           ; Skip ahead if bottom row is higher or equal
+       jhe  create_window_2            ; Skip ahead if bottom row is higher or equal
        bl   @remove_window_from_list   ; Bottom row is lower - remove window
-create_windows_2:
+create_window_2:
        mov  @window_anim_next(r3),r3   ; Next window
-       jmp  create_windows_1
-create_windows_3:
+       jmp  create_window_1
+create_window_3:
 *      Find an available slot to use
        li   r3,window_anims            ; Don't use linked list since we're looking for an empty slot
-create_windows_4:
+create_window_4:
        mov  *r3,r1                     ; Window y (window_anim_row)
-       jlt  create_windows_11           ; Negative is the end (no space)
-       jeq  create_windows_5           ; Zero is unused
+       jlt  create_window_14           ; Negative is the end (no space)
+       jeq  create_window_5            ; Zero is unused
        ai   r3,window_anim_size
-       jmp  create_windows_4
-create_windows_5:
+       jmp  create_window_4
 *      Add new window
+create_window_5:
 *      Determine type
        c    @current_residents,@max_residents
-       jhe  create_windows_6           ; Jump if resident not allowed
+       jhe  create_window_6            ; Jump if resident not allowed
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0                     ; Next stage scroll y
        ci   r0,64                      ; Are we close to next stage?
-       jlt  create_windows_6           ; Yes - don't create resident
+       jlt  create_window_6            ; Yes - don't create resident
        bl   @rand
        andi r0,1                       ; 1/2 chance of resident
        ci   r0,window_anim_type_resident
-       jeq  create_windows_7
-create_windows_6:
+       jeq  create_window_7
+create_window_6:
        li  r0,window_anim_type_window
-create_windows_7:
+create_window_7:
 *      Set type
        mov  r0,@window_anim_type(r3)   ; 0 = empty window, 1 = resident
 *      Determine position
        ci   r0,window_anim_type_resident
-       jne  create_windows_7a
+       jne  create_window_8
        mov  @current_residents,r0
-       jne  create_windows_7a
+       jne  create_window_8
        bl   @climber_column            ; X coord of climber
-       jmp  create_windows_7b
-create_windows_7a:
+       jmp  create_window_9
+create_window_8:
        li   r2,6                       ; X coord between 0 and 5
        bl   @rand_max                  ; X coord in r0
-create_windows_7b:
+create_window_9:
        mov  r0,@window_anim_col(r3)    ; Write X coord
 *      Y position
        li   r2,12                      ; Y coord between 0 and 11
        c    @window_anim_type(r3),@w_window_anim_type_resident
-       jne  create_windows_7c
+       jne  create_window_10
        ai   r2,-6                      ; Only add residents above climber
-create_windows_7c:
+create_window_10:
        bl   @rand_max                  ; Y coord in r1
        ai   r4,-12                     ; Y coord of top window row on screen
        a    r4,r1                      ; Add y coord of top window row on screen
@@ -947,31 +949,31 @@ create_windows_7c:
        mov  @window_anim_col(r3),r0    ; X coord
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window? Checks 'from char' = window open top.
-       jne  create_windows_10          ; If not then skip
+       jne  create_window_5            ; If not then try again
        bl   @is_open_window_bottom     ; Is there a window above? Checks 'to char' = window open bottom.
-       jne  create_windows_10          ; If not then skip
+       jne  create_window_13           ; If not then give up
        ai   r2,2*map_width             ; Move one window down
        bl   @is_open_window            ; Is there an open window below? Checks from char = window open top.
-       jne  create_windows_10          ; If not then skip
+       jne  create_window_13           ; If not then give up
 *      Other initializations
        clr  @window_anim_frame(r3)     ; Clear frame
        c    @window_anim_type(r3),@w_window_anim_type_resident
-       jeq  create_windows_8
+       jeq  create_window_11
        mov  @close_window_counts,r1
        mov  *r1,@window_anim_count(r3)
-       jmp  create_windows_9
-create_windows_8:
+       jmp  create_window_12
+create_window_11:
        mov  @face_appear_counts,@window_anim_count(r3)
-create_windows_9:
+create_window_12:
 *      Add new window to linked list sorted by y (row)
        bl   @add_window_to_list
-       jmp  create_windows_11
-create_windows_10:
+       jmp  create_window_14
+create_window_13:
 *      Cancel adding window
        clr  *r3                        ; Make available again
-create_windows_11:
+create_window_14:
        .endproc
-*// create_windows
+*// create_window
 
 *********************************************************************
 *
@@ -1946,6 +1948,25 @@ is_resident_above:
 is_resident_above_1:
        rt
 *// is_resident_above
+
+*********************************************************************
+*
+* Lose grip or fall.
+*
+* Modifies r0-r1
+*
+lose_grip_or_fall:
+       .proc
+       bl   @rand
+       andi r0,>0100
+       jeq  lose_grip_or_fall_1
+       bl   @fall
+       jmp  lose_grip_or_fall_2
+lose_grip_or_fall_1:
+       bl   @lose_grip
+lose_grip_or_fall_2:
+       .endproc
+*// lose_grip_or_fall
 
 *********************************************************************
 *
@@ -3207,24 +3228,36 @@ logo_screen:
        bl   @vmbw
        li   r0,sprite_attr_table
        li   r1,SL0
-       li   r2,20*4+1
+       .ifeq beta_stamp,1
+       li   r2,20*4
+       .else
+       li   r2,16*4
+       .endif
        bl   @vmbw
+       li   r1,>d000
+       mov  r1,*r15
        bl   @screen_on
        li   r2,240
 logo_screen_1:
        bl   @vsync
        li   r0,KEY_1
        bl   @check_key
-       jne  logo_screen_2
+       jne  logo_screen_3
        li   r0,KEY_2
        bl   @check_key
-       jne  logo_screen_2
+       jne  logo_screen_3
+       li   r0,KEY_F
+       bl   @check_key
+       jeq  logo_screen_2
+       seto @sprite_dupl_bug
+       jmp  logo_screen_3
+logo_screen_2:
        dec  r2
        jne  logo_screen_1
-logo_screen_2:
+logo_screen_3:
        li   r0,KEY_SP
        bl   @check_key
-       jne  logo_screen_2
+       jne  logo_screen_3
        bl   @screen_off
        bl   @disable_sprites
        .endproc
@@ -3313,7 +3346,7 @@ level_init:
        ci   r0,n_levels
        jlt  level_init_1
        mov  @level4+close_window_counts-current_level_data,@close_window_counts
-       mov  @level4+create_windows_frame_mask-current_level_data,@create_windows_frame_mask
+       mov  @level4+create_window_frame_mask-current_level_data,@create_window_frame_mask
 level_init_1:
 *      Set ROM bank
        mov  @level_bank_select,r0
@@ -3385,13 +3418,13 @@ level_init_1:
 restart_init:
        .proc
        bl   @display_lives
-       bl   @clear_sprites_and_animations
 *      Check if climber died
        mov  @status,r0
        jeq  restart_init_1
        jgt  restart_init_1
 *      Actions after dying
        bl   @unpack_map
+       bl   @clear_sprites_and_animations
        bl   @scroll_to_climber
        clr  @max_residents
        mov  @next_stage_ptr,r0
@@ -4040,7 +4073,7 @@ progress_map:
        data progress_map_1
 close_window_counts:
        data close_window_counts_1
-create_windows_frame_mask:
+create_window_frame_mask:
        data >000f
 step_points:
        data 100

@@ -545,4 +545,3 @@ SL0    BYTE 23,184,16,11               ; y, x, pattern#, color#
        BYTE 7,24,56,15                 ;
        BYTE 23,8,60,15                 ;
        BYTE 23,24,64,15
-       BYTE >D0
