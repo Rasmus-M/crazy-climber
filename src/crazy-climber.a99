@@ -73,6 +73,8 @@ display_logo:
        equ  1
 display_title:
        equ  1
+loops_before_demo:
+       equ  3
 test_bird:
        equ  0
 test_kong:
@@ -88,7 +90,7 @@ test_chopper:
 start_level:
        equ  0                          ; 0 is the first building
 beta_stamp:
-       equ  0
+       equ  1
 
 *      Constants
 map_width:
@@ -1687,6 +1689,21 @@ climber_column:
 
 *********************************************************************
 *
+* Window row of climbers head
+*
+* On return r1 contains the row
+*
+climber_row:
+       mov  @climber_pos,r1            ; y/x
+       andi r1,>ff00                   ; y
+       swpb r1
+       a    @scroll_y,r1
+       srl  r1,4                       ; / 16
+       rt
+*// climber_row
+
+*********************************************************************
+*
 * Position of climber's left hand in map
 *
 * On return r2 contains the address in the map
@@ -2702,7 +2719,7 @@ title_screen_1:
        clr  @int_count
 *      Title screen loop
        clr  @title_screen_done
-       li   r0,3
+       li   r0,loops_before_demo
        mov  r0,@title_screen_loops
 title_screen_2:
        bl   @title_screen_main_cycle
@@ -3120,6 +3137,8 @@ demo_mode_screen:
        bl   @intro_climb
        bl   @restart_init
        clr  @frame
+       clr  @demo_movement             ; Climb up
+       mov  @w_32,@demo_counter
 demo_loop:
        bl   @main_loop_body
        mov  @status,r0
@@ -3146,51 +3165,128 @@ demo_loop_2:
 * Demo mode vertical control
 *
 * On return:
-* r6 Left down
-* r7 Left up
-* r8 Right down
-* r9 Right up
+* r6 Left joystick down
+* r7 Left joystick up
+* r8 Right joystick down
+* r9 Right joystick up
 *
 demo_vert_keys:
+       .proc
        mov  @frame,r0
        ci   r0,16
-       jlt  demo_vert_keys_2
-       andi r0,8
-       jeq  demo_vert_keys_1
+       jlt  demo_vert_keys_4           ; No movement before frame 16
+       mov  @demo_counter,r0
+       jne  demo_vert_keys_1
+*      Determine next move
+       bl   @climber_column            ; Column in r0
+       mov  @demo_current_column,@demo_previous_column
+       mov  r0,@demo_current_column
+       bl   @climber_row               ; Row in r1
+       bl   @window_map_addr           ; Window address in r2
+       li   r3,3
+demo_vert_keys_5:
+       ai   r2,-2*map_width            ; Move one window up
+       bl   @is_open_window
+       jne  demo_vert_keys_6
+       dec  r3
+       jne  demo_vert_keys_5
+*      Coast is clear
+       clr  @demo_movement             ; Move up
+       mov  @w_32,@demo_counter
+       jmp  demo_vert_keys_1
+*      Obstacle above
+demo_vert_keys_6:
+       mov  @demo_movement,r0
+       jne  demo_vert_keys_7
+       mov  @demo_vert_movement,@demo_movement
+       neg  @demo_vert_movement        ; Next time start in other direction
+       jmp  demo_vert_keys_8
+demo_vert_keys_7:
+       c    @demo_current_column,@demo_previous_column
+       jne  demo_vert_keys_8
+       neg  @demo_movement             ; Switch direction
+demo_vert_keys_8:
+       mov  @w_6,@demo_counter
+**
+*      Move
+demo_vert_keys_1:
+       mov  @demo_movement,r0          ; Climbing up?
+       jne  demo_vert_keys_2           ; No - skip
+*      Pause or move arm?
+       mov  @demo_counter,r0
+       dec  r0
+       coc  @w_8,r0                       ; Alternate move arm/pause every 8 frames
+       jeq  demo_vert_keys_3
+*      Pause
+       dect  @demo_counter
+       dect  @demo_counter
+demo_vert_keys_2:
+*      Do nothing
        clr  r6
        clr  r7
        clr  r8
        clr  r9
-       inc  @frame
-       jmp  demo_vert_keys_2
-demo_vert_keys_1:
-       mov  @frame,r0
-       andi r0,16
-       mov  r0,r7                      ; Left up
-       mov  r0,r8                      ; Right down
+       jmp  demo_vert_keys_4
+*      Move arm
+demo_vert_keys_3:
+       andi r0,16                      ; Alternate left/right arm every 16 frames
+       mov  r0,r7                      ; Left joystick up
+       mov  r0,r8                      ; Right joystick down
        li   r1,16
-       xor  r1,r0
-       mov  r0,r6                      ; Left down
-       mov  r0,r9                      ; Right up
-demo_vert_keys_2:
-       rt
+       xor  r1,r0                      ; Inverse for down/up
+       mov  r0,r6                      ; Left joystick down
+       mov  r0,r9                      ; Right joystick up
+       dec  @demo_counter
+demo_vert_keys_4:
+       .endproc
+demo_current_column:
+       data 4
+demo_previous_column:
+       data 4
+demo_vert_movement:
+       data 1
 *// demo_vert_keys
 
 *********************************************************************
 *
-* Demo mode horizontal control. Could be improved :-)
+* Demo mode horizontal control.
 *
 * On return:
-* r1 Left left
-* r2 Left right
-* r3 Right left
-* r4 Right right
+* r1 Left joystick left
+* r2 Left joystick right
+* r3 Right joystick left
+* r4 Right joystick right
 *
 demo_horz_keys:
-       clr  r1                         ; Left left
-       clr  r2                         ; Left right
-       clr  r3                         ; Right left
-       clr  r4                         ; Right right
+       mov  @demo_movement,r0
+       jgt  demo_horz_keys_1
+       jlt  demo_horz_keys_2
+*      No vertical movement
+       clr  r1                         ; Left joystick left
+       clr  r2                         ; Left joystick right
+       clr  r3                         ; Right joystick left
+       clr  r4                         ; Right joystick right
+       jmp  demo_horz_keys_4
+*      Move right
+demo_horz_keys_1:
+       mov  @demo_counter,r0
+       jeq  demo_horz_keys_4
+       clr  r1                         ; Left joystick left
+       seto r2                         ; Left joystick right
+       clr  r3                         ; Right joystick left
+       seto r4                         ; Right joystick right
+       jmp  demo_horz_keys_3
+*      Move left
+demo_horz_keys_2:
+       mov  @demo_counter,r0
+       jeq  demo_horz_keys_4
+       seto r1                         ; Left joystick left
+       clr r2                          ; Left joystick right
+       seto r3                         ; Right joystick left
+       clr r4                          ; Right joystick right
+demo_horz_keys_3:
+       dec  @demo_counter
+demo_horz_keys_4:
        rt
 *// demo_horz_keys
 
@@ -3832,12 +3928,6 @@ quit:
        blwp @>0000
 *// check_quit
 
-*********************************************************************
-*
-*      Program includes
-*
-       copy "stage-handlers.a99"
-
 ***************************************************************************
 *
 lower_memory_max:
@@ -3853,6 +3943,7 @@ lower_memory_max:
 *
 *      Program includes
 *
+       copy "stage-handlers.a99"
        copy "sprite-handlers.a99"
        copy "vdp.a99"
        copy "sound-player.a99"
@@ -3908,6 +3999,8 @@ w_8:
        data 8
 w_24:
        data 24
+w_32:
+       data 32
 w_window_anim_type_resident:
        data window_anim_type_resident
 w_map_width:
@@ -3949,6 +4042,10 @@ joystick_control:
 keyboard_control:
        data KEY_D, KEY_E, KEY_K, KEY_I
        data KEY_S, KEY_F, KEY_J, KEY_L
+demo_movement:
+       data 0
+demo_counter:
+       data 0
 
 intro_climb_data:
        data left_anim, 0, right_anim, 0, >0000

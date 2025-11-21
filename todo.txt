@@ -1,1 +1,2 @@
-More advance demo mode movement.
+Text color.
+Is music volume too high?
