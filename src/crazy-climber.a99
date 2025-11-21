@@ -2444,6 +2444,11 @@ rand:
 initial_static_screen:
        .proc
        bl   @load_static_characters
+       abs  @sprite_dupl_bug
+       jeq  initial_static_screen_1
+       li   r1,>1700
+       bl   @color_static_text
+initial_static_screen_1:
 *      Name table 0
        li   r0,name_table_0
        li   r1,MD1
@@ -2464,36 +2469,23 @@ initial_static_screen:
 load_static_characters:
        .proc
        seto @static_screen_bank_select
-*      Non-scrolling patterns 1st part
-       li   r0,108*8+pattern_table     ; Non-scrolling characters
+*      Non-scrolling patterns
+       li   r3,3
+       li   r4,pattern_table
+load_static_characters_1:
+       mov  r4,r0
+       ai   r0,108*8
        li   r1,PAT108
        li   r2,20*8
        bl   @vmbw
-       li   r0,236*8+pattern_table     ; Non-scrolling characters
+       ai   r0,(236-108)*8
        li   r1,PAT236
        li   r2,20*8
        bl   @vmbw
        bl   @check_int
-*      Non-scrolling patterns 2nd part
-       li   r0,108*8+pattern_table_1   ; Non-scrolling characters
-       li   r1,PAT108
-       li   r2,20*8
-       bl   @vmbw
-       li   r0,236*8+pattern_table_1   ; Non-scrolling characters
-       li   r1,PAT236
-       li   r2,20*8
-       bl   @vmbw
-       bl   @check_int
-*      Non-scrolling patterns 2rd part
-       li   r0,108*8+pattern_table_2   ; Non-scrolling characters
-       li   r1,PAT108
-       li   r2,20*8
-       bl   @vmbw
-       li   r0,236*8+pattern_table_2   ; Non-scrolling characters
-       li   r1,PAT236
-       li   r2,20*8
-       bl   @vmbw
-       bl   @check_int
+       ai   r4,pattern_table_1-pattern_table
+       dec  r3
+       jne  load_static_characters_1
 *      Non-scrolling colors
        li   r0,108*8+color_table       ; Non-scrolling colors
        li   r1,COL108
@@ -2506,6 +2498,23 @@ load_static_characters:
        bl   @check_int
        .endproc
 *// load_static_characters
+
+*********************************************************************
+*
+* Color static text
+*
+* r1 msb: Color for static text fg/bg
+*
+color_static_text
+       .proc
+       li   r0,108*8+color_table
+       li   r2,10*8
+       bl   @vsmw
+       li   r0,236*8+color_table
+       li   r2,16*8
+       bl   @vsmw
+       .endproc
+*// color_static_text
 
 *********************************************************************
 *
@@ -3010,16 +3019,8 @@ high_score_screen:
        bl   @load_static_characters
        seto @title_bank_select
 *      Set all colors to white on black
-       li   r0,color_table
        li   r1,>f100
-       li   r3,8
-high_score_screen_0:
-       li   r2,>100
-       bl   @vsmw
-       bl   @check_int
-       ai   r0,>100
-       dec  r3
-       jne  high_score_screen_0
+       bl   @color_static_text
 *      Set name table
        clr  @frame
        bl   @set_name_table

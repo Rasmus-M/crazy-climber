@@ -113,13 +113,13 @@ intro_note_0078:
        data D♯2
 intro_instr_00:
        byte T1
-       byte 127
-       byte 0
+       byte 96
+       byte 63
        byte 2
        data >0000
 intro_instr_01:
        byte T2
-       byte 36
-       byte 0
+       byte 27
+       byte 63
        byte 7
        data >0000
