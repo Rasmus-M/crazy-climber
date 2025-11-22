@@ -22,121 +22,27 @@ speech_data:
        data speech_yuck_end-speech_yuck
 
 speech_ouch:
-       BYTE >45,>F3,>A5,>2E,>AC,>7E,>14,>DD
-       BYTE >EE,>7A,>B3,>DA,>B5,>F4,>30,>EB
-       BYTE >C3,>33,>7B,>D3,>42,>99,>6D,>B6
-       BYTE >63,>4B,>F1,>63,>3A,>A8,>6A,>15
-       BYTE >C9,>E5,>6F,>11,>1F,>97,>44,>D5
-       BYTE >D7,>45,>33,>B6,>53,>44,>FE,>46
-       BYTE >C9,>A8,>46,>A2,>F3,>44,>73,>C2
-       BYTE >12,>8E,>9F,>40,>CB,>8A,>8A,>18
-       BYTE >3D,>C4,>C9,>93,>1E,>20,>A2,>9F
-       BYTE >4C,>11,>11,>C5,>C8,>F5,>77,>52
-       BYTE >DC,>B1,>C1,>F6,>EB,>9B,>28,>FB
-       BYTE >8E,>9D,>73,>FE,>EE,>94,>05,>6C
-       BYTE >CC,>DB,>EE,>01,>1E,>D8,>B9,>3E
-       BYTE >7B,>C8,>BD,>23,>C6,>BA,>AB,>0D
-       BYTE >68,>0C,>98,>F3,>97,>00,>E5,>E6
-       BYTE >13,>BE,>F5,>99,>2E,>D1,>8C,>F0
-       BYTE >BC,>7A,>9C,>C9,>16,>00,>00,>3c
+       bcopy "ouch.lpc"
 speech_ouch_end:
        equ  $
 
 speech_go_for_it:
-       BYTE >02,>4B,>3F,>3D,>CC,>E5,>38,>3C
-       BYTE >0C,>55,>F1,>CE,>5D,>30,>3B,>C3
-       BYTE >55,>43,>79,>41,>43,>E8,>11,>99
-       BYTE >D0,>05,>75,>EA,>37,>38,>86,>3A
-       BYTE >CC,>DA,>79,>E0,>A5,>EE,>70,>ED
-       BYTE >2F,>98,>4A,>39,>02,>A2,>67,>67
-       BYTE >40,>B6,>95,>08,>28,>E5,>82,>D0
-       BYTE >D5,>B8,>87,>9A,>14,>C7,>68,>3F
-       BYTE >CD,>3C,>65,>1C,>2B,>E3,>8E,>E2
-       BYTE >8F,>76,>9C,>2A,>9B,>06,>3D,>2E
-       BYTE >08,>E6,>A5,>1B,>77,>34,>27,>D9
-       BYTE >AD,>E9,>3C,>C1,>9D,>E2,>36,>B7
-       BYTE >F2,>59,>0B,>6A,>BC,>58,>66,>63
-       BYTE >35,>E9,>A9,>52,>56,>96,>19,>03
-       BYTE >E4,>AC,>AA,>80,>14,>41,>09,>53
-       BYTE >82,>7A,>7D,>C1,>7E
+       bcopy "go-for-it.lpc"
 speech_go_for_it_end:
        equ  $
 
 speech_oh_no:
-       BYTE >89,>75,>B1,>DF,>84,>FE,>37,>DE
-       BYTE >DA,>7A,>56,>79,>D6,>54,>67,>EA
-       BYTE >DD,>B0,>79,>53,>6D,>EB,>25,>86
-       BYTE >F5,>41,>F5,>37,>86,>01,>0E,>07
-       BYTE >CE,>26,>75,>AA,>52,>3A,>D8,>38
-       BYTE >A2,>20,>B4,>D2,>62,>C3,>8E,>E0
-       BYTE >8C,>D2,>8B,>0D,>B9,>52,>AD,>A3
-       BYTE >0F,>CE,>B5,>69,>D5,>28,>1F,>70
-       BYTE >D7,>FE,>40,>F2,>B9,>42,>6C,>B9
-       BYTE >67,>82,>E1,>81,>B7,>E1,>1F,>45
-       BYTE >2E,>39,>45,>A4,>3B,>D2,>F8,>65
-       BYTE >24,>3A,>B6,>C9,>F4,>9C,>93,>79
-       BYTE >BA,>02,>FF,>27,>8C,>64,>75,>0B
-       BYTE >D5,>12,>33,>54,>D9,>29,>0A,>52
-       BYTE >25,>00,>A7,>22,>1e
+       bcopy "oh-no.lpc"
 speech_oh_no_end:
        equ  $
 
 speech_extra_life:
-       BYTE >01,>0C,>8D,>9B,>B6,>07,>17,>7C
-       BYTE >74,>6B,>FE,>8F,>32,>D8,>52,>23
-       BYTE >F8,>6A,>45,>23,>CB,>65,>A7,>5C
-       BYTE >29,>86,>2C,>9D,>5C,>A2,>64,>83
-       BYTE >03,>C2,>B2,>30,>78,>4F,>77,>03
-       BYTE >00,>CC,>E1,>3F,>FD,>44,>A8,>3B
-       BYTE >83,>FE,>D9,>95,>A1,>57,>04,>FB
-       BYTE >D6,>4D,>A8,>08,>42,>40,>FB,>D3
-       BYTE >0E,>E8,>B3,>2B,>E9,>FE,>BA,>19
-       BYTE >49,>DE,>A6,>BB,>A9,>EE,>CE,>6D
-       BYTE >96,>E1,>53,>85,>9A,>2E,>19,>A6
-       BYTE >75,>5D,>4A,>5D,>37,>58,>32,>74
-       BYTE >30,>6F,>54,>67,>F1,>B0,>41,>F2
-       BYTE >76,>82,>25,>DC,>19,>EB,>DA,>77
-       BYTE >26,>F7,>E7,>E4,>67,>3B,>19,>CA
-       BYTE >BE,>B1,>8E,>B3,>A6,>6B,>BF,>45
-       BYTE >76,>F6,>86,>E6,>FD,>35,>DB,>D8
-       BYTE >19,>9A,>8B,>33,>38,>C3,>A8,>69
-       BYTE >B6,>B6,>49,>17,>F1,>A5,>85,>DA
-       BYTE >0B,>75,>52,>8E,>16,>4B,>A4,>76
-       BYTE >3A,>39,>7A,>1E,>66,>DA,>6D,>65
-       BYTE >19,>39,>8B,>E6,>8C,>95,>04,>D4
-       BYTE >09,>5E,>80,>5A,>21,>13,>90,>23
-       BYTE >64,>00,>52,>75,>66,>40,>AF,>DF
-       BYTE >04,>68,>65,>F2,>01
+       bcopy "extra-life.lpc"
 speech_extra_life_end:
        equ  $
 
 speech_yuck:
-       BYTE >80,>7C,>60,>BF,>9B,>C8,>0A,>09
-       BYTE >30,>DF,>59,>45,>59,>24,>A4,>A4
-       BYTE >67,>1D,>65,>89,>50,>82,>9A,>0E
-       BYTE >91,>25,>42,>0D,>7C,>B7,>09,>99
-       BYTE >8A,>0C,>B4,>DE,>13,>B0,>26,>34
-       BYTE >58,>F3,>CE,>C0,>84,>D0,>12,>A9
-       BYTE >BD,>82,>56,>3C,>AF,>39,>AF,>03
-       BYTE >72,>F1,>9C,>93,>EA,>76,>2A,>CD
-       BYTE >75,>C9,>2C,>AA,>A0,>34,>D7,>D5
-       BYTE >30,>CB,>86,>DA,>5C,>D7,>5A,>CC
-       BYTE >87,>58,>F3,>4C,>5F,>37,>6F,>B2
-       BYTE >49,>77,>AB,>11,>65,>C4,>04,>DD
-       BYTE >F5,>16,>94,>24,>90,>38,>FB,>2F
-       BYTE >44,>5E,>90,>C3,>DD,>DB,>12,>FA
-       BYTE >F9,>09,>73,>E3,>D6,>78,>A3,>04
-       BYTE >30,>E5,>3F,>83,>9A,>46,>E0,>F0
-       BYTE >C2,>C3,>4B,>2A,>00,>40,>60,>D3
-       BYTE >CF,>AA,>B0,>26,>85,>4F,>4F,>2B
-       BYTE >43,>9D,>06,>BA,>BC,>26,>8D,>4C
-       BYTE >56,>D8,>72,>2E,>C4,>D2,>59,>00
-       BYTE >F3,>CF,>0C,>09,>27,>01,>4B,>BB
-       BYTE >C4,>2C,>9D,>06,>2D,>8D,>31,>B7
-       BYTE >B4,>E7,>CC,>D8,>87,>DC,>32,>98
-       BYTE >D1,>63,>1B,>37,>89,>BB,>42,>8E
-       BYTE >6D,>C5,>5D,>AD,>20,>D5,>EF,>12
-       BYTE >37,>55,>02,>0F
+       bcopy "yuck.lpc"
 speech_yuck_end:
        equ  $
 
