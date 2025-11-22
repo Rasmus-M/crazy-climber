@@ -56,6 +56,7 @@ The code and game is free to use for non-commercial purposes. You are not allowe
 Thanks to:
 * Ralph for his xdt99 tools
 * Martin for his MOD2PSG2 player
+* Eric Lafortune for his speech tools (https://github.com/EricLafortune/VideoTools/blob/master/docs/ConvertWavToLpc.md)
 
 ## Contact
 
