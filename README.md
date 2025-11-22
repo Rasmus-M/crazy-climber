@@ -16,8 +16,9 @@
 * Mounted twin joysticks
 * F18A or PICO9918 for faster gameplay (1)
 
-(1) The TMS9918A has a bug that prevents the use or more than 8 sprites in the graphics mode optimal for fast smooth scrolling.
-F18A and clones don't have this bug, so here the game can run in the optimal mode. 
+(1) The TMS9918A has a bug that prevents the use or more than 8 sprites in the graphics mode optimal for smooth scrolling.
+F18A and clones don't have this bug, so here the game can run in the optimal mode. If you have an F18A and want to run the 
+game at the original speed, press F at the opening screen with the big logo to bypass the optimal mode.
 
 ## Keys
 
@@ -34,6 +35,12 @@ F18A and clones don't have this bug, so here the game can run in the optimal mod
 
 * Left joystick controls left hand
 * Right joystick controls right hand
+
+## Tips
+
+* Move left and right hand to the left at the same time to automatically climb to the left. 
+* Move left and right hand to the right at the same time to automatically climb to the right.
+* If the red/cyan text combination is difficult to read on your screen, press C to cycle between different colors.
 
 ## Building from source
 
