@@ -3062,7 +3062,7 @@ high_score_screen:
 *      Sprite patterns
        li   r0,4*32+sprite_pattern_table
        li   r1,T_SPR4
-       li   r2,7*32
+       li   r2,8*32
        bl   @vmbw
 *      Set all colors to white on black
        li   r1,>f100
@@ -3208,7 +3208,7 @@ display_high_score_sprites_4:
        ab   @b_1,r0
        mov  r0,*r3+
        ab   @b_1,r1
-       cb   r1,@b_44
+       cb   r1,@b_48
        jl   display_high_score_sprites_6
        clr  r1
 display_high_score_sprites_6:
@@ -4119,8 +4119,8 @@ b_4:
        byte 4
 b_12:
        byte 12
-b_44:
-       byte 44
+b_48:
+       byte 48
 b_192:
        byte 192
 b_m12:
