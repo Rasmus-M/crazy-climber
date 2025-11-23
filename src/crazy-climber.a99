@@ -2540,7 +2540,21 @@ color_static_text:
        li   r0,236*8+color_table
        li   r2,16*8
        bl   @vsmw
+*      Life character
+       li   r0,chr_life*8+color_table
+       bl   @vwad
+       andi r1,>0f00
+       li   r2,8
+       li   r3,life_char_col
+color_static_text_1:
+       movb *r3+,r0
+       socb r1,r0
+       movb r0,*r15
+       dec  r2
+       jne  color_static_text_1
        .endproc
+life_char_col:
+       data >6060,>C0C0,>C0C0,>C060    ;
 *// color_static_text
 
 *********************************************************************

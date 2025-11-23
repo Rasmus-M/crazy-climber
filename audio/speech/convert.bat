@@ -1,4 +1,4 @@
-set CLASSPATH=tools/out/videotools.jar
+set CLASSPATH=C:/Users/rasmu/git/VideoTools/tools/out/videotools.jar
 
 java ConvertWavToLpc -minfrequency 130 -maxfrequency 510 -preemphasis 0.82 -trimsilenceframes -addstopframe go-for-it.wav go-for-it.lpc
 java ConvertWavToLpc -trimsilenceframes -addstopframe ouch.wav ouch.lpc
