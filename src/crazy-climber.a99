@@ -2472,6 +2472,7 @@ rand:
 *
 initial_static_screen:
        .proc
+       bl   @three_pattern_tables
        bl   @load_static_characters
        mov  @current_text_color,r1
        movb @text_colors(r1),r1
@@ -2784,7 +2785,6 @@ title_screen_3:
 *      Select name_table_0
        clr  @frame
        bl   @set_name_table
-       bl   @three_pattern_tables
        .endproc
 title_screen_loops:
        data 0
@@ -3270,7 +3270,6 @@ demo_mode_screen:
        .proc
        seto @demo_mode
        bl   @screen_off
-       bl   @three_pattern_tables
        bl   @initial_static_screen
        bl   @game_init
        bl   @level_init
@@ -3485,7 +3484,7 @@ logo_screen_1:
        li   r0,KEY_F
        bl   @check_key
        jeq  logo_screen_2
-       seto @sprite_dupl_bug
+       inv  @sprite_dupl_bug
        jmp  logo_screen_3
 logo_screen_2:
        dec  r2
@@ -3750,10 +3749,6 @@ set_character_set:
 graphics_mode:
        .proc
        clr  r0
-       abs  @sprite_dupl_bug
-       jne  graphics_mode_0
-       movb r0,@vdp_registers+4        ; One pattern table
-graphics_mode_0:
        li   r1,vdp_registers
        li   r2,8
 graphics_mode_1:
@@ -3834,7 +3829,7 @@ screen_on:
 
 *********************************************************************
 *
-* Enable 3 pattern tables if required
+* Enable 1 pattern table
 *
 one_pattern_table:
        .proc
