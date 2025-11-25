@@ -14,7 +14,7 @@ resident_handler_1:
        mov  @sprite_x(r3),r0
        mov  @sprite_y(r3),r1
        bl   @window_screen_coords
-       mov  r1,r1
+       ci   r1,-15
        jlt  resident_handler_3
        dec  r1
        swpb r1
@@ -93,6 +93,7 @@ plant_handler_1:
        mov  @scroll_dy,r0
        sla  r0,4
        s    r0,@sprite_y(r3)
+       jlt  plant_handler_2
        c    @sprite_y(r3),@plant_bottom_screen
        jl   plant_handler_2
        clr  @sprite_handler(r3)

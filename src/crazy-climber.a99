@@ -957,7 +957,7 @@ create_window_7:
 *      Determine position
        ci   r0,window_anim_type_resident
        jne  create_window_8
-       mov  @current_residents,r0
+       mov  @current_residents,r0      ; Is it the only resident?
        jne  create_window_8
        bl   @climber_column            ; X coord of climber
        jmp  create_window_9
@@ -974,13 +974,13 @@ create_window_9:
 create_window_10:
        bl   @rand_max                  ; Y coord in r1
        ai   r4,-12                     ; Y coord of top window row on screen
-       a    r4,r1                      ; Add y coord of top window row on screen
+       a    r4,r1                      ; Y + y coord of top window row on screen
        mov  r1,*r3                     ; Save it in new window anim (window_anim_row)
 *      Check map position
        mov  @window_anim_col(r3),r0    ; X coord
        bl   @window_map_addr           ; Window address in r2
        bl   @is_open_window            ; Is there an open window? Checks 'from char' = window open top.
-       jne  create_window_5            ; If not then try again
+       jne  create_window_6            ; If not then try again (window)
        bl   @is_open_window_bottom     ; Is there a window above? Checks 'to char' = window open bottom.
        jne  create_window_13           ; If not then give up
        ai   r2,2*map_width             ; Move one window down

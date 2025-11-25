@@ -6,7 +6,7 @@ base_stage_1:
        data base_stage_init            ; init
        data 0
 one_resident_stage_1:
-       data >0ac0                      ; scroll y
+       data >0b00                      ; scroll y
        data residents_stage_init       ; init
        data one_resident_init_data
 bird_stage_1:
