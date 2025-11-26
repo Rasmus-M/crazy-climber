@@ -314,7 +314,6 @@ next_level:
 restart_level:
        bl   @restart_init
 *      Main loop
-       clr  @frame
 main_loop:
        bl   @main_loop_body
 *      Check status
@@ -2274,15 +2273,15 @@ display_high_score:
 *
 update_and_display_bonus:
        .proc
-       mov  @frame,r0
-       andi r0,255
-       ci   r0,255
-       jne  update_and_display_bonus_1
+       mov  @int_count,r0
+       ci   r0,512
+       jlt  update_and_display_bonus_1
        mov  @bonus,r1
        jeq  update_and_display_bonus_1
        ai   r1,-100
        mov  r1,@bonus
        bl   @display_bonus
+       clr  @int_count
 update_and_display_bonus_1:
        .endproc
 *// update_and_display_bonus
@@ -3275,7 +3274,6 @@ demo_mode_screen:
        bl   @level_init
        bl   @intro_climb
        bl   @restart_init
-       clr  @frame
        clr  @demo_movement             ; Climb up
        mov  @w_32,@demo_counter
 demo_loop:
@@ -3679,6 +3677,9 @@ restart_init_1:
        mov  r0,@right_anim_ptr
        clr  @right_wide
        bl   @update_climber_attrs_right
+*      Reset counters
+       clr  @frame
+       clr  @int_count
        .endproc
 *// restart_init
 
