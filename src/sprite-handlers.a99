@@ -56,10 +56,10 @@ plant_handler:
        srl  r0,4
        swpb r0
        movb r0,*r15
-       li   r2,spr_plant_1*256
-       movb r2,*r15
-       li   r2,>0c00                   ; Green
-       movb r2,*r15
+       mov  @plant,r2
+       movb r2,*r15                    ; Pattern
+       swpb r2
+       movb r2,*r15                    ; Color
 *      Check for collision with climber
        abs  @sprite_ax(r3)             ; check if already hit
        jne  plant_handler_1
@@ -106,7 +106,7 @@ plant_handler_2:
 plant_handler_3:
        .endproc
 plant_bottom_screen:
-       data 194 * 16;
+       data 194 * 16
 *// plant_handler
 
 *********************************************************************
@@ -337,26 +337,26 @@ kong_x:
 
 *********************************************************************
 *
-* Sparking sign handler
+* Spark handler
 *
-sparking_sign_handler:
+spark_handler:
        .proc
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
        ci   r0,8
-       jgt  sparking_sign_handler_1
+       jgt  spark_handler_1
 *      Remove
        clr  @sprite_handler(r3)
-       jmp  sparking_sign_handler_5
-sparking_sign_handler_1:
+       jmp  spark_handler_6
+spark_handler_1:
 *      Display sprite
        mov  @sprite_count(r3),r2       ; y
        andi r2,15
        bl   @rand
        andi r0,7
        ci   r0,2
-       jl   sparking_sign_handler_2
+       jl   spark_handler_2
 *      Display a normal spark
        mov  @sprite_y(r3),r1
        s    @scroll_y,r1
@@ -370,8 +370,8 @@ sparking_sign_handler_1:
        a    r2,r4
        movb *r4,*r15
        movb @sparking_sign_colors(r2),*r15    ; Color
-       jmp  sparking_sign_handler_3
-sparking_sign_handler_2:
+       jmp  spark_handler_3
+spark_handler_2:
 *      Display a spark ball
        mov  r0,r4
        mov  @sprite_y(r3),r1
@@ -388,29 +388,33 @@ sparking_sign_handler_2:
        swpb r4
        movb r4,*r15
 *      Check for collision with climber
-sparking_sign_handler_3:
+spark_handler_3:
        bl   @check_sprite_hit_head
        mov  r2,r2
-       jeq  sparking_sign_handler_4
+       jeq  spark_handler_5
 *      Hit
        li   r0,speech_ouch_idx
        bl   @speak
        inc  @spark_hits
        c    @spark_hits,@w_10
-       jlt  sparking_sign_handler_5
-       bl   @lose_grip
-       jmp  sparking_sign_handler_5
+       jgt  spark_handler_4
+       inct @scroll_y
+       szc  @w_1,@scroll_y
+       jmp  spark_handler_6
+spark_handler_4:
+       bl   @fall
+       jmp  spark_handler_6
 *      Update sprite
-sparking_sign_handler_4:
+spark_handler_5:
        inc  @sprite_count(r3)
 *      Sound FX
        bl   @rand
        andi r0,15
-       jne  sparking_sign_handler_5
+       jne  spark_handler_6
        .push r3
         bl   @play_spark
        .pop r3
-sparking_sign_handler_5:
+spark_handler_6:
        .endproc
 sparking_sign_patterns_left:
        byte >a0,>a4,>a8,>ac,>b0,>b4,>b8,>bc,>c0,>bc,>b8,>b4,>b0,>ac,>a8,>a4
@@ -424,7 +428,7 @@ spark_balls:
        byte >e8,>08,>ec,>0b
 spark_hits:
        data 0
-*// sparking_sign_handler
+*// spark_handler
 
 *********************************************************************
 *
@@ -572,6 +576,8 @@ balloon_handler_5:
 *
 dropping_sign_handler:
        .proc
+       mov  @status,r0
+       jne  dropping_sign_handler_3
        mov  @scroll_y,r0
        mov  @next_stage_ptr,r1
        s    *r1,r0
@@ -632,6 +638,7 @@ dropping_sign_handler_6:
        abs  r1
        ci   r1,15
        jgt  dropping_sign_handler_2
+*      Collision
        bl   @fall
        jmp  dropping_sign_handler_3
 *      Check if bottom reached

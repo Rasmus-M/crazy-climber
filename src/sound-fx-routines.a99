@@ -106,8 +106,11 @@ play_sign:
 *
 play_spark:
        .proc
-       li   r0,snd_spark
+       li   r0,snd_spark_1
        li   r1,snd_channel_3
+       bl   @play_snd
+       li   r0,snd_spark_2
+       li   r1,snd_channel_4
        bl   @play_snd
        .endproc
 *// play_spark

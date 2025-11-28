@@ -43,7 +43,14 @@ snd_sign:
        byte 16                         ; Attn step
        data 0                          ; Freq step
 
-snd_spark:
+snd_spark_1:
+       byte T3
+       byte 24                         ; Frames
+       byte 255                        ; Attn start
+       byte 0                          ; Attn step
+       data 0                          ; Freq step
+
+snd_spark_2:
        byte W3
        byte 24                         ; Frames
        byte 0                          ; Attn start

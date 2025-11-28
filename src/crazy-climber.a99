@@ -62,7 +62,7 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 infinite_lives:
-       equ  0
+       equ  1
 n_lives:
        equ  3
 falling_enabled:
@@ -85,12 +85,14 @@ test_dropping_sign:
        equ  0
 test_balloon:
        equ  0
+test_windows:
+       equ  0
 test_chopper:
        equ  0
 start_level:
        equ  0                          ; 0 is the first building
 beta_stamp:
-       equ  1
+       equ  0
 
 *      Constants
 map_width:
@@ -347,8 +349,12 @@ finished_3:
 died:
 *      Died
        bl   @fall_sequence
+dec_lives:
        .ifeq infinite_lives,0
        dec  @lives
+       .else
+       nop
+       nop
        .endif
        jne  restart_level
 *      Game over
@@ -3475,25 +3481,36 @@ logo_screen_1:
        bl   @vsync
        li   r0,KEY_1
        bl   @check_key
-       jne  logo_screen_3
+       jne  logo_screen_4
        li   r0,KEY_2
        bl   @check_key
-       jne  logo_screen_3
-       li   r0,KEY_F
+       jne  logo_screen_4
+       li   r0,KEY_CT
        bl   @check_key
        jeq  logo_screen_2
-       inv  @sprite_dupl_bug
-       jmp  logo_screen_3
+       li   r0,KEY_X
+       bl   @check_key
+       jeq  logo_screen_2
+       mov  @nop_instr,@dec_lives
+       mov  @nop_instr,@dec_lives+2
 logo_screen_2:
+       li   r0,KEY_F
+       bl   @check_key
+       jeq  logo_screen_3
+       inv  @sprite_dupl_bug
+       jmp  logo_screen_4
+logo_screen_3:
        dec  r2
        jne  logo_screen_1
-logo_screen_3:
+logo_screen_4:
        li   r0,KEY_SP
        bl   @check_key
-       jne  logo_screen_3
+       jne  logo_screen_4
        bl   @screen_off
        bl   @disable_sprites
        .endproc
+nop_instr:
+       nop
 *// logo_screen
 
 *********************************************************************
@@ -3612,9 +3629,9 @@ level_init_1:
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_sparking_sign,1
-       li   r0,(sign_row_2*8)+>60      ; For testing sign with wires
+       li   r0,(sign_row_4*8)+>60      ; For testing sparking sign
        mov  r0,@scroll_y
-       li   r0,sign_stage_2
+       li   r0,sign_stage_4
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_dropping_sign,1
@@ -3627,6 +3644,12 @@ level_init_1:
        li   r0,>280                    ; For testing balloon
        mov  r0,@scroll_y
        li   r0,balloon_stage_2
+       mov  r0,@next_stage_ptr
+       .endif
+       .ifeq test_windows,1
+       li   r0,>0c0                    ; For testing windows
+       mov  r0,@scroll_y
+       li   r0,windows_stage_init_4
        mov  r0,@next_stage_ptr
        .endif
        .ifeq test_chopper,1
@@ -4222,6 +4245,7 @@ level1:
        data door_map_1
        data kong_map_undraw_1
        data kong_row_1_3
+       data spr_plant_1
        data PSTRIP1
        data CSTRIP1-PSTRIP1
        data progress_map_1
@@ -4239,6 +4263,7 @@ level2:
        data door_map_2
        data sign_map_2
        data sign_row_2
+       data spr_plant_2
        data PSTRIP2
        data CSTRIP2-PSTRIP2
        data progress_map_2
@@ -4256,6 +4281,7 @@ level3:
        data door_map_3
        data kong_map_undraw_3
        data kong_row_1_3
+       data spr_plant_1
        data PSTRIP3
        data CSTRIP3-PSTRIP3
        data progress_map_3
@@ -4273,6 +4299,7 @@ level4:
        data door_map_4
        data sign_map_4
        data sign_row_4
+       data spr_plant_3
        data PSTRIP4
        data CSTRIP4-PSTRIP4
        data progress_map_4
@@ -4304,6 +4331,8 @@ sign_row:
        equ  $
 kong_row:
        data  kong_row_1_3
+plant:
+       data spr_plant_1
 pattern_strips:
        data PSTRIP1
 color_strip_offset:
