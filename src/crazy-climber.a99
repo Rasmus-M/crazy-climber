@@ -3485,6 +3485,9 @@ logo_screen_1:
        li   r0,KEY_2
        bl   @check_key
        jne  logo_screen_4
+       li   r0,KEY_FI
+       bl   @check_key
+       jne  logo_screen_4
        li   r0,KEY_CT
        bl   @check_key
        jeq  logo_screen_2
