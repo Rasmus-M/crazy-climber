@@ -7,7 +7,7 @@ xas99.py src/rom-banks/rom-bank-8.a99 -B -q -R -o bin/bank8.bin
 xas99.py src/rom-banks/rom-bank-9.a99 -B -q -R -o bin/bank9.bin
 xas99.py src/rom-banks/rom-bank-A.a99 -B -q -R -o bin/bankA.bin
 
-java -jar tools/ea5tocart.jar bin\main "CRAZY CLIMBER BETA"
+java -jar tools/ea5tocart.jar bin\main "CRAZY CLIMBER"
 
 copy /b bin\main8.bin ^
     + bin\bank4.bin ^

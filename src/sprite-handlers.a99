@@ -683,6 +683,7 @@ chopper_handler:
 chopper_handler_0:
        mov  @sprite_x(r3),r0           ; Position of middle of landing gear
        mov  @sprite_y(r3),r1
+       mov  @sprite_count(r3),r4
        andi r4,1
        sla  r4,1
        mov  @sprite_vx(r3),r2

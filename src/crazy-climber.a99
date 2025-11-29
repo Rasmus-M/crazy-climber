@@ -62,7 +62,7 @@ sprite_attr_table:                     ; Sprite attribute table
 
 *      For testing
 infinite_lives:
-       equ  1
+       equ  0
 n_lives:
        equ  3
 falling_enabled:
@@ -920,6 +920,7 @@ create_window:
 *      Remove window animations that are scrolled out
        mov  @scroll_y,r4
        srl  r4,4                       ; Number of windows scrolled
+       mov  r4,r5                      ; Save it
        ai   r4,12                      ; Y coord of bottom window row on screen
        mov  @windows_head_ptr,r3
 create_window_1:
@@ -978,8 +979,7 @@ create_window_9:
        ai   r2,-6                      ; Only add residents above climber
 create_window_10:
        bl   @rand_max                  ; Y coord in r1
-       ai   r4,-12                     ; Y coord of top window row on screen
-       a    r4,r1                      ; Y + y coord of top window row on screen
+       a    r5,r1                      ; Y + y coord of top window row on screen
        mov  r1,*r3                     ; Save it in new window anim (window_anim_row)
 *      Check map position
        mov  @window_anim_col(r3),r0    ; X coord
