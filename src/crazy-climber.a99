@@ -640,13 +640,19 @@ check_for_inactivity:
        .proc
        inc  @inactivity_count
        mov  @inactivity_count,r0
+       s    @inactivity_count_extra,r0
        ci   r0,120
        jlt  check_for_inactivity_1
        li   r0,speech_go_for_it_idx
        bl   @speak
        clr  @inactivity_count
+       li   r2,120
+       bl   @rand_max
+       mov  r0,@inactivity_count_extra
 check_for_inactivity_1:
        .endproc
+inactivity_count_extra:
+       data 0
 *// check_for_inactivity
 
 
@@ -1029,7 +1035,7 @@ check_grip:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_1
        bl   @left_hand_map_addr
-       mov  r2,r4
+       mov  r2,r4                      ; Save left hand map address
        bl   @is_open_window_bottom
        jne  check_grip_1
        bl   @is_resident_above
@@ -1048,7 +1054,7 @@ check_grip_1:
        andi r1,>000f                   ; Hand position relative to building
        jne  check_grip_2
        bl   @right_hand_map_addr
-       mov  r2,r5
+       mov  r2,r5                      ; Save right hand map address
        bl   @is_open_window_bottom
        jne  check_grip_2
        bl   @is_resident_above
@@ -1062,16 +1068,17 @@ check_grip_2:
        soc  @right_grip,r0
        jne  check_grip_4
 *      No grip
-       mov  r4,r2
+       mov  r4,r2                      ; Left hand map address
+       bl   @is_closed_window
+       jeq  check_grip_2a
+       mov  r5,r2                      ; Right hand map address
        bl   @is_closed_window
        jne  check_grip_3
-       mov  r5,r2
-       bl   @is_closed_window
-       jne  check_grip_3
-       bl   @fall
+check_grip_2a:
+       bl   @fall                      ; Fall if any hand is at a closed window
        jmp  check_grip_4
 check_grip_3:
-       bl   @fall_short
+       bl   @fall_short                ; Otherwise just fall short
 check_grip_4:
        .endproc
 *// check_grip
@@ -1967,7 +1974,7 @@ is_closed_window:
        movb *r2,r1
        swpb r1
        sla  r1,1
-       a    @trans_chars,r1
+       a    @trans_chars,r1            ; Not the same as mov @trans_chars(r1),r1
        mov  *r1,r1
        swpb r1
        cb   @b_window_left_bottom_closed,r1
@@ -2614,7 +2621,7 @@ intro_climb_3:
        jne  intro_climb_2
        dec  r8
        jne  intro_climb_1
-       li   r0,120                     ; Trigger speech
+       li   r0,240                     ; Trigger speech
        mov  r0,@inactivity_count
        clr  @left_wide
        clr  @right_wide
