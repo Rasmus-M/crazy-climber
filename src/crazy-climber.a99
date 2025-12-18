@@ -2616,6 +2616,8 @@ intro_climb_3:
        jne  intro_climb_1
        li   r0,120                     ; Trigger speech
        mov  r0,@inactivity_count
+       clr  @left_wide
+       clr  @right_wide
        .endproc
 *// intro_climb
 
@@ -3667,6 +3669,12 @@ level_init_1:
 *      Place climber
        li   r0,initial_climber_position
        mov  r0,@climber_pos
+       li   r0,left_anim
+       mov  r0,@left_anim_ptr
+       clr  @left_wide
+       li   r0,right_anim
+       mov  r0,@right_anim_ptr
+       clr  @right_wide
        .endproc
 *// level_init
 
@@ -3698,13 +3706,7 @@ restart_init_1:
 *      Restare climber
        li   r0,initial_climber_position
        movb r0,@climber_pos            ; Only reset y
-       li   r0,left_anim
-       mov  r0,@left_anim_ptr
-       clr  @left_wide
        bl   @update_climber_attrs_left
-       li   r0,right_anim
-       mov  r0,@right_anim_ptr
-       clr  @right_wide
        bl   @update_climber_attrs_right
 *      Reset counters
        clr  @frame
