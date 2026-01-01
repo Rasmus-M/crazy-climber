@@ -1026,14 +1026,15 @@ check_grip:
        mov  @animation_count,r1        ; Is an animation count already taking place?
        jne  check_grip_4               ; Yes - return
 *      Left
+       clr    r4
        clr  @left_grip
        clr  @left_hand_pos
        bl   @left_hand_y_offset
        mov  @scroll_y,r0
        ai   r0,-8
        a    r0,r1
-       andi r1,>000f                   ; Hand position relative to building
-       jne  check_grip_1
+       andi r1,>000f                   ; Vertical hand position relative to building
+       jne  check_grip_1               ; Jump if not at window bottom
        bl   @left_hand_map_addr
        mov  r2,r4                      ; Save left hand map address
        bl   @is_open_window_bottom
@@ -1045,14 +1046,15 @@ check_grip:
        mov  r1,@left_hand_pos
 *      Right
 check_grip_1:
+       clr  r5
        clr  @right_grip
        clr  @right_hand_pos
        bl   @right_hand_offset
        mov  @scroll_y,r0
        ai   r0,-8
        a    r0,r1
-       andi r1,>000f                   ; Hand position relative to building
-       jne  check_grip_2
+       andi r1,>000f                   ; Vertical hand position relative to building
+       jne  check_grip_2               ; Jump if not at window bottom
        bl   @right_hand_map_addr
        mov  r2,r5                      ; Save right hand map address
        bl   @is_open_window_bottom
@@ -1068,13 +1070,19 @@ check_grip_2:
        soc  @right_grip,r0
        jne  check_grip_4
 *      No grip
+       mov  r4,r0
+       soc  r5,r0
+       jeq  check_grip_3
        mov  r4,r2                      ; Left hand map address
+       jeq  check_grip_2b
        bl   @is_closed_window
-       jeq  check_grip_2a
+       jeq  check_grip_2b
+check_grip_2a:
        mov  r5,r2                      ; Right hand map address
+       jeq  check_grip_3
        bl   @is_closed_window
        jne  check_grip_3
-check_grip_2a:
+check_grip_2b:
        bl   @fall                      ; Fall if any hand is at a closed window
        jmp  check_grip_4
 check_grip_3:
@@ -4129,7 +4137,7 @@ lower_memory_max:
 *
 *       Data
 *
-b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5
+b_window_closed_left_tch:              ; Window left bottom closed -> Window left closed 5 (same for all levels)
        byte >21
 b_window_open_top:                     ; Original window open top char
        byte chr_window_open_top
